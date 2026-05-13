@@ -44,7 +44,7 @@
 </script>
 <style>
 :root{
-  --bg:#060e08;--s1:#0c160e;--s2:#111d13;--s3:#162118;
+  --bg:#0d1a0f;--s1:#142018;--s2:#1a2a1e;--s3:#1f3024;
   --border:rgba(0,229,160,.12);--border2:rgba(0,229,160,.2);
   --accent:#00e57a;--blue:#00ccff;--red:#ff4060;--yellow:#ffc840;--purple:#a855f7;
   --text:#f0faf2;--muted:rgba(220,245,225,.72);--muted2:rgba(220,245,225,.90);
@@ -700,16 +700,27 @@ function goTab(name) {
   else if(name==='analisis') renderAnalisis();
 }
 
-// THEME
+// THEME - modo noche por defecto, respeta preferencia guardada
 let isDark = true;
 function toggleTheme() {
   isDark = !isDark;
   document.body.className = isDark ? '' : 'light';
   document.getElementById('theme-btn').innerHTML = isDark ? '&#127769;' : '&#9728;&#65039;';
-  localStorage.setItem('nqft_theme', isDark?'dark':'light');
+  localStorage.setItem('nqft_theme', isDark ? 'dark' : 'light');
 }
+// Si ya eligió un tema lo respetamos, si no: modo noche por defecto
 const savedTheme = localStorage.getItem('nqft_theme');
-if (savedTheme==='light') { isDark=false; document.body.className='light'; document.getElementById('theme-btn').innerHTML='&#9728;&#65039;'; }
+if (savedTheme === 'light') {
+  isDark = false;
+  document.body.className = 'light';
+  document.getElementById('theme-btn').innerHTML = '&#9728;&#65039;';
+} else {
+  // dark (guardado o primera vez)
+  isDark = true;
+  document.body.className = '';
+  document.getElementById('theme-btn').innerHTML = '&#127769;';
+  if (!savedTheme) localStorage.setItem('nqft_theme', 'dark');
+}
 
 // MODALS
 function openOv(name) { document.getElementById('ov-'+name).classList.add('show'); }
