@@ -661,6 +661,27 @@ async function save() {
 
 window._init = function() {
   accounts = window._accounts || [];
+  // Asignar numero a cuentas que no lo tienen, por firma, en orden de fecha
+  if(!window._firmCounters) window._firmCounters = {};
+  const sinNumero = accounts.filter(a => !a.numero);
+  if (sinNumero.length > 0) {
+    // Calcular maximos actuales
+    accounts.forEach(a => {
+      if (a.numero && (!window._firmCounters[a.firma] || a.numero > window._firmCounters[a.firma]))
+        window._firmCounters[a.firma] = a.numero;
+    });
+    // Agrupar sin numero por firma y asignar en orden de fecha
+    const firmas = [...new Set(sinNumero.map(a => a.firma))];
+    firmas.forEach(firma => {
+      const grupo = sinNumero.filter(a => a.firma === firma)
+        .sort((a,b) => a.fecha < b.fecha ? -1 : 1);
+      grupo.forEach(a => {
+        window._firmCounters[firma] = (window._firmCounters[firma] || 0) + 1;
+        a.numero = window._firmCounters[firma];
+      });
+    });
+    save();
+  }
   calDate = new Date();
   renderDashboard();
 };
@@ -780,8 +801,8 @@ function renderCuentas() {
       +'<td>'+(obj>0?'<span class="mn" style="color:'+(pct>=80?'var(--accent)':pct>=50?'var(--yellow)':'var(--muted2)')+'">'+pct.toFixed(0)+'%</span><div class="pb"><div class="pbf" style="width:'+pct+'%;background:'+(pct>=80?'var(--accent)':pct>=50?'var(--yellow)':'var(--blue)')+'"></div></div>':'&mdash;')+'</td>'
       +'<td class="mn" style="color:var(--muted2)">'+dias+'d</td>'
       +'<td>'
-        +(a.estado==='active'||a.estado==='funded'?'<button class="ab" style="border-color:rgba(0,229,122,.3);color:var(--accent)" onclick="aprobarCuenta(&quot;'+a.id+'&quot;)" title="Marcar como Aprobada">&#10003; Aprobada</button>':'')+
-        +(a.estado==='active'||a.estado==='funded'?'<button class="ab fire" onclick="quemarCuenta(&quot;'+a.id+'&quot;)" title="Queme la cuenta">&#128293; Quemada</button>':'')+
+        +(a.estado==='active'||a.estado==='funded'?'<button class="ab" style="border-color:rgba(0,229,122,.3);color:var(--accent)" onclick="aprobarCuenta(&quot;'+a.id+'&quot;)" title="Aprobada">&#10003;</button>':'')+
+        (a.estado==='active'||a.estado==='funded'?'<button class="ab fire" onclick="quemarCuenta(&quot;'+a.id+'&quot;)" title="Quemada">&#128293;</button>':'')+
         '<button class="ab" onclick="editAccount(&quot;'+a.id+'&quot;)" title="Editar">&#9998;</button>'
         +'<button class="ab del" onclick="deleteAccount(&quot;'+a.id+'&quot;)" title="Eliminar">&#215;</button>'
       +'</td>'
