@@ -1457,7 +1457,7 @@ function saveProfile() {
 
 <!-- MODAL OPERATIVAS EN VIVO -->
 <div class="ov" id="ov-promo">
-  <div class="modal" style="max-width:480px;background:linear-gradient(160deg,#0a1a0f 0%,#060a0e 100%);border:1px solid rgba(0,229,160,.2)">
+  <div class="modal promo-modal" style="max-width:480px;">
     <div class="mhdr" style="margin-bottom:8px">
       <div style="display:flex;align-items:center;gap:10px">
         <div style="width:10px;height:10px;border-radius:50%;background:#ff4444;box-shadow:0 0 8px #ff4444;animation:blink 1.2s infinite"></div>
@@ -1465,34 +1465,39 @@ function saveProfile() {
       </div>
       <button class="mx" onclick="closeOv('promo')">&#215;</button>
     </div>
-    <style>@keyframes blink{0%,100%{opacity:1}50%{opacity:.3}}</style>
+    <style>
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.3}}
+.promo-modal{background:linear-gradient(160deg,#0a1a0f 0%,#060a0e 100%) !important;border-color:rgba(0,229,160,.2) !important;}
+body.light .promo-modal{background:linear-gradient(160deg,#f0f8f4 0%,#ffffff 100%) !important;border-color:rgba(0,150,80,.2) !important;}
+body.light .promo-modal .u-email{color:#4a6a50}
+</style>
 
     <div style="text-align:center;padding:10px 0 20px">
-      <div style="font-size:26px;font-weight:800;color:#ffffff;line-height:1.2">Opera en vivo<br>conmigo</div>
+      <div style="font-size:26px;font-weight:800;color:var(--text);line-height:1.2">Opera en vivo<br>conmigo</div>
       <div style="margin-top:16px;display:flex;align-items:baseline;justify-content:center;gap:6px">
         <span style="font-size:44px;font-weight:900;color:var(--accent);font-family:var(--mono);line-height:1">$33</span>
         <span style="font-size:15px;color:var(--muted);font-weight:400">USD / mes</span>
       </div>
     </div>
 
-    <div style="background:rgba(0,229,160,.05);border:1px solid rgba(0,229,160,.12);border-radius:12px;padding:16px;margin-bottom:20px">
-      <div style="font-size:10px;color:var(--muted);letter-spacing:.12em;text-transform:uppercase;font-family:var(--mono);margin-bottom:12px">Lo que incluye</div>
+    <div style="background:var(--s2);border:1px solid var(--border2);border-radius:12px;padding:16px;margin-bottom:20px">
+      <div style="font-size:10px;color:var(--muted2);letter-spacing:.12em;text-transform:uppercase;font-family:var(--mono);margin-bottom:12px">Lo que incluye</div>
       <div style="display:flex;flex-direction:column;gap:10px">
         <div style="display:flex;align-items:center;gap:12px">
-          <div style="width:28px;height:28px;border-radius:8px;background:rgba(0,229,160,.15);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:14px">&#127979;</div>
-          <span style="font-size:13px;color:#ffffff;font-weight:500">Curso basico de trading</span>
+          <div style="width:28px;height:28px;border-radius:8px;background:rgba(0,229,160,.15);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:14px;border:1px solid rgba(0,229,160,.2)">&#127979;</div>
+          <span style="font-size:13px;color:var(--text);font-weight:500">Curso basico de trading</span>
         </div>
         <div style="display:flex;align-items:center;gap:12px">
-          <div style="width:28px;height:28px;border-radius:8px;background:rgba(0,229,160,.15);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:14px">&#128250;</div>
-          <span style="font-size:13px;color:#ffffff;font-weight:500">Operativas en vivo <span style="color:var(--accent)">Lun, Mie y Vie</span><br><span style="font-size:11px;color:var(--muted)">Sesion New York y Tokyo</span></span>
+          <div style="width:28px;height:28px;border-radius:8px;background:rgba(0,229,160,.15);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:14px;border:1px solid rgba(0,229,160,.2)">&#128250;</div>
+          <span style="font-size:13px;color:var(--text);font-weight:500">Operativas en vivo <span style="color:var(--accent)">Lun, Mie y Vie</span><br><span style="font-size:11px;color:var(--muted2)">Sesion New York y Tokyo</span></span>
         </div>
         <div style="display:flex;align-items:center;gap:12px">
-          <div style="width:28px;height:28px;border-radius:8px;background:rgba(0,229,160,.15);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:14px">&#128274;</div>
-          <span style="font-size:13px;color:#ffffff;font-weight:500">Acceso a grupo privado</span>
+          <div style="width:28px;height:28px;border-radius:8px;background:rgba(0,229,160,.15);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:14px;border:1px solid rgba(0,229,160,.2)">&#128274;</div>
+          <span style="font-size:13px;color:var(--text);font-weight:500">Acceso a grupo privado</span>
         </div>
         <div style="display:flex;align-items:center;gap:12px">
-          <div style="width:28px;height:28px;border-radius:8px;background:rgba(0,229,160,.15);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:14px">&#128187;</div>
-          <span style="font-size:13px;color:#ffffff;font-weight:500">Acceso a plataforma <span style="color:var(--accent)">24/7</span></span>
+          <div style="width:28px;height:28px;border-radius:8px;background:rgba(0,229,160,.15);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:14px;border:1px solid rgba(0,229,160,.2)">&#128187;</div>
+          <span style="font-size:13px;color:var(--text);font-weight:500">Acceso a plataforma <span style="color:var(--accent)">24/7</span></span>
         </div>
       </div>
     </div>
