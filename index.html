@@ -83,7 +83,26 @@ td,th,p,span,div,label,button,input,select,a{font-family:var(--font)}
 /* Grid de fondo */
 .bg-grid{position:absolute;inset:0;background-image:linear-gradient(rgba(0,229,160,.03) 1px,transparent 1px),linear-gradient(90deg,rgba(0,229,160,.03) 1px,transparent 1px);background-size:40px 40px;animation:grid-fade 4s ease-in-out infinite alternate}
 @keyframes grid-fade{0%{opacity:.5}100%{opacity:1}}
-.login-card{background:#050a0f;border:1px solid rgba(255,255,255,.08);border-radius:24px;padding:52px 44px;text-align:center;max-width:440px;width:92%;box-shadow:0 32px 80px rgba(0,0,0,.6)}
+.login-card{
+  background:
+    radial-gradient(ellipse at 50% 0%, rgba(255,255,255,.03) 0%, transparent 60%),
+    radial-gradient(ellipse at 100% 100%, rgba(0,0,0,.6) 0%, transparent 50%),
+    radial-gradient(ellipse at 0% 100%, rgba(0,0,0,.5) 0%, transparent 50%),
+    linear-gradient(160deg,#0e0e0e 0%,#080808 50%,#050505 100%);
+  border:1px solid rgba(255,255,255,.06);
+  border-radius:24px;
+  padding:52px 44px;
+  text-align:center;
+  max-width:440px;
+  width:92%;
+  box-shadow:
+    0 40px 80px rgba(0,0,0,.8),
+    0 0 0 1px rgba(255,255,255,.04),
+    inset 0 1px 0 rgba(255,255,255,.06),
+    inset 0 -1px 0 rgba(0,0,0,.5),
+    inset -1px 0 0 rgba(0,0,0,.3),
+    inset 1px 0 0 rgba(255,255,255,.03)
+}
 .login-logo{display:flex;flex-direction:column;align-items:center;margin-bottom:28px}
 .login-sub{font-size:10px;color:rgba(255,255,255,.35);letter-spacing:.3em;margin-top:6px;font-weight:500;text-transform:uppercase}
 .login-title{font-size:30px;font-weight:700;margin-bottom:10px;color:#fff;letter-spacing:-.03em}
@@ -530,25 +549,25 @@ body.light #contact-menu span[style*="letter-spacing"] { color:#4a6a50 !importan
   <div id="particles-container"></div>
   <div class="login-card">
     <div class="login-logo">
-      <svg viewBox="0 0 220 160" xmlns="http://www.w3.org/2000/svg" style="width:180px;height:130px;animation:subtle-blink 3s ease-in-out infinite">
+      <svg viewBox="0 0 240 170" xmlns="http://www.w3.org/2000/svg" style="width:190px;height:135px;animation:subtle-blink 3s ease-in-out infinite">
   <defs>
     <linearGradient id="lgw" x1="0%" y1="0%" x2="100%" y2="100%">
       <stop offset="0%" style="stop-color:#ffffff;stop-opacity:1"/>
-      <stop offset="50%" style="stop-color:#ccddcc;stop-opacity:1"/>
+      <stop offset="40%" style="stop-color:#e0e0e0;stop-opacity:1"/>
       <stop offset="100%" style="stop-color:#ffffff;stop-opacity:1"/>
     </linearGradient>
   </defs>
-  <!-- N -->
-  <line x1="18" y1="100" x2="18" y2="20" stroke="url(#lgw)" stroke-width="9" stroke-linecap="round"/>
-  <line x1="18" y1="20" x2="62" y2="100" stroke="url(#lgw)" stroke-width="9" stroke-linecap="round"/>
-  <line x1="62" y1="100" x2="62" y2="20" stroke="url(#lgw)" stroke-width="9" stroke-linecap="round"/>
-  <!-- Q -->
-  <circle cx="138" cy="60" r="42" fill="none" stroke="url(#lgw)" stroke-width="9"/>
-  <line x1="166" y1="88" x2="188" y2="110" stroke="url(#lgw)" stroke-width="9" stroke-linecap="round"/>
+  <!-- N: barra izquierda, diagonal correcta, barra derecha -->
+  <line x1="22" y1="18" x2="22" y2="102" stroke="url(#lgw)" stroke-width="10" stroke-linecap="round"/>
+  <line x1="22" y1="18" x2="60" y2="102" stroke="url(#lgw)" stroke-width="8" stroke-linecap="round"/>
+  <line x1="60" y1="18" x2="60" y2="102" stroke="url(#lgw)" stroke-width="10" stroke-linecap="round"/>
+  <!-- Q: circulo con cola -->
+  <circle cx="148" cy="60" r="44" fill="none" stroke="url(#lgw)" stroke-width="10"/>
+  <line x1="172" y1="84" x2="200" y2="112" stroke="url(#lgw)" stroke-width="10" stroke-linecap="round"/>
   <!-- PROJECT -->
-  <text x="110" y="148" text-anchor="middle" fill="white" fill-opacity="0.7" font-family="Inter,sans-serif" font-size="13" font-weight="500" letter-spacing="7">PROJECT</text>
+  <text x="120" y="155" text-anchor="middle" fill="white" fill-opacity="0.55" font-family="Inter,sans-serif" font-size="12" font-weight="400" letter-spacing="8">PROJECT</text>
 </svg>
-      <div class="login-sub">Funded Tracker</div>
+      
     </div>
     <div class="login-title">Bienvenido</div>
     <div class="login-desc">Lleva el control completo de tus cuentas de fondeo, trades y rentabilidad.</div>
@@ -573,7 +592,7 @@ body.light #contact-menu span[style*="letter-spacing"] { color:#4a6a50 !importan
 
 <div class="hdr">
   <div class="logo">
-    <svg viewBox="0 0 220 160" xmlns="http://www.w3.org/2000/svg" style="width:32px;height:24px"><defs><linearGradient id="lgw2" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" style="stop-color:#ffffff"/><stop offset="50%" style="stop-color:#aaccaa"/><stop offset="100%" style="stop-color:#ffffff"/></linearGradient></defs><line x1="18" y1="100" x2="18" y2="20" stroke="url(#lgw2)" stroke-width="9" stroke-linecap="round"/><line x1="18" y1="20" x2="62" y2="100" stroke="url(#lgw2)" stroke-width="9" stroke-linecap="round"/><line x1="62" y1="100" x2="62" y2="20" stroke="url(#lgw2)" stroke-width="9" stroke-linecap="round"/><circle cx="138" cy="60" r="42" fill="none" stroke="url(#lgw2)" stroke-width="9"/><line x1="166" y1="88" x2="188" y2="110" stroke="url(#lgw2)" stroke-width="9" stroke-linecap="round"/></svg>
+    <svg viewBox="0 0 240 120" xmlns="http://www.w3.org/2000/svg" style="width:36px;height:22px"><defs><linearGradient id="lgwh" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" style="stop-color:#ffffff"/><stop offset="100%" style="stop-color:#cccccc"/></linearGradient></defs><line x1="22" y1="18" x2="22" y2="102" stroke="url(#lgwh)" stroke-width="10" stroke-linecap="round"/><line x1="22" y1="18" x2="60" y2="102" stroke="url(#lgwh)" stroke-width="8" stroke-linecap="round"/><line x1="60" y1="18" x2="60" y2="102" stroke="url(#lgwh)" stroke-width="10" stroke-linecap="round"/><circle cx="148" cy="60" r="44" fill="none" stroke="url(#lgwh)" stroke-width="10"/><line x1="172" y1="84" x2="200" y2="112" stroke="url(#lgwh)" stroke-width="10" stroke-linecap="round"/></svg>
     <div class="logo-sub">Funded Tracker</div>
   </div>
   <div class="hdr-right">
