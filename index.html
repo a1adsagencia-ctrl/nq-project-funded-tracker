@@ -1123,7 +1123,7 @@ function renderCuentas() {
   document.getElementById('resumen-firmas').innerHTML=resumenHTML;
 
   const tbody=document.getElementById('t-cuentas');
-  if(!accounts.length){tbody.innerHTML='<tr><td colspan="11">'+emptyState('📋','Sin cuentas registradas','Agrega tu primera cuenta de fondeo para comenzar a registrar tu progreso.','Nueva Cuenta','openAcctModal()')+' </td></tr>';return;}
+  if(!accounts.length){tbody.innerHTML='<tr><td colspan="11">'+emptyState('📋','Sin cuentas registradas','Agrega tu primera cuenta de fondeo para comenzar a registrar tu progreso.','Nueva Cuenta','newAccountModal()')+' </td></tr>';return;}
   const bmap={active:'b-active',funded:'b-funded',passed:'b-passed',failed:'b-failed'};
   const blbl={active:'ACTIVA',funded:'FONDEADA',passed:'PASADA',failed:'FALLIDA'};
   tbody.innerHTML=accounts.map(a=>{
