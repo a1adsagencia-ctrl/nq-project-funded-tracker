@@ -546,6 +546,74 @@ body.light #contact-menu span[style*="letter-spacing"] { color:#4a6a50 !importan
   0%, 100% { opacity: 0.22; }
   50%       { opacity: 0.65; }
 }
+
+/* ── SKELETON LOADERS ── */
+@keyframes skeleton-shine {
+  0%   { background-position: -400px 0; }
+  100% { background-position: 400px 0; }
+}
+.skeleton {
+  background: linear-gradient(90deg,
+    rgba(0,255,136,.04) 0px,
+    rgba(0,255,136,.10) 80px,
+    rgba(0,255,136,.04) 160px
+  );
+  background-size: 400px 100%;
+  animation: skeleton-shine 1.6s ease-in-out infinite;
+  border-radius: 6px;
+}
+.sk-line  { height: 12px; margin-bottom: 8px; border-radius: 4px; }
+.sk-val   { height: 28px; width: 70%; border-radius: 6px; }
+.sk-card  { background: var(--s1); border: 1px solid var(--border); border-radius: 12px; padding: 16px; }
+
+/* ── EMPTY STATES ── */
+.empty-state {
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  padding: 64px 24px; text-align: center;
+  opacity: 0; animation: empty-fade .5s ease .1s forwards;
+}
+@keyframes empty-fade { from{opacity:0;transform:translateY(8px)} to{opacity:1;transform:translateY(0)} }
+.empty-icon {
+  width: 64px; height: 64px; border-radius: 16px;
+  background: rgba(0,255,136,.05); border: 1px solid rgba(0,255,136,.1);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 28px; margin-bottom: 20px;
+  box-shadow: 0 0 32px rgba(0,255,136,.06);
+}
+.empty-title {
+  font-size: 16px; font-weight: 700; color: var(--text);
+  margin-bottom: 8px; letter-spacing: -.02em;
+}
+.empty-desc {
+  font-size: 13px; color: var(--muted); line-height: 1.6;
+  max-width: 280px; font-weight: 300; margin-bottom: 24px;
+}
+.empty-btn {
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 10px 20px; border-radius: 10px;
+  background: rgba(0,255,136,.08); border: 1px solid rgba(0,255,136,.2);
+  color: var(--accent); font-size: 13px; font-weight: 600;
+  cursor: pointer; font-family: var(--font);
+  transition: all .2s;
+}
+.empty-btn:hover {
+  background: rgba(0,255,136,.13); border-color: rgba(0,255,136,.35);
+  transform: translateY(-1px);
+}
+
+/* ── TAB TRANSITIONS ── */
+.pane { animation: none; }
+.pane.active { animation: pane-in .25s ease both; }
+@keyframes pane-in { from{opacity:0;transform:translateY(6px)} to{opacity:1;transform:translateY(0)} }
+
+/* ── SCROLLBAR ── */
+::-webkit-scrollbar { width: 5px; height: 5px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: rgba(0,255,136,.2); border-radius: 10px; }
+::-webkit-scrollbar-thumb:hover { background: rgba(0,255,136,.4); }
+
+/* ── COUNTER ANIMATION ── */
+.sv[data-count] { transition: none; }
 </style>
 </head>
 <body>
@@ -834,6 +902,8 @@ async function save() {
 }
 
 window._init = function() {
+  // Show skeletons while rendering
+  renderSkeletonStats();
   accounts = window._accounts || [];
   // Asignar numero a cuentas que no lo tienen, por firma, en orden de fecha
   if(!window._firmCounters) window._firmCounters = {};
@@ -916,6 +986,47 @@ function streak(trades) {
 }
 
 // DASHBOARD
+
+/* ── COUNTUP ANIMATION ── */
+function countUp(el, target, prefix, suffix, decimals, duration) {
+  if (!el) return;
+  const isNeg = target < 0;
+  const abs = Math.abs(target);
+  const start = performance.now();
+  duration = duration || 900;
+  function step(now) {
+    const p = Math.min((now - start) / duration, 1);
+    const ease = 1 - Math.pow(1 - p, 3); // ease-out cubic
+    const val = abs * ease;
+    el.textContent = (isNeg ? '-' : (prefix||'')) + val.toFixed(decimals||0) + (suffix||'');
+    if (p < 1) requestAnimationFrame(step);
+    else el.textContent = (isNeg ? '-' : (prefix||'')) + abs.toFixed(decimals||0) + (suffix||'');
+  }
+  requestAnimationFrame(step);
+}
+
+/* ── SKELETON: render skeleton stat cards ── */
+function renderSkeletonStats() {
+  const grid = document.getElementById('d-stats');
+  if (!grid) return;
+  grid.innerHTML = Array(10).fill(0).map(() =>
+    `<div class="sk-card">
+      <div class="sk-line skeleton" style="width:55%;margin-bottom:10px"></div>
+      <div class="sk-val skeleton"></div>
+    </div>`
+  ).join('');
+}
+
+/* ── EMPTY STATE HELPER ── */
+function emptyState(icon, title, desc, btnText, btnAction) {
+  return `<div class="empty-state">
+    <div class="empty-icon">${icon}</div>
+    <div class="empty-title">${title}</div>
+    <div class="empty-desc">${desc}</div>
+    ${btnText ? `<button class="empty-btn" onclick="${btnAction}">+ ${btnText}</button>` : ''}
+  </div>`;
+}
+
 function renderDashboard() {
   const inv=accounts.reduce((s,a)=>s+(a.inversion||0),0);
   const ret=accounts.reduce((s,a)=>s+(a.retiros||[]).reduce((x,r)=>x+r.monto,0),0);
@@ -939,7 +1050,21 @@ function renderDashboard() {
     ['% Aprobacion',apr.toFixed(1)+'%','yellow'],
     ['Total Trades',tr.length,''],
     ['Win Rate Global',wr.toFixed(1)+'%',wr>=60?'green':wr>=50?'yellow':'red'],
-  ].map(s=>'<div class="sc"><div class="sl">'+s[0]+'</div><div class="sv '+s[2]+'">'+s[1]+'</div></div>').join('');
+    ].map(s=>'<div class="sc"><div class="sl">'+s[0]+'</div><div class="sv '+s[2]+'" data-raw="'+s[1]+'">'+s[1]+'</div></div>').join('');
+  // CountUp animation on stat values
+  setTimeout(() => {
+    document.querySelectorAll('#d-stats .sv[data-raw]').forEach(el => {
+      const raw = el.dataset.raw;
+      const num = parseFloat(raw.replace(/[^0-9.\-]/g,''));
+      if (!isNaN(num) && num !== 0) {
+        const prefix = raw.includes('$') ? '$' : '';
+        const suffix = raw.includes('%') ? '%' : '';
+        const dec = raw.includes('.') ? 1 : 0;
+        el.textContent = prefix + '0' + suffix;
+        countUp(el, raw.includes('-') && !raw.startsWith('-') ? -num : num, prefix, suffix, dec, 1000);
+      }
+    });
+  }, 50);
 
   const sorted=[...tr].sort((a,b)=>a.fecha<b.fecha?-1:1);
   let cum=0; const pts=sorted.map(t=>{cum+=(t.pnl||0);return {x:t.fecha,y:cum};});
@@ -965,6 +1090,12 @@ function renderDashboard() {
 
 // CUENTAS
 function renderCuentas() {
+  // Empty state when no accounts
+  const cuentasEl = document.getElementById('cuentas-list') || document.querySelector('#pane-cuentas .tw');
+  if (!accounts.length) {
+    const container = document.getElementById('cuentas-container') || document.querySelector('[id*="cuentas"]');
+    // will be handled below
+  }
   // Resumen por firma
   const firmas=[...new Set(accounts.map(a=>a.firma))];
   const resumenHTML=firmas.length?'<div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:16px">'+
@@ -992,7 +1123,7 @@ function renderCuentas() {
   document.getElementById('resumen-firmas').innerHTML=resumenHTML;
 
   const tbody=document.getElementById('t-cuentas');
-  if(!accounts.length){tbody.innerHTML='<tr><td colspan="11"><div style="text-align:center;padding:40px;color:var(--muted);font-family:var(--mono)">No hay cuentas registradas</div></td></tr>';return;}
+  if(!accounts.length){tbody.innerHTML='<tr><td colspan="11">'+emptyState('📋','Sin cuentas registradas','Agrega tu primera cuenta de fondeo para comenzar a registrar tu progreso.','Nueva Cuenta','openAcctModal()')+' </td></tr>';return;}
   const bmap={active:'b-active',funded:'b-funded',passed:'b-passed',failed:'b-failed'};
   const blbl={active:'ACTIVA',funded:'FONDEADA',passed:'PASADA',failed:'FALLIDA'};
   tbody.innerHTML=accounts.map(a=>{
@@ -1048,10 +1179,24 @@ function renderDiario() {
     ['Racha Actual',stk.cur?(stk.cur+(stk.type==='win'?' W':' L')):'&mdash;',stk.type==='win'?'green':stk.type==='loss'?'red':''],
     ['Mejor Racha',stk.best||'&mdash;','green'],
     ['Peor Racha',stk.worst||'&mdash;','red'],
-  ].map(s=>'<div class="sc"><div class="sl">'+s[0]+'</div><div class="sv '+s[2]+'">'+s[1]+'</div></div>').join('');
+    ].map(s=>'<div class="sc"><div class="sl">'+s[0]+'</div><div class="sv '+s[2]+'" data-raw="'+s[1]+'">'+s[1]+'</div></div>').join('');
+  // CountUp animation on stat values
+  setTimeout(() => {
+    document.querySelectorAll('#d-stats .sv[data-raw]').forEach(el => {
+      const raw = el.dataset.raw;
+      const num = parseFloat(raw.replace(/[^0-9.\-]/g,''));
+      if (!isNaN(num) && num !== 0) {
+        const prefix = raw.includes('$') ? '$' : '';
+        const suffix = raw.includes('%') ? '%' : '';
+        const dec = raw.includes('.') ? 1 : 0;
+        el.textContent = prefix + '0' + suffix;
+        countUp(el, raw.includes('-') && !raw.startsWith('-') ? -num : num, prefix, suffix, dec, 1000);
+      }
+    });
+  }, 50);
 
   const tbody=document.getElementById('t-diario');
-  if(!tr.length){tbody.innerHTML='<tr><td colspan="9"><div style="text-align:center;padding:40px;color:var(--muted);font-family:var(--mono)">Sin trades registrados</div></td></tr>';return;}
+  if(!tr.length){tbody.innerHTML='<tr><td colspan="9">'+emptyState('📈','Sin trades registrados','Registra tu primer trade para empezar a ver tus estadísticas y evolución.','Registrar Trade','openTradeModal()')+' </td></tr>';return;}
   const rmap={win:'b-win',loss:'b-loss',be:'b-be'};
   const rlbl={win:'WIN',loss:'LOSS',be:'BE'};
   tbody.innerHTML=tr.map(t=>{
@@ -1205,7 +1350,7 @@ function openCalDay(fecha) {
           +'<td>'+fotoBtn+'</td>'
           +'</tr>';
       }).join('')
-    :'<tr><td colspan="7" style="text-align:center;padding:20px;color:var(--muted);font-family:var(--mono)">Sin trades este dia</td></tr>';
+    :'<tr><td colspan="7">'+emptyState('📅','Sin trades este día','No registraste ningún trade en este día.',null,null)+' </td></tr>';
   openOv('calday');
 }
 
