@@ -571,6 +571,7 @@ body.light .emo-label { color:#4a6a50 !important; }
   <div class="tab" onclick="goTab('cuentas')">Cuentas</div>
   <div class="tab" onclick="goTab('diario')">Diario de Trades</div>
   <div class="tab" onclick="goTab('analisis')">Analisis</div>
+  <div class="tab" onclick="goTab('noticias')">📰 Noticias</div>
 </div>
 
 <div class="content">
@@ -645,6 +646,35 @@ body.light .emo-label { color:#4a6a50 !important; }
     </div>
   </div>
 </div>
+<!-- PANE NOTICIAS -->
+<div class="pane" id="pane-noticias" style="display:none">
+  <div style="margin-bottom:16px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px">
+    <div>
+      <div style="font-size:16px;font-weight:700;color:var(--text)">Calendario Económico</div>
+      <div style="font-size:11px;color:var(--muted);font-family:var(--mono);margin-top:3px">Fuente: Investing.com · Tiempo real</div>
+    </div>
+    <div style="display:flex;gap:12px;align-items:center">
+      <span style="display:flex;align-items:center;gap:5px;font-size:11px;font-family:var(--mono);color:var(--muted)"><span style="width:8px;height:8px;border-radius:50%;background:#ff4060;display:inline-block"></span>Alto impacto</span>
+      <span style="display:flex;align-items:center;gap:5px;font-size:11px;font-family:var(--mono);color:var(--muted)"><span style="width:8px;height:8px;border-radius:50%;background:#ffc840;display:inline-block"></span>Medio</span>
+      <span style="display:flex;align-items:center;gap:5px;font-size:11px;font-family:var(--mono);color:var(--muted)"><span style="width:8px;height:8px;border-radius:50%;background:#00e5a0;display:inline-block"></span>Bajo</span>
+    </div>
+  </div>
+  <div style="border-radius:14px;overflow:hidden;border:1px solid var(--border);box-shadow:0 4px 24px rgba(0,0,0,.3)">
+    <iframe
+      src="https://sslecal2.investing.com?columns=exc_flags,exc_currency,exc_importance,exc_actual,exc_forecast,exc_previous&features=datepicker,timezone&countries=25,32,6,37,72,22,17,39,14,10,35,43,56,36,110,11,26,12,4,5&calType=week&timeZone=55&lang=12"
+      width="100%" height="640" frameborder="0"
+      allowtransparency="true" marginwidth="0" marginheight="0"
+      style="display:block;border:none">
+    </iframe>
+  </div>
+  <div style="margin-top:10px;text-align:right">
+    <a href="https://www.investing.com/economic-calendar/" target="_blank"
+       style="font-size:10px;color:var(--muted);font-family:var(--mono);text-decoration:none;letter-spacing:.06em">
+      VER CALENDARIO COMPLETO →
+    </a>
+  </div>
+</div>
+
 <!-- WIDGET FLOTANTE CONTACTO -->
 <div id="contact-widget" style="position:fixed;bottom:24px;right:24px;z-index:9999;display:flex;flex-direction:column;align-items:flex-end;gap:10px">
 
@@ -860,7 +890,7 @@ window._init = function() {
 // TABS
 function goTab(name) {
   document.querySelectorAll('.tab').forEach((t,i)=>{
-    t.classList.toggle('active',['dashboard','cuentas','diario','analisis'][i]===name);
+    t.classList.toggle('active',['dashboard','cuentas','diario','analisis','noticias'][i]===name);
   });
   document.querySelectorAll('.pane').forEach(p=>p.classList.remove('active'));
   document.getElementById('pane-'+name).classList.add('active');
@@ -868,6 +898,7 @@ function goTab(name) {
   else if(name==='cuentas') renderCuentas();
   else if(name==='diario') renderDiario();
   else if(name==='analisis') renderAnalisis();
+  // noticias: iframe carga sola, nada que hacer
 }
 
 // THEME - 3 modos: dark / gray / light
