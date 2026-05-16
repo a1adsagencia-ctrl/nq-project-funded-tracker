@@ -543,6 +543,42 @@ body:not(.light):not(.gray) input[type="date"]::-webkit-calendar-picker-indicato
 body:not(.light):not(.gray) input[type="date"]::-webkit-calendar-picker-indicator:hover {
   opacity: 1;
 }
+
+/* ── NOTAS ── */
+.folder-item{display:flex;align-items:center;gap:8px;padding:9px 10px;border-radius:9px;cursor:pointer;border:1px solid transparent;transition:all .18s;position:relative;}
+.folder-item:hover{background:rgba(0,255,136,.05);border-color:rgba(0,255,136,.12);}
+.folder-item.active{background:rgba(0,255,136,.09);border-color:rgba(0,255,136,.28);box-shadow:0 0 0 1px rgba(0,255,136,.08) inset;}
+.folder-item .f-icon{font-size:16px;flex-shrink:0;}
+.folder-item .f-name{font-size:12px;font-weight:600;color:var(--text);flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.folder-item .f-count{font-size:10px;font-family:var(--mono);color:var(--muted);flex-shrink:0;}
+.folder-item .f-del{display:none;background:none;border:none;color:var(--red);cursor:pointer;font-size:14px;padding:2px;border-radius:4px;transition:all .15s;flex-shrink:0;}
+.folder-item:hover .f-del{display:block;}
+.folder-item .f-del:hover{background:rgba(255,64,96,.15);}
+.note-card{background:rgba(0,6,3,.82);border:1px solid rgba(0,255,136,.09);border-radius:12px;padding:16px;cursor:pointer;transition:all .2s;position:relative;display:flex;flex-direction:column;gap:8px;min-height:130px;}
+.note-card:hover{border-color:rgba(0,255,136,.28);transform:translateY(-2px);box-shadow:0 8px 24px rgba(0,0,0,.4);}
+.note-card.color-blue{border-color:rgba(0,204,255,.18);background:rgba(0,20,40,.82);}
+.note-card.color-blue:hover{border-color:rgba(0,204,255,.4);}
+.note-card.color-yellow{border-color:rgba(255,200,64,.18);background:rgba(30,20,0,.82);}
+.note-card.color-yellow:hover{border-color:rgba(255,200,64,.4);}
+.note-card.color-red{border-color:rgba(255,64,96,.18);background:rgba(30,0,5,.82);}
+.note-card.color-red:hover{border-color:rgba(255,64,96,.4);}
+.note-card.color-purple{border-color:rgba(168,85,247,.18);background:rgba(20,5,35,.82);}
+.note-card.color-purple:hover{border-color:rgba(168,85,247,.4);}
+.note-card.color-orange{border-color:rgba(255,140,0,.18);background:rgba(30,12,0,.82);}
+.note-card.color-orange:hover{border-color:rgba(255,140,0,.4);}
+.note-card-title{font-size:13px;font-weight:700;color:var(--text);line-height:1.3;}
+.note-card-preview{font-size:11px;color:var(--muted);line-height:1.5;flex:1;overflow:hidden;display:-webkit-box;-webkit-line-clamp:4;-webkit-box-orient:vertical;}
+.note-card-date{font-size:10px;font-family:var(--mono);color:var(--muted);margin-top:auto;}
+.emoji-opt:hover{background:rgba(255,255,255,.06);}
+.note-color-opt.selected{transform:scale(1.15);}
+body.gray .folder-item.active{background:rgba(0,229,122,.08)!important;border-color:rgba(0,229,122,.25)!important;}
+body.gray .note-card{background:#262626!important;border-color:rgba(255,255,255,.09)!important;}
+body.gray .note-card:hover{border-color:rgba(0,229,122,.3)!important;}
+body.gray #notes-sidebar{background:#262626!important;border-color:rgba(255,255,255,.09)!important;}
+body.light .folder-item.active{background:rgba(0,122,69,.08)!important;border-color:rgba(0,122,69,.25)!important;}
+body.light .note-card{background:#ffffff!important;border-color:#d8e8d8!important;}
+body.light .note-card:hover{border-color:#007a45!important;}
+body.light #notes-sidebar{background:#ffffff!important;border-color:#d8e8d8!important;}
 </style>
 </head>
 <body>
@@ -614,6 +650,7 @@ body:not(.light):not(.gray) input[type="date"]::-webkit-calendar-picker-indicato
   <div class="tab" onclick="goTab('cuentas')">Cuentas</div>
   <div class="tab" onclick="goTab('diario')">Diario de Trades</div>
   <div class="tab" onclick="goTab('analisis')">Analisis</div>
+  <div class="tab" onclick="goTab('notas')">📝 Notas</div>
 </div>
 
 <div class="content">
@@ -687,7 +724,120 @@ body:not(.light):not(.gray) input[type="date"]::-webkit-calendar-picker-indicato
       <div class="card"><div class="ct">⭐ Resultados por nivel de confianza</div><div id="a-stars-stats" style="padding:4px 0"></div></div>
     </div>
   </div>
+
+  <!-- PANE NOTAS -->
+  <div class="pane" id="pane-notas">
+    <div style="display:flex;gap:0;height:calc(100vh - 110px);min-height:400px;">
+
+      <!-- SIDEBAR DE CARPETAS -->
+      <div id="notes-sidebar" style="width:220px;min-width:180px;max-width:260px;background:rgba(0,6,3,.82);border:1px solid rgba(0,255,136,.08);border-radius:14px;padding:14px 10px;display:flex;flex-direction:column;gap:6px;margin-right:16px;flex-shrink:0;overflow-y:auto;">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;padding:0 4px;">
+          <span style="font-size:10px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);font-family:var(--mono);">Carpetas</span>
+          <button onclick="openNewFolderModal()" style="background:rgba(0,255,136,.1);border:1px solid rgba(0,255,136,.25);color:var(--accent);border-radius:6px;width:24px;height:24px;cursor:pointer;font-size:16px;display:flex;align-items:center;justify-content:center;line-height:1;transition:all .2s;" onmouseover="this.style.background='rgba(0,255,136,.2)'" onmouseout="this.style.background='rgba(0,255,136,.1)'">+</button>
+        </div>
+        <div id="folders-list" style="display:flex;flex-direction:column;gap:4px;flex:1;"></div>
+      </div>
+
+      <!-- PANEL PRINCIPAL DE NOTAS -->
+      <div style="flex:1;display:flex;flex-direction:column;gap:12px;min-width:0;">
+
+        <!-- Header del panel -->
+        <div style="display:flex;align-items:center;justify-content:space-between;flex-shrink:0;">
+          <div style="display:flex;align-items:center;gap:10px;">
+            <span id="notes-folder-title" style="font-size:16px;font-weight:800;color:var(--text);">Selecciona una carpeta</span>
+            <span id="notes-folder-badge" style="font-size:10px;font-family:var(--mono);color:var(--muted);"></span>
+          </div>
+          <button id="btn-new-note" onclick="openNewNoteModal()" style="display:none;background:var(--accent);color:#000;border:none;padding:8px 16px;border-radius:8px;font-weight:700;font-size:12px;cursor:pointer;transition:all .2s;" onmouseover="this.style.background='#00ffb3'" onmouseout="this.style.background='var(--accent)'">+ Nueva Nota</button>
+        </div>
+
+        <!-- Grid de notas -->
+        <div id="notes-grid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:14px;overflow-y:auto;padding-bottom:20px;align-content:start;">
+          <!-- Empty state inicial -->
+          <div id="notes-empty" style="grid-column:1/-1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:60px 20px;color:var(--muted);text-align:center;">
+            <div style="font-size:48px;margin-bottom:16px;opacity:.4;">📂</div>
+            <div style="font-size:14px;font-weight:600;color:var(--muted2);margin-bottom:6px;">Selecciona o crea una carpeta</div>
+            <div style="font-size:12px;font-family:var(--mono);opacity:.6;">Usa el panel izquierdo para organizar tus notas</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
 </div>
+
+<!-- MODAL NUEVA CARPETA -->
+<div class="ov" id="ov-new-folder">
+  <div class="modal" style="width:380px;max-width:96vw;">
+    <div class="mhdr">
+      <span class="mtitle">📁 Nueva Carpeta</span>
+      <button class="mx" onclick="closeOv('new-folder')">×</button>
+    </div>
+    <div class="fg">
+      <label class="fl">Nombre de la carpeta</label>
+      <input class="fi" id="folder-name-input" type="text" placeholder="Ej: Importante, Estrategias, Ideas..." maxlength="40" oninput="updateFolderPreview(this.value)">
+    </div>
+    <div class="fg">
+      <label class="fl">Ícono (opcional)</label>
+      <div id="folder-emoji-picker" style="display:flex;flex-wrap:wrap;gap:6px;padding:8px 0;">
+        <span class="emoji-opt selected" onclick="selectEmoji(this,'📁')" style="font-size:22px;cursor:pointer;padding:4px 6px;border-radius:6px;border:2px solid var(--accent);transition:all .15s;">📁</span>
+        <span class="emoji-opt" onclick="selectEmoji(this,'⭐')" style="font-size:22px;cursor:pointer;padding:4px 6px;border-radius:6px;border:2px solid transparent;transition:all .15s;">⭐</span>
+        <span class="emoji-opt" onclick="selectEmoji(this,'💡')" style="font-size:22px;cursor:pointer;padding:4px 6px;border-radius:6px;border:2px solid transparent;transition:all .15s;">💡</span>
+        <span class="emoji-opt" onclick="selectEmoji(this,'📈')" style="font-size:22px;cursor:pointer;padding:4px 6px;border-radius:6px;border:2px solid transparent;transition:all .15s;">📈</span>
+        <span class="emoji-opt" onclick="selectEmoji(this,'🎯')" style="font-size:22px;cursor:pointer;padding:4px 6px;border-radius:6px;border:2px solid transparent;transition:all .15s;">🎯</span>
+        <span class="emoji-opt" onclick="selectEmoji(this,'🔥')" style="font-size:22px;cursor:pointer;padding:4px 6px;border-radius:6px;border:2px solid transparent;transition:all .15s;">🔥</span>
+        <span class="emoji-opt" onclick="selectEmoji(this,'📝')" style="font-size:22px;cursor:pointer;padding:4px 6px;border-radius:6px;border:2px solid transparent;transition:all .15s;">📝</span>
+        <span class="emoji-opt" onclick="selectEmoji(this,'🧠')" style="font-size:22px;cursor:pointer;padding:4px 6px;border-radius:6px;border:2px solid transparent;transition:all .15s;">🧠</span>
+        <span class="emoji-opt" onclick="selectEmoji(this,'⚡')" style="font-size:22px;cursor:pointer;padding:4px 6px;border-radius:6px;border:2px solid transparent;transition:all .15s;">⚡</span>
+        <span class="emoji-opt" onclick="selectEmoji(this,'🔒')" style="font-size:22px;cursor:pointer;padding:4px 6px;border-radius:6px;border:2px solid transparent;transition:all .15s;">🔒</span>
+        <span class="emoji-opt" onclick="selectEmoji(this,'📊')" style="font-size:22px;cursor:pointer;padding:4px 6px;border-radius:6px;border:2px solid transparent;transition:all .15s;">📊</span>
+        <span class="emoji-opt" onclick="selectEmoji(this,'💰')" style="font-size:22px;cursor:pointer;padding:4px 6px;border-radius:6px;border:2px solid transparent;transition:all .15s;">💰</span>
+      </div>
+    </div>
+    <div style="display:flex;gap:10px;margin-top:6px;">
+      <button class="bf2" onclick="closeOv('new-folder')">Cancelar</button>
+      <button class="bf" onclick="saveNewFolder()">Crear Carpeta</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL NUEVA / EDITAR NOTA -->
+<div class="ov" id="ov-note-editor">
+  <div class="modal" style="width:580px;max-width:96vw;max-height:90vh;">
+    <div class="mhdr">
+      <span class="mtitle" id="note-editor-title">📝 Nueva Nota</span>
+      <button class="mx" onclick="closeNoteEditor()">×</button>
+    </div>
+    <div class="fg">
+      <label class="fl">Título</label>
+      <input class="fi" id="note-title-input" type="text" placeholder="Título de la nota..." maxlength="80">
+    </div>
+    <div class="fg">
+      <label class="fl">Contenido</label>
+      <textarea class="fi" id="note-content-input" placeholder="Escribe aquí tu nota..." style="min-height:220px;resize:vertical;line-height:1.6;font-family:var(--font);font-size:13px;"></textarea>
+    </div>
+    <div class="fg">
+      <label class="fl">Color de la nota</label>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;padding:4px 0;">
+        <div class="note-color-opt selected" data-color="default" onclick="selectNoteColor(this)" style="width:28px;height:28px;border-radius:50%;background:rgba(0,255,136,.08);border:2px solid var(--accent);cursor:pointer;transition:all .15s;"></div>
+        <div class="note-color-opt" data-color="blue" onclick="selectNoteColor(this)" style="width:28px;height:28px;border-radius:50%;background:rgba(0,204,255,.15);border:2px solid transparent;cursor:pointer;transition:all .15s;" onmouseover="this.style.borderColor='rgba(0,204,255,.6)'" onmouseout="if(!this.classList.contains('selected'))this.style.borderColor='transparent'"></div>
+        <div class="note-color-opt" data-color="yellow" onclick="selectNoteColor(this)" style="width:28px;height:28px;border-radius:50%;background:rgba(255,200,64,.15);border:2px solid transparent;cursor:pointer;transition:all .15s;" onmouseover="this.style.borderColor='rgba(255,200,64,.6)'" onmouseout="if(!this.classList.contains('selected'))this.style.borderColor='transparent'"></div>
+        <div class="note-color-opt" data-color="red" onclick="selectNoteColor(this)" style="width:28px;height:28px;border-radius:50%;background:rgba(255,64,96,.15);border:2px solid transparent;cursor:pointer;transition:all .15s;" onmouseover="this.style.borderColor='rgba(255,64,96,.6)'" onmouseout="if(!this.classList.contains('selected'))this.style.borderColor='transparent'"></div>
+        <div class="note-color-opt" data-color="purple" onclick="selectNoteColor(this)" style="width:28px;height:28px;border-radius:50%;background:rgba(168,85,247,.15);border:2px solid transparent;cursor:pointer;transition:all .15s;" onmouseover="this.style.borderColor='rgba(168,85,247,.6)'" onmouseout="if(!this.classList.contains('selected'))this.style.borderColor='transparent'"></div>
+        <div class="note-color-opt" data-color="orange" onclick="selectNoteColor(this)" style="width:28px;height:28px;border-radius:50%;background:rgba(255,140,0,.15);border:2px solid transparent;cursor:pointer;transition:all .15s;" onmouseover="this.style.borderColor='rgba(255,140,0,.6)'" onmouseout="if(!this.classList.contains('selected'))this.style.borderColor='transparent'"></div>
+      </div>
+    </div>
+    <div style="display:flex;gap:10px;margin-top:6px;justify-content:space-between;align-items:center;">
+      <div>
+        <button id="btn-delete-note" onclick="deleteCurrentNote()" style="display:none;background:none;border:1px solid rgba(255,64,96,.3);color:var(--red);padding:8px 14px;border-radius:8px;font-size:12px;cursor:pointer;font-family:var(--font);font-weight:600;transition:all .2s;" onmouseover="this.style.background='rgba(255,64,96,.1)'" onmouseout="this.style.background='none'">🗑 Eliminar</button>
+      </div>
+      <div style="display:flex;gap:10px;">
+        <button class="bf2" onclick="closeNoteEditor()" style="width:auto;padding:10px 18px;margin-top:0;">Cancelar</button>
+        <button class="bf" onclick="saveNote()" style="width:auto;padding:10px 22px;margin-top:0;">Guardar Nota</button>
+      </div>
+    </div>
+  </div>
+</div>
+
 <!-- WIDGET FLOTANTE CONTACTO -->
 <div id="contact-widget" style="position:fixed;bottom:24px;right:24px;z-index:9999;display:flex;flex-direction:column;align-items:flex-end;gap:10px">
 
@@ -903,7 +1053,7 @@ window._init = function() {
 // TABS
 function goTab(name) {
   document.querySelectorAll('.tab').forEach((t,i)=>{
-    t.classList.toggle('active',['dashboard','cuentas','diario','analisis'][i]===name);
+    t.classList.toggle('active',['dashboard','cuentas','diario','analisis','notas'][i]===name);
   });
   document.querySelectorAll('.pane').forEach(p=>p.classList.remove('active'));
   document.getElementById('pane-'+name).classList.add('active');
@@ -911,7 +1061,7 @@ function goTab(name) {
   else if(name==='cuentas') renderCuentas();
   else if(name==='diario') renderDiario();
   else if(name==='analisis') renderAnalisis();
-  // noticias: iframe carga sola, nada que hacer
+  else if(name==='notas') renderFolders();
 }
 
 // THEME - 3 modos: dark / gray / light
@@ -1825,6 +1975,306 @@ function saveProfile() {
   }
   closeOv('profile');
 }
+</script>
+
+<script type="module">
+// ── MÓDULO DE NOTAS ──
+import { getFirestore, doc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+import { getApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+
+const db2 = getFirestore(getApp());
+
+// Estado del módulo
+let _folders = [];       // [{id, name, icon, createdAt}]
+let _notes = {};         // {folderId: [{id, title, content, color, createdAt, updatedAt}]}
+let _activeFolderId = null;
+let _editingNoteId = null;
+let _editingFolderId = null; // folder del modal
+let _selectedEmoji = '📁';
+let _selectedNoteColor = 'default';
+
+// Cargar notas desde Firestore
+async function loadNotes() {
+  if (!window._user) return;
+  try {
+    const snap = await getDoc(doc(db2, 'users', window._user.uid));
+    if (snap.exists()) {
+      const d = snap.data();
+      _folders = d.notes_folders ? JSON.parse(d.notes_folders) : [];
+      _notes   = d.notes_data   ? JSON.parse(d.notes_data)    : {};
+    }
+  } catch(e) { console.warn('Error cargando notas:', e); }
+}
+
+async function saveNotes() {
+  if (!window._user) return;
+  try {
+    const snap = await getDoc(doc(db2, 'users', window._user.uid));
+    const existing = snap.exists() ? snap.data() : {};
+    await setDoc(doc(db2, 'users', window._user.uid), {
+      ...existing,
+      notes_folders: JSON.stringify(_folders),
+      notes_data:    JSON.stringify(_notes)
+    });
+  } catch(e) { console.warn('Error guardando notas:', e); }
+}
+
+// ── RENDER CARPETAS ──
+window.renderFolders = async function() {
+  await loadNotes();
+  const list = document.getElementById('folders-list');
+  if (!list) return;
+  list.innerHTML = '';
+
+  if (_folders.length === 0) {
+    list.innerHTML = `<div style="text-align:center;padding:20px 8px;color:var(--muted);font-size:11px;font-family:var(--mono);">Sin carpetas aún.<br>Crea una con el +</div>`;
+    renderNotesList();
+    return;
+  }
+
+  _folders.forEach(folder => {
+    const count = (_notes[folder.id] || []).length;
+    const div = document.createElement('div');
+    div.className = 'folder-item' + (_activeFolderId === folder.id ? ' active' : '');
+    div.innerHTML = `
+      <span class="f-icon">${folder.icon || '📁'}</span>
+      <span class="f-name">${folder.name}</span>
+      <span class="f-count">${count}</span>
+      <button class="f-del" onclick="event.stopPropagation();confirmDeleteFolder('${folder.id}')" title="Eliminar carpeta">×</button>
+    `;
+    div.addEventListener('click', () => selectFolder(folder.id));
+    list.appendChild(div);
+  });
+
+  renderNotesList();
+};
+
+window.selectFolder = function(folderId) {
+  _activeFolderId = folderId;
+  renderFolders();
+};
+
+// ── RENDER NOTAS ──
+function renderNotesList() {
+  const grid   = document.getElementById('notes-grid');
+  const title  = document.getElementById('notes-folder-title');
+  const badge  = document.getElementById('notes-folder-badge');
+  const btnNew = document.getElementById('btn-new-note');
+  if (!grid) return;
+
+  if (!_activeFolderId) {
+    title.textContent = 'Selecciona una carpeta';
+    badge.textContent = '';
+    btnNew.style.display = 'none';
+    grid.innerHTML = `<div id="notes-empty" style="grid-column:1/-1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:60px 20px;color:var(--muted);text-align:center;">
+      <div style="font-size:48px;margin-bottom:16px;opacity:.4;">📂</div>
+      <div style="font-size:14px;font-weight:600;color:var(--muted2);margin-bottom:6px;">Selecciona o crea una carpeta</div>
+      <div style="font-size:12px;font-family:var(--mono);opacity:.6;">Usa el panel izquierdo para organizar tus notas</div>
+    </div>`;
+    return;
+  }
+
+  const folder = _folders.find(f => f.id === _activeFolderId);
+  const notes  = _notes[_activeFolderId] || [];
+
+  title.textContent = (folder?.icon || '📁') + ' ' + (folder?.name || '');
+  badge.textContent = notes.length + ' nota' + (notes.length !== 1 ? 's' : '');
+  btnNew.style.display = 'block';
+
+  grid.innerHTML = '';
+
+  if (notes.length === 0) {
+    grid.innerHTML = `<div style="grid-column:1/-1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:60px 20px;color:var(--muted);text-align:center;">
+      <div style="font-size:48px;margin-bottom:16px;opacity:.4;">📝</div>
+      <div style="font-size:14px;font-weight:600;color:var(--muted2);margin-bottom:10px;">Sin notas en esta carpeta</div>
+      <button onclick="openNewNoteModal()" style="background:var(--accent);color:#000;border:none;padding:10px 20px;border-radius:8px;font-weight:700;font-size:12px;cursor:pointer;transition:all .2s;">+ Crear primera nota</button>
+    </div>`;
+    return;
+  }
+
+  // Ordenar por más reciente
+  const sorted = [...notes].sort((a,b) => (b.updatedAt||b.createdAt) - (a.updatedAt||a.createdAt));
+
+  sorted.forEach(note => {
+    const card = document.createElement('div');
+    card.className = 'note-card' + (note.color && note.color !== 'default' ? ' color-' + note.color : '');
+    const date = new Date(note.updatedAt || note.createdAt);
+    const dateStr = date.toLocaleDateString('es-CO', {day:'2-digit', month:'short', year:'numeric'});
+    card.innerHTML = `
+      <div class="note-card-title">${escapeHtml(note.title || 'Sin título')}</div>
+      <div class="note-card-preview">${escapeHtml(note.content || '')}</div>
+      <div class="note-card-date">${dateStr}</div>
+    `;
+    card.addEventListener('click', () => openEditNoteModal(note.id));
+    grid.appendChild(card);
+  });
+}
+
+function escapeHtml(str) {
+  return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/\n/g,'<br>');
+}
+
+// ── MODAL NUEVA CARPETA ──
+window.openNewFolderModal = function() {
+  _selectedEmoji = '📁';
+  document.getElementById('folder-name-input').value = '';
+  document.querySelectorAll('.emoji-opt').forEach(e => {
+    e.style.border = '2px solid transparent';
+    e.classList.remove('selected');
+  });
+  const first = document.querySelector('.emoji-opt');
+  if (first) { first.style.border = '2px solid var(--accent)'; first.classList.add('selected'); }
+  openOv('new-folder');
+  setTimeout(() => document.getElementById('folder-name-input').focus(), 100);
+};
+
+window.selectEmoji = function(el, emoji) {
+  _selectedEmoji = emoji;
+  document.querySelectorAll('.emoji-opt').forEach(e => {
+    e.style.border = '2px solid transparent';
+    e.classList.remove('selected');
+  });
+  el.style.border = '2px solid var(--accent)';
+  el.classList.add('selected');
+};
+
+window.updateFolderPreview = function(val) {};
+
+window.saveNewFolder = async function() {
+  const name = document.getElementById('folder-name-input').value.trim();
+  if (!name) { document.getElementById('folder-name-input').focus(); return; }
+  const folder = { id: 'f_' + Date.now(), name, icon: _selectedEmoji, createdAt: Date.now() };
+  _folders.push(folder);
+  _activeFolderId = folder.id;
+  await saveNotes();
+  closeOv('new-folder');
+  renderFolders();
+};
+
+window.confirmDeleteFolder = function(folderId) {
+  const folder = _folders.find(f => f.id === folderId);
+  const count  = (_notes[folderId] || []).length;
+  const msg    = count > 0
+    ? `¿Eliminar la carpeta "${folder?.name}" y sus ${count} nota(s)? Esta acción no se puede deshacer.`
+    : `¿Eliminar la carpeta "${folder?.name}"?`;
+  if (!confirm(msg)) return;
+  _folders = _folders.filter(f => f.id !== folderId);
+  delete _notes[folderId];
+  if (_activeFolderId === folderId) _activeFolderId = null;
+  saveNotes().then(() => renderFolders());
+};
+
+// ── MODAL NOTA ──
+window.openNewNoteModal = function() {
+  if (!_activeFolderId) return;
+  _editingNoteId = null;
+  _selectedNoteColor = 'default';
+  document.getElementById('note-editor-title').textContent = '📝 Nueva Nota';
+  document.getElementById('note-title-input').value = '';
+  document.getElementById('note-content-input').value = '';
+  document.getElementById('btn-delete-note').style.display = 'none';
+  resetNoteColorPicker('default');
+  openOv('note-editor');
+  setTimeout(() => document.getElementById('note-title-input').focus(), 100);
+};
+
+window.openEditNoteModal = function(noteId) {
+  if (!_activeFolderId) return;
+  const note = (_notes[_activeFolderId] || []).find(n => n.id === noteId);
+  if (!note) return;
+  _editingNoteId = noteId;
+  _selectedNoteColor = note.color || 'default';
+  document.getElementById('note-editor-title').textContent = '✏️ Editar Nota';
+  document.getElementById('note-title-input').value = note.title || '';
+  document.getElementById('note-content-input').value = note.content || '';
+  document.getElementById('btn-delete-note').style.display = 'block';
+  resetNoteColorPicker(note.color || 'default');
+  openOv('note-editor');
+};
+
+function resetNoteColorPicker(color) {
+  document.querySelectorAll('.note-color-opt').forEach(el => {
+    el.classList.remove('selected');
+    el.style.transform = '';
+  });
+  const sel = document.querySelector(`.note-color-opt[data-color="${color}"]`);
+  if (sel) { sel.classList.add('selected'); sel.style.transform = 'scale(1.15)'; }
+}
+
+window.selectNoteColor = function(el) {
+  _selectedNoteColor = el.dataset.color;
+  document.querySelectorAll('.note-color-opt').forEach(e => {
+    e.classList.remove('selected');
+    e.style.transform = '';
+    // restaurar hover handlers
+    const c = e.dataset.color;
+    const colors = {blue:'rgba(0,204,255,.6)',yellow:'rgba(255,200,64,.6)',red:'rgba(255,64,96,.6)',purple:'rgba(168,85,247,.6)',orange:'rgba(255,140,0,.6)'};
+    if (c !== 'default') {
+      e.onmouseover = () => { if(!e.classList.contains('selected')) e.style.borderColor = colors[c]; };
+      e.onmouseout  = () => { if(!e.classList.contains('selected')) e.style.borderColor = 'transparent'; };
+    }
+  });
+  el.classList.add('selected');
+  el.style.transform = 'scale(1.15)';
+  el.style.borderColor = 'var(--accent)';
+};
+
+window.closeNoteEditor = function() {
+  closeOv('note-editor');
+  _editingNoteId = null;
+};
+
+window.saveNote = async function() {
+  const title   = document.getElementById('note-title-input').value.trim();
+  const content = document.getElementById('note-content-input').value.trim();
+  if (!title && !content) { document.getElementById('note-title-input').focus(); return; }
+  if (!_activeFolderId) return;
+
+  if (!_notes[_activeFolderId]) _notes[_activeFolderId] = [];
+
+  if (_editingNoteId) {
+    const idx = _notes[_activeFolderId].findIndex(n => n.id === _editingNoteId);
+    if (idx !== -1) {
+      _notes[_activeFolderId][idx] = {
+        ..._notes[_activeFolderId][idx],
+        title, content, color: _selectedNoteColor, updatedAt: Date.now()
+      };
+    }
+  } else {
+    _notes[_activeFolderId].push({
+      id: 'n_' + Date.now(),
+      title, content, color: _selectedNoteColor,
+      createdAt: Date.now(), updatedAt: Date.now()
+    });
+  }
+
+  await saveNotes();
+  closeNoteEditor();
+  renderNotesList();
+  renderFolders(); // actualiza contadores
+};
+
+window.deleteCurrentNote = async function() {
+  if (!_editingNoteId || !_activeFolderId) return;
+  const note = (_notes[_activeFolderId] || []).find(n => n.id === _editingNoteId);
+  if (!confirm(`¿Eliminar la nota "${note?.title || 'Sin título'}"?`)) return;
+  _notes[_activeFolderId] = (_notes[_activeFolderId] || []).filter(n => n.id !== _editingNoteId);
+  await saveNotes();
+  closeNoteEditor();
+  renderNotesList();
+  renderFolders();
+};
+
+// Keyboard shortcut: Ctrl+Enter guarda la nota
+document.addEventListener('keydown', function(e) {
+  if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
+    const ov = document.getElementById('ov-note-editor');
+    if (ov && ov.classList.contains('show')) { e.preventDefault(); saveNote(); }
+  }
+});
+
+// Exponer para que openOv/closeOv funcionen desde los modales
+// (ya están definidos en el script principal, no hay conflicto)
 </script>
 
     <div onclick="openWhatsApp()" style="background:linear-gradient(135deg,#0e1f14,#0a1a10);border:1px solid rgba(0,229,160,.3);border-radius:16px 0 0 16px;border-right:none;padding:14px 18px;display:flex;align-items:center;gap:14px;cursor:pointer;max-width:270px;transition:all .2s">
