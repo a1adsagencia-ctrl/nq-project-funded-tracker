@@ -811,12 +811,12 @@ body.light .emo-label { color:#4a6a50 !important; }
 
 <!-- MODAL DIA CALENDARIO -->
 <div class="ov" id="ov-calday">
-  <div class="modal" style="max-width:600px">
+  <div class="modal" style="max-width:900px">
     <div class="mhdr"><div class="mtitle" id="calday-title">Trades del dia</div><button class="mx" onclick="closeOv('calday')">&#215;</button></div>
     <div id="calday-stats" style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:16px"></div>
     <div class="tw">
       <table>
-        <thead><tr><th>Cuenta</th><th>Sesion</th><th>Inst</th><th>Tipo</th><th>P&L</th><th>Resultado</th><th>Foto</th></tr></thead>
+        <thead><tr><th>Cuenta</th><th>Sesion</th><th>Inst</th><th>Tipo</th><th>P&L</th><th>Resultado</th><th>Emociones</th><th>Reglas</th><th>Confianza</th><th>Foto</th></tr></thead>
         <tbody id="t-calday"></tbody>
       </table>
     </div>
@@ -1228,6 +1228,22 @@ function openCalDay(fecha) {
   document.getElementById('t-calday').innerHTML=tr.length
     ?tr.map(t=>{
         const fotoBtn=t.foto?'<a href="'+t.foto+'" target="_blank" style="color:var(--accent);font-size:13px;text-decoration:none">&#128248; Ver</a>':'&mdash;';
+        // Emociones
+        const emoChips = (t.emo && t.emo.emociones && t.emo.emociones.length)
+          ? t.emo.emociones.map(e => '<span style="display:inline-block;padding:2px 7px;border-radius:100px;font-size:10px;font-weight:600;background:rgba(0,229,160,.08);border:1px solid rgba(0,229,160,.18);color:var(--accent);margin:1px;font-family:var(--mono)">'+e+'</span>').join('')
+          : '<span style="color:var(--muted);font-size:11px">—</span>';
+        // Reglas cumplidas
+        const reglasCumplidas = (t.emo && t.emo.reglas)
+          ? Object.values(t.emo.reglas).filter(Boolean).length + '/' + Object.keys(t.emo.reglas).length
+          : '—';
+        const reglasColor = (t.emo && t.emo.reglas)
+          ? (Object.values(t.emo.reglas).filter(Boolean).length / Object.keys(t.emo.reglas).length >= 0.8 ? 'var(--accent)' : Object.values(t.emo.reglas).filter(Boolean).length / Object.keys(t.emo.reglas).length >= 0.5 ? 'var(--yellow)' : 'var(--red)')
+          : 'var(--muted)';
+        // Confianza
+        const confianza = (t.emo && t.emo.confianza)
+          ? '⭐'.repeat(t.emo.confianza)
+          : '<span style="color:var(--muted)">—</span>';
+
         return '<tr>'
           +'<td class="fw" style="font-size:12px">'+t._firma+'</td>'
           +'<td><span class="badge" style="background:rgba(168,85,247,.1);color:var(--purple);border:1px solid rgba(168,85,247,.2)">'+t.sesion+'</span></td>'
@@ -1235,6 +1251,9 @@ function openCalDay(fecha) {
           +'<td style="font-size:11px;color:'+(t.tipo==='Long'?'var(--accent)':'var(--red)')+';font-family:var(--mono)">'+t.tipo+'</td>'
           +'<td class="mn '+((t.pnl||0)>=0?'green':'red')+'">'+fmtD(t.pnl||0)+'</td>'
           +'<td><span class="badge '+rmap[t.resultado]+'">'+rlbl[t.resultado]+'</span></td>'
+          +'<td style="max-width:180px">'+emoChips+'</td>'
+          +'<td class="mn" style="color:'+reglasColor+';font-weight:700">'+reglasCumplidas+'</td>'
+          +'<td style="font-size:13px;letter-spacing:1px">'+confianza+'</td>'
           +'<td>'+fotoBtn+'</td>'
           +'</tr>';
       }).join('')
