@@ -576,6 +576,21 @@ body:not(.light):not(.gray) input[type="date"]::-webkit-calendar-picker-indicato
 .note-card:hover .note-quick-del{display:flex;}
 .note-card .note-quick-del:hover{background:rgba(255,64,96,.35);border-color:rgba(255,64,96,.7);transform:scale(1.1);}
 
+/* Drag & drop notas */
+.note-card{user-select:none;}
+.note-card.dragging{opacity:.35;transform:scale(.97);cursor:grabbing!important;}
+.note-card.drag-over{outline:2px dashed var(--accent);outline-offset:3px;transform:scale(1.02);}
+.note-card[draggable="true"]{cursor:grab;}
+
+/* Drag & drop carpetas */
+.folder-item[draggable="true"]{cursor:grab;}
+.folder-item.dragging{opacity:.35;}
+.folder-item.drag-over-folder{background:rgba(0,255,136,.1)!important;border-color:rgba(0,255,136,.35)!important;outline:2px dashed rgba(0,255,136,.5);outline-offset:2px;}
+
+/* Sidebar colapsado */
+#notes-sidebar.collapsed{width:0!important;padding:0!important;margin-right:0!important;opacity:0;pointer-events:none;border-color:transparent!important;}
+#sidebar-toggle.expanded{transform:none;}
+
 /* Colores en modo gray */
 body.gray .folder-item.active{background:rgba(0,229,122,.08)!important;border-color:rgba(0,229,122,.25)!important;}
 body.gray #notes-sidebar{background:#262626!important;border-color:rgba(255,255,255,.09)!important;}
@@ -755,21 +770,27 @@ body.light .note-card.color-orange:hover{border-color:rgba(210,110,0,.6)!importa
 
   <!-- PANE NOTAS -->
   <div class="pane" id="pane-notas">
-    <div style="display:flex;gap:0;height:calc(100vh - 110px);min-height:400px;">
+    <div style="display:flex;gap:0;height:calc(100vh - 110px);min-height:400px;position:relative;">
 
       <!-- SIDEBAR DE CARPETAS -->
-      <div id="notes-sidebar" style="width:220px;min-width:180px;max-width:260px;background:rgba(0,6,3,.82);border:1px solid rgba(0,255,136,.08);border-radius:14px;padding:14px 10px;display:flex;flex-direction:column;gap:6px;margin-right:16px;flex-shrink:0;overflow-y:auto;">
-        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;padding:0 4px;">
-          <span style="font-size:10px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);font-family:var(--mono);">Carpetas</span>
-          <button onclick="openNewFolderModal()" style="background:rgba(0,255,136,.1);border:1px solid rgba(0,255,136,.25);color:var(--accent);border-radius:6px;width:24px;height:24px;cursor:pointer;font-size:16px;display:flex;align-items:center;justify-content:center;line-height:1;transition:all .2s;" onmouseover="this.style.background='rgba(0,255,136,.2)'" onmouseout="this.style.background='rgba(0,255,136,.1)'">+</button>
+      <div id="notes-sidebar" style="width:220px;background:rgba(0,6,3,.82);border:1px solid rgba(0,255,136,.08);border-radius:14px;padding:14px 10px;display:flex;flex-direction:column;gap:6px;margin-right:24px;flex-shrink:0;overflow:hidden;transition:width .28s ease,opacity .28s ease,margin .28s ease,padding .28s ease;">
+        <div id="sidebar-inner" style="display:flex;flex-direction:column;gap:6px;flex:1;min-width:196px;">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;padding:0 4px;">
+            <span style="font-size:10px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);font-family:var(--mono);">Carpetas</span>
+            <button onclick="openNewFolderModal()" style="background:rgba(0,255,136,.1);border:1px solid rgba(0,255,136,.25);color:var(--accent);border-radius:6px;width:24px;height:24px;cursor:pointer;font-size:16px;display:flex;align-items:center;justify-content:center;line-height:1;transition:all .2s;" onmouseover="this.style.background='rgba(0,255,136,.2)'" onmouseout="this.style.background='rgba(0,255,136,.1)'">+</button>
+          </div>
+          <div id="folders-list" style="display:flex;flex-direction:column;gap:4px;flex:1;overflow-y:auto;"></div>
         </div>
-        <div id="folders-list" style="display:flex;flex-direction:column;gap:4px;flex:1;"></div>
       </div>
+
+      <!-- BOTÓN COLAPSAR/EXPANDIR SIDEBAR -->
+      <button id="sidebar-toggle" onclick="toggleNotesSidebar()" title="Mostrar/ocultar carpetas"
+        style="width:18px;height:44px;background:rgba(0,6,3,.95);border:1px solid rgba(0,255,136,.2);border-radius:6px;color:var(--accent);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:13px;transition:all .25s;flex-shrink:0;padding:0;margin-right:16px;align-self:center;"
+        onmouseover="this.style.background='rgba(0,255,136,.1)'"
+        onmouseout="this.style.background='rgba(0,6,3,.95)'">‹</button>
 
       <!-- PANEL PRINCIPAL DE NOTAS -->
       <div style="flex:1;display:flex;flex-direction:column;gap:12px;min-width:0;">
-
-        <!-- Header del panel -->
         <div style="display:flex;align-items:center;justify-content:space-between;flex-shrink:0;">
           <div style="display:flex;align-items:center;gap:10px;">
             <span id="notes-folder-title" style="font-size:16px;font-weight:800;color:var(--text);">Selecciona una carpeta</span>
@@ -777,10 +798,7 @@ body.light .note-card.color-orange:hover{border-color:rgba(210,110,0,.6)!importa
           </div>
           <button id="btn-new-note" onclick="openNewNoteModal()" style="display:none;background:var(--accent);color:#000;border:none;padding:8px 16px;border-radius:8px;font-weight:700;font-size:12px;cursor:pointer;transition:all .2s;" onmouseover="this.style.background='#00ffb3'" onmouseout="this.style.background='var(--accent)'">+ Nueva Nota</button>
         </div>
-
-        <!-- Grid de notas -->
         <div id="notes-grid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:14px;overflow-y:auto;padding-bottom:20px;align-content:start;">
-          <!-- Empty state inicial -->
           <div id="notes-empty" style="grid-column:1/-1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:60px 20px;color:var(--muted);text-align:center;">
             <div style="font-size:48px;margin-bottom:16px;opacity:.4;">📂</div>
             <div style="font-size:14px;font-weight:600;color:var(--muted2);margin-bottom:6px;">Selecciona o crea una carpeta</div>
@@ -2013,13 +2031,13 @@ import { getApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.
 const db2 = getFirestore(getApp());
 
 // Estado del módulo
-let _folders = [];       // [{id, name, icon, createdAt}]
-let _notes = {};         // {folderId: [{id, title, content, color, createdAt, updatedAt}]}
+let _folders = [];
+let _notes = {};
 let _activeFolderId = null;
 let _editingNoteId = null;
-let _editingFolderId = null; // folder del modal
 let _selectedEmoji = '📁';
 let _selectedNoteColor = 'default';
+let _sidebarOpen = true;
 
 // Cargar notas desde Firestore
 async function loadNotes() {
@@ -2064,6 +2082,7 @@ window.renderFolders = async function() {
     const count = (_notes[folder.id] || []).length;
     const div = document.createElement('div');
     div.className = 'folder-item' + (_activeFolderId === folder.id ? ' active' : '');
+    div.dataset.folderId = folder.id;
     div.innerHTML = `
       <span class="f-icon">${folder.icon || '📁'}</span>
       <span class="f-name">${folder.name}</span>
@@ -2074,6 +2093,7 @@ window.renderFolders = async function() {
     list.appendChild(div);
   });
 
+  enableFolderDrag();
   renderNotesList();
 };
 
@@ -2120,12 +2140,13 @@ function renderNotesList() {
     return;
   }
 
-  // Ordenar por más reciente
-  const sorted = [...notes].sort((a,b) => (b.updatedAt||b.createdAt) - (a.updatedAt||a.createdAt));
+  // Respetar el orden guardado (drag & drop)
+  const sorted = [...notes];
 
   sorted.forEach(note => {
     const card = document.createElement('div');
     card.className = 'note-card' + (note.color && note.color !== 'default' ? ' color-' + note.color : '');
+    card.dataset.noteId = note.id;
     const date = new Date(note.updatedAt || note.createdAt);
     const dateStr = date.toLocaleDateString('es-CO', {day:'2-digit', month:'short', year:'numeric'});
     card.innerHTML = `
@@ -2137,6 +2158,8 @@ function renderNotesList() {
     card.addEventListener('click', () => openEditNoteModal(note.id));
     grid.appendChild(card);
   });
+
+  enableNoteDrag();
 }
 
 function escapeHtml(str) {
@@ -2312,8 +2335,115 @@ document.addEventListener('keydown', function(e) {
   }
 });
 
-// Exponer para que openOv/closeOv funcionen desde los modales
-// (ya están definidos en el script principal, no hay conflicto)
+// ── SIDEBAR TOGGLE ──
+window.toggleNotesSidebar = function() {
+  const sidebar = document.getElementById('notes-sidebar');
+  const btn     = document.getElementById('sidebar-toggle');
+  if (!sidebar || !btn) return;
+  _sidebarOpen = !_sidebarOpen;
+  sidebar.classList.toggle('collapsed', !_sidebarOpen);
+  btn.textContent = _sidebarOpen ? '‹' : '›';
+  btn.title = _sidebarOpen ? 'Ocultar carpetas' : 'Mostrar carpetas';
+  localStorage.setItem('nqft_sidebar_open', _sidebarOpen ? '1' : '0');
+};
+
+// Restaurar estado del sidebar
+const _savedSidebar = localStorage.getItem('nqft_sidebar_open');
+if (_savedSidebar === '0') {
+  _sidebarOpen = false;
+  setTimeout(() => {
+    const sidebar = document.getElementById('notes-sidebar');
+    const btn     = document.getElementById('sidebar-toggle');
+    if (sidebar) sidebar.classList.add('collapsed');
+    if (btn) { btn.textContent = '›'; btn.title = 'Mostrar carpetas'; }
+  }, 100);
+}
+
+// ── DRAG & DROP NOTAS ──
+let _dragNoteId   = null;
+let _dragOverNoteId = null;
+
+function enableNoteDrag() {
+  const grid = document.getElementById('notes-grid');
+  if (!grid) return;
+
+  grid.querySelectorAll('.note-card[data-note-id]').forEach(card => {
+    card.setAttribute('draggable', 'true');
+
+    card.addEventListener('dragstart', e => {
+      _dragNoteId = card.dataset.noteId;
+      card.classList.add('dragging');
+      e.dataTransfer.effectAllowed = 'move';
+    });
+    card.addEventListener('dragend', () => {
+      card.classList.remove('dragging');
+      grid.querySelectorAll('.note-card').forEach(c => c.classList.remove('drag-over'));
+      _dragNoteId = null;
+    });
+    card.addEventListener('dragover', e => {
+      e.preventDefault();
+      if (card.dataset.noteId === _dragNoteId) return;
+      grid.querySelectorAll('.note-card').forEach(c => c.classList.remove('drag-over'));
+      card.classList.add('drag-over');
+      _dragOverNoteId = card.dataset.noteId;
+    });
+    card.addEventListener('drop', e => {
+      e.preventDefault();
+      if (!_dragNoteId || !_activeFolderId || _dragNoteId === _dragOverNoteId) return;
+      const arr   = _notes[_activeFolderId] || [];
+      const fromI = arr.findIndex(n => n.id === _dragNoteId);
+      const toI   = arr.findIndex(n => n.id === _dragOverNoteId);
+      if (fromI === -1 || toI === -1) return;
+      const [moved] = arr.splice(fromI, 1);
+      arr.splice(toI, 0, moved);
+      _notes[_activeFolderId] = arr;
+      saveNotes();
+      renderNotesList();
+    });
+  });
+}
+
+// ── DRAG & DROP CARPETAS ──
+let _dragFolderId   = null;
+let _dragOverFolderId = null;
+
+function enableFolderDrag() {
+  const list = document.getElementById('folders-list');
+  if (!list) return;
+
+  list.querySelectorAll('.folder-item[data-folder-id]').forEach(item => {
+    item.setAttribute('draggable', 'true');
+
+    item.addEventListener('dragstart', e => {
+      _dragFolderId = item.dataset.folderId;
+      item.classList.add('dragging');
+      e.dataTransfer.effectAllowed = 'move';
+    });
+    item.addEventListener('dragend', () => {
+      item.classList.remove('dragging');
+      list.querySelectorAll('.folder-item').forEach(i => i.classList.remove('drag-over-folder'));
+      _dragFolderId = null;
+    });
+    item.addEventListener('dragover', e => {
+      e.preventDefault();
+      if (item.dataset.folderId === _dragFolderId) return;
+      list.querySelectorAll('.folder-item').forEach(i => i.classList.remove('drag-over-folder'));
+      item.classList.add('drag-over-folder');
+      _dragOverFolderId = item.dataset.folderId;
+    });
+    item.addEventListener('drop', e => {
+      e.preventDefault();
+      if (!_dragFolderId || _dragFolderId === _dragOverFolderId) return;
+      const fromI = _folders.findIndex(f => f.id === _dragFolderId);
+      const toI   = _folders.findIndex(f => f.id === _dragOverFolderId);
+      if (fromI === -1 || toI === -1) return;
+      const [moved] = _folders.splice(fromI, 1);
+      _folders.splice(toI, 0, moved);
+      saveNotes();
+      renderFolders();
+    });
+  });
+}
 </script>
 
     <div onclick="openWhatsApp()" style="background:linear-gradient(135deg,#0e1f14,#0a1a10);border:1px solid rgba(0,229,160,.3);border-radius:16px 0 0 16px;border-right:none;padding:14px 18px;display:flex;align-items:center;gap:14px;cursor:pointer;max-width:270px;transition:all .2s">
