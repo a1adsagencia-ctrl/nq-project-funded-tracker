@@ -31,6 +31,7 @@
       window._user = user;
       document.getElementById('login-screen').style.display='none';
       document.getElementById('app-screen').style.display='flex';
+      document.getElementById('news-widget').style.display='flex';
       document.getElementById('u-name').textContent=user.displayName;
       document.getElementById('u-email').textContent=user.email;
       document.getElementById('u-avatar').src=user.photoURL||'';
@@ -39,6 +40,7 @@
       window._user=null;
       document.getElementById('login-screen').style.display='flex';
       document.getElementById('app-screen').style.display='none';
+      document.getElementById('news-widget').style.display='none';
     }
   });
 </script>
@@ -603,7 +605,6 @@ body.light .emo-label { color:#4a6a50 !important; }
   <div class="tab" onclick="goTab('cuentas')">Cuentas</div>
   <div class="tab" onclick="goTab('diario')">Diario de Trades</div>
   <div class="tab" onclick="goTab('analisis')">Analisis</div>
-  <div class="tab" onclick="goTab('noticias')">📰 Noticias</div>
 </div>
 
 <div class="content">
@@ -678,40 +679,6 @@ body.light .emo-label { color:#4a6a50 !important; }
     </div>
   </div>
 </div>
-<!-- PANE NOTICIAS -->
-<!-- PANE NOTICIAS -->
-<div class="pane" id="pane-noticias">
-
-  <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:60vh;text-align:center">
-  <div style="margin-bottom:20px">
-    <div style="font-size:16px;font-weight:700;color:var(--text);margin-bottom:4px">Calendario Económico</div>
-    <div style="font-size:12px;color:var(--muted);font-family:var(--mono)">Consulta los eventos del mercado en Forex Factory</div>
-  </div>
-
-  <div class="card" style="text-align:center;padding:52px 32px;max-width:520px;margin:0 auto">
-    <div style="width:72px;height:72px;border-radius:18px;background:rgba(0,229,160,.08);border:1px solid rgba(0,229,160,.2);display:flex;align-items:center;justify-content:center;margin:0 auto 24px;font-size:32px;box-shadow:0 0 32px rgba(0,229,160,.08)">📅</div>
-    <div style="font-size:20px;font-weight:800;color:var(--text);letter-spacing:-.02em;margin-bottom:10px">Forex Factory Calendar</div>
-    <div style="font-size:14px;color:var(--muted);line-height:1.7;font-weight:300;margin-bottom:32px;max-width:360px;margin-left:auto;margin-right:auto">
-      Consulta los eventos económicos de alta importancia: NFP, CPI, FOMC, tasas de interés y más — en tiempo real.
-    </div>
-    <div style="display:flex;justify-content:center;gap:20px;margin-bottom:32px">
-      <span style="display:flex;align-items:center;gap:6px;font-size:11px;font-family:var(--mono);color:var(--muted)"><span style="width:9px;height:9px;border-radius:50%;background:#ff4060;display:inline-block;box-shadow:0 0 6px #ff4060"></span>Alto impacto</span>
-      <span style="display:flex;align-items:center;gap:6px;font-size:11px;font-family:var(--mono);color:var(--muted)"><span style="width:9px;height:9px;border-radius:50%;background:#ffc840;display:inline-block;box-shadow:0 0 6px #ffc840"></span>Medio</span>
-      <span style="display:flex;align-items:center;gap:6px;font-size:11px;font-family:var(--mono);color:var(--muted)"><span style="width:9px;height:9px;border-radius:50%;background:#00e5a0;display:inline-block;box-shadow:0 0 6px #00e5a0"></span>Bajo</span>
-    </div>
-    <a href="https://www.forexfactory.com/calendar" target="_blank"
-       style="display:inline-flex;align-items:center;gap:10px;background:var(--accent);color:#000;font-family:var(--font);font-weight:700;font-size:14px;letter-spacing:.04em;padding:14px 28px;border-radius:12px;text-decoration:none;transition:all .2s;box-shadow:0 4px 20px rgba(0,229,160,.3)"
-       onmouseover="this.style.transform='translateY(-2px)';this.style.boxShadow='0 8px 28px rgba(0,229,160,.45)'"
-       onmouseout="this.style.transform='';this.style.boxShadow='0 4px 20px rgba(0,229,160,.3)'">
-      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" width="16" height="16"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
-      ABRIR FOREX FACTORY
-    </a>
-    <div style="margin-top:16px;font-size:11px;color:var(--muted);font-family:var(--mono)">Se abre en una nueva pestaña</div>
-  </div>
-  </div>
-
-</div>
-
 <!-- WIDGET FLOTANTE CONTACTO -->
 <div id="contact-widget" style="position:fixed;bottom:24px;right:24px;z-index:9999;display:flex;flex-direction:column;align-items:flex-end;gap:10px">
 
@@ -927,7 +894,7 @@ window._init = function() {
 // TABS
 function goTab(name) {
   document.querySelectorAll('.tab').forEach((t,i)=>{
-    t.classList.toggle('active',['dashboard','cuentas','diario','analisis','noticias'][i]===name);
+    t.classList.toggle('active',['dashboard','cuentas','diario','analisis'][i]===name);
   });
   document.querySelectorAll('.pane').forEach(p=>p.classList.remove('active'));
   document.getElementById('pane-'+name).classList.add('active');
@@ -1930,5 +1897,73 @@ body.light .promo-modal .u-email{color:#4a6a50}
   </div>
 </div>
 
+
+<!-- WIDGET FLOTANTE NOTICIAS (solo dentro del app) -->
+<style>
+@keyframes news-shake {
+  0%,100% { transform: translateX(0); }
+  20%     { transform: translateX(-3px); }
+  40%     { transform: translateX(3px); }
+  60%     { transform: translateX(-2px); }
+  80%     { transform: translateX(2px); }
+}
+#news-widget {
+  display: none; /* oculto por defecto, se muestra al hacer login */
+  position: fixed;
+  bottom: 88px;
+  right: 24px;
+  z-index: 9998;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  background: var(--s1);
+  border: 1px solid rgba(255,64,96,.25);
+  border-radius: 12px;
+  padding: 8px 12px;
+  transition: all .2s;
+  backdrop-filter: blur(12px);
+}
+#news-widget:hover {
+  border-color: rgba(255,64,96,.5);
+  background: var(--s2);
+  transform: translateY(-2px);
+}
+#news-widget.shaking { animation: news-shake .5s ease; }
+.news-dot {
+  width: 7px; height: 7px; border-radius: 50%;
+  background: #ff4060;
+  flex-shrink: 0;
+  box-shadow: 0 0 6px rgba(255,64,96,.6);
+  animation: blink 2s ease-in-out infinite;
+}
+.news-text {
+  font-size: 11px; font-weight: 600;
+  color: var(--text);
+  font-family: var(--font);
+  letter-spacing: .02em;
+  white-space: nowrap;
+}
+.news-arrow {
+  font-size: 10px;
+  color: var(--muted);
+}
+</style>
+
+<div id="news-widget" onclick="window.open('https://www.forexfactory.com/calendar','_blank')" title="Calendario económico - Forex Factory">
+  <span class="news-dot"></span>
+  <span class="news-text">Noticias del día</span>
+  <span class="news-arrow">↗</span>
+</div>
+
+<script>
+function shakeNewsWidget() {
+  const w = document.getElementById('news-widget');
+  if (!w || w.style.display === 'none') return;
+  w.classList.add('shaking');
+  setTimeout(() => w.classList.remove('shaking'), 500);
+}
+setTimeout(shakeNewsWidget, 4000);
+setInterval(shakeNewsWidget, 60000);
+</script>
 </body>
 </html>
