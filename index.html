@@ -990,11 +990,10 @@ body.light .note-card.color-orange:hover{border-color:rgba(210,110,0,.6)!importa
       <div class="emo-label">Checklist de reglas</div>
       <div class="emo-rules">
         <div class="emo-rule" onclick="toggleRule(this)"><div class="emo-rule-box">✓</div><div class="emo-rule-text">Seguí mi plan de trading</div></div>
-        <div class="emo-rule" onclick="toggleRule(this)"><div class="emo-rule-box">✓</div><div class="emo-rule-text">Respeté mi stop loss</div></div>
         <div class="emo-rule" onclick="toggleRule(this)"><div class="emo-rule-box">✓</div><div class="emo-rule-text">Esperé confirmación antes de entrar</div></div>
         <div class="emo-rule" onclick="toggleRule(this)"><div class="emo-rule-box">✓</div><div class="emo-rule-text">No sobre-operé (máx trades del día)</div></div>
         <div class="emo-rule" onclick="toggleRule(this)"><div class="emo-rule-box">✓</div><div class="emo-rule-text">Operé en horario de mi plan</div></div>
-        <div class="emo-rule" onclick="toggleRule(this)"><div class="emo-rule-box">✓</div><div class="emo-rule-text">Respeté el drawdown máximo del día</div></div>
+        <div class="emo-rule" onclick="toggleRule(this)"><div class="emo-rule-box">✓</div><div class="emo-rule-text">Cumplí con mis hábitos antes de operar</div></div>
       </div>
 
       <div style="margin-top:13px">
@@ -1176,7 +1175,29 @@ function renderDashboard() {
     ['% Aprobacion',apr.toFixed(1)+'%','yellow'],
     ['Total Trades',tr.length,''],
     ['Win Rate Global',wr.toFixed(1)+'%',wr>=60?'green':wr>=50?'yellow':'red'],
-  ].map(s=>'<div class="sc"><div class="sl">'+s[0]+'</div><div class="sv '+s[2]+'">'+s[1]+'</div></div>').join('');
+  ].map(s=>'<div class="sc"><div class="sl">'+s[0]+'</div><div class="sv '+s[2]+'" data-val="'+s[1]+'">0</div></div>').join('');
+
+  // CountUp animación
+  document.querySelectorAll('#d-stats .sv[data-val]').forEach(el => {
+    const target = el.getAttribute('data-val');
+    el.textContent = '0';
+    const num = parseFloat(target.replace(/[^0-9.\-]/g,''));
+    if(isNaN(num) || num === 0){ el.textContent = target; return; }
+    const dur = 900, steps = 30, step = dur/steps;
+    let cur = 0;
+    const sign = target.startsWith('+') ? '+' : target.startsWith('-') ? '-' : '';
+    const suffix = target.replace(/^[+\-]?\$?[\d.,]+/, '');
+    const prefix = target.match(/^[+\-]?\$/) ? (sign + '$') : sign;
+    const timer = setInterval(() => {
+      cur++;
+      const progress = cur/steps;
+      const ease = 1 - Math.pow(1-progress, 3);
+      const val = Math.abs(num) * ease;
+      const isFloat = target.includes('.');
+      el.textContent = prefix + (isFloat ? val.toFixed(target.split('.')[1]?.length||1) : Math.round(val)) + suffix;
+      if(cur >= steps){ el.textContent = target; clearInterval(timer); }
+    }, step);
+  });
 
   const sorted=[...tr].sort((a,b)=>a.fecha<b.fecha?-1:1);
   let cum=0; const pts=sorted.map(t=>{cum+=(t.pnl||0);return {x:t.fecha,y:cum};});
