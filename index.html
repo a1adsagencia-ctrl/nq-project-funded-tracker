@@ -571,14 +571,42 @@ body:not(.light):not(.gray) input[type="date"]::-webkit-calendar-picker-indicato
 .note-card-date{font-size:10px;font-family:var(--mono);color:var(--muted);margin-top:auto;}
 .emoji-opt:hover{background:rgba(255,255,255,.06);}
 .note-color-opt.selected{transform:scale(1.15);}
+/* Botón X rápido en cada nota */
+.note-card .note-quick-del{display:none;position:absolute;top:8px;right:8px;width:22px;height:22px;border-radius:50%;background:rgba(255,64,96,.15);border:1px solid rgba(255,64,96,.3);color:var(--red);font-size:13px;line-height:1;cursor:pointer;align-items:center;justify-content:center;transition:all .15s;z-index:2;font-weight:700;}
+.note-card:hover .note-quick-del{display:flex;}
+.note-card .note-quick-del:hover{background:rgba(255,64,96,.35);border-color:rgba(255,64,96,.7);transform:scale(1.1);}
+
+/* Colores en modo gray */
 body.gray .folder-item.active{background:rgba(0,229,122,.08)!important;border-color:rgba(0,229,122,.25)!important;}
-body.gray .note-card{background:#262626!important;border-color:rgba(255,255,255,.09)!important;}
-body.gray .note-card:hover{border-color:rgba(0,229,122,.3)!important;}
 body.gray #notes-sidebar{background:#262626!important;border-color:rgba(255,255,255,.09)!important;}
+body.gray .note-card{background:#2e2e2e!important;border-color:rgba(255,255,255,.09)!important;}
+body.gray .note-card:hover{border-color:rgba(0,229,122,.3)!important;}
+body.gray .note-card.color-blue{background:#1a2535!important;border-color:rgba(0,180,255,.35)!important;}
+body.gray .note-card.color-blue:hover{border-color:rgba(0,204,255,.6)!important;}
+body.gray .note-card.color-yellow{background:#2a2410!important;border-color:rgba(255,200,64,.35)!important;}
+body.gray .note-card.color-yellow:hover{border-color:rgba(255,200,64,.6)!important;}
+body.gray .note-card.color-red{background:#2a1015!important;border-color:rgba(255,64,96,.35)!important;}
+body.gray .note-card.color-red:hover{border-color:rgba(255,64,96,.6)!important;}
+body.gray .note-card.color-purple{background:#1e1030!important;border-color:rgba(168,85,247,.35)!important;}
+body.gray .note-card.color-purple:hover{border-color:rgba(168,85,247,.6)!important;}
+body.gray .note-card.color-orange{background:#2a1800!important;border-color:rgba(255,140,0,.35)!important;}
+body.gray .note-card.color-orange:hover{border-color:rgba(255,140,0,.6)!important;}
+
+/* Colores en modo light */
 body.light .folder-item.active{background:rgba(0,122,69,.08)!important;border-color:rgba(0,122,69,.25)!important;}
-body.light .note-card{background:#ffffff!important;border-color:#d8e8d8!important;}
-body.light .note-card:hover{border-color:#007a45!important;}
 body.light #notes-sidebar{background:#ffffff!important;border-color:#d8e8d8!important;}
+body.light .note-card{background:#ffffff!important;border-color:#d0ddd0!important;}
+body.light .note-card:hover{border-color:#007a45!important;}
+body.light .note-card.color-blue{background:#e8f4ff!important;border-color:rgba(0,130,220,.35)!important;}
+body.light .note-card.color-blue:hover{border-color:rgba(0,130,220,.7)!important;}
+body.light .note-card.color-yellow{background:#fffbe8!important;border-color:rgba(200,160,0,.35)!important;}
+body.light .note-card.color-yellow:hover{border-color:rgba(200,160,0,.7)!important;}
+body.light .note-card.color-red{background:#fff0f2!important;border-color:rgba(220,50,70,.3)!important;}
+body.light .note-card.color-red:hover{border-color:rgba(220,50,70,.6)!important;}
+body.light .note-card.color-purple{background:#f5eeff!important;border-color:rgba(140,70,220,.3)!important;}
+body.light .note-card.color-purple:hover{border-color:rgba(140,70,220,.6)!important;}
+body.light .note-card.color-orange{background:#fff5e8!important;border-color:rgba(210,110,0,.3)!important;}
+body.light .note-card.color-orange:hover{border-color:rgba(210,110,0,.6)!important;}
 </style>
 </head>
 <body>
@@ -2101,6 +2129,7 @@ function renderNotesList() {
     const date = new Date(note.updatedAt || note.createdAt);
     const dateStr = date.toLocaleDateString('es-CO', {day:'2-digit', month:'short', year:'numeric'});
     card.innerHTML = `
+      <button class="note-quick-del" onclick="event.stopPropagation();quickDeleteNote('${note.id}')" title="Eliminar nota">×</button>
       <div class="note-card-title">${escapeHtml(note.title || 'Sin título')}</div>
       <div class="note-card-preview">${escapeHtml(note.content || '')}</div>
       <div class="note-card-date">${dateStr}</div>
@@ -2261,6 +2290,16 @@ window.deleteCurrentNote = async function() {
   _notes[_activeFolderId] = (_notes[_activeFolderId] || []).filter(n => n.id !== _editingNoteId);
   await saveNotes();
   closeNoteEditor();
+  renderNotesList();
+  renderFolders();
+};
+
+window.quickDeleteNote = async function(noteId) {
+  if (!_activeFolderId) return;
+  const note = (_notes[_activeFolderId] || []).find(n => n.id === noteId);
+  if (!confirm(`¿Eliminar "${note?.title || 'Sin título'}"?`)) return;
+  _notes[_activeFolderId] = (_notes[_activeFolderId] || []).filter(n => n.id !== noteId);
+  await saveNotes();
   renderNotesList();
   renderFolders();
 };
