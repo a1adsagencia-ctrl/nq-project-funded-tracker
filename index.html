@@ -207,9 +207,7 @@ td{padding:12px 14px;vertical-align:middle;color:var(--text)}
 .fg{margin-bottom:14px}
 .fl{font-size:10px;color:var(--muted);letter-spacing:.08em;text-transform:uppercase;font-family:var(--mono);margin-bottom:5px;display:block}
 .fl small{color:var(--muted);font-weight:300;text-transform:none;letter-spacing:0;font-family:var(--font)}
-.fi{width:100%;background:rgba(0,20,8,.8);border:1px solid rgba(0,255,136,.12);color:var(--text);padding:10px 13px;border-radius:8px;font-family:var(--mono);font-size:13px;outline:none;transition:all .2s;color-scheme:dark}
-input[type="date"]::-webkit-calendar-picker-indicator{filter:invert(1);opacity:.65;cursor:pointer}
-input[type="date"]::-webkit-calendar-picker-indicator:hover{opacity:1}
+.fi{width:100%;background:rgba(0,20,8,.8);border:1px solid rgba(0,255,136,.12);color:var(--text);padding:10px 13px;border-radius:8px;font-family:var(--mono);font-size:13px;outline:none;transition:all .2s}
 .fi:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(0,255,136,.08)}
 .fs{width:100%;background:rgba(0,20,8,.8);border:1px solid rgba(0,255,136,.12);color:var(--text);padding:10px 13px;border-radius:8px;font-family:var(--font);font-size:13px;outline:none;cursor:pointer}
 .fr{display:grid;grid-template-columns:1fr 1fr;gap:12px}
@@ -536,6 +534,15 @@ body.light .emo-label { color:#4a6a50 !important; }
 .emo-bar-track { flex:1; height:6px; background:rgba(255,255,255,.07); border-radius:3px; overflow:hidden; }
 .emo-bar-fill { height:100%; border-radius:3px; transition:width .6s ease; }
 .emo-bar-count { width:40px; text-align:right; color:var(--muted); font-family:var(--mono); font-size:11px; }
+/* Icono calendario — solo modo noche */
+body:not(.light):not(.gray) input[type="date"]::-webkit-calendar-picker-indicator {
+  filter: brightness(0) invert(1);
+  opacity: .8;
+  cursor: pointer;
+}
+body:not(.light):not(.gray) input[type="date"]::-webkit-calendar-picker-indicator:hover {
+  opacity: 1;
+}
 </style>
 </head>
 <body>
