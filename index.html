@@ -1907,6 +1907,14 @@ body.light .promo-modal .u-email{color:#4a6a50}
   60%     { transform: translateX(-2px); }
   80%     { transform: translateX(2px); }
 }
+@keyframes bell-ring1 {
+  0%,100% { transform:scale(1);   opacity:.5; }
+  50%     { transform:scale(1.7); opacity:0;  }
+}
+@keyframes bell-ring2 {
+  0%,100% { transform:scale(1);   opacity:.6; }
+  50%     { transform:scale(1.5); opacity:0;  }
+}
 #news-widget {
   display: none; /* oculto por defecto, se muestra al hacer login */
   position: fixed;
@@ -1944,7 +1952,14 @@ body.light .promo-modal .u-email{color:#4a6a50}
 </style>
 
 <div id="news-widget" onclick="window.open('https://www.forexfactory.com/calendar','_blank')" title="Calendario económico - Forex Factory">
-  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="#ff4060" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="13" height="13" style="flex-shrink:0"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/></svg>
+  <span style="position:relative;display:flex;align-items:center;justify-content:center;flex-shrink:0">
+    <!-- Anillo de luz exterior -->
+    <span style="position:absolute;width:22px;height:22px;border-radius:50%;border:1.5px solid rgba(255,64,96,.4);animation:bell-ring1 2s ease-in-out infinite;"></span>
+    <!-- Anillo de luz interior -->
+    <span style="position:absolute;width:16px;height:16px;border-radius:50%;background:rgba(255,64,96,.12);animation:bell-ring2 2s ease-in-out infinite;"></span>
+    <!-- Campana -->
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="#ff4060" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="13" height="13" style="position:relative;z-index:1"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/></svg>
+  </span>
   <span class="news-text">Noticias del día</span>
   <span class="news-arrow">↗</span>
 </div>
