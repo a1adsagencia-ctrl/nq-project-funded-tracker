@@ -1916,25 +1916,31 @@ body.light .promo-modal .u-email{color:#4a6a50}
   50%     { transform:scale(1.5); opacity:0;  }
 }
 #news-widget {
-  display: none; /* oculto por defecto, se muestra al hacer login */
+  display: none;
   position: fixed;
   bottom: 88px;
   left: 24px;
   z-index: 9998;
   align-items: center;
   gap: 8px;
-  cursor: pointer;
+  cursor: grab;
   background: var(--s1);
   border: 1px solid rgba(255,64,96,.25);
   border-radius: 12px;
   padding: 8px 12px;
-  transition: all .2s;
   backdrop-filter: blur(12px);
+  user-select: none;
+  transition: border-color .2s, background .2s, box-shadow .2s;
 }
 #news-widget:hover {
   border-color: rgba(255,64,96,.5);
   background: var(--s2);
-  transform: translateY(-2px);
+  box-shadow: 0 4px 16px rgba(255,64,96,.15);
+}
+#news-widget.dragging {
+  cursor: grabbing;
+  box-shadow: 0 8px 28px rgba(0,0,0,.4), 0 0 0 2px rgba(255,64,96,.3);
+  transition: none;
 }
 #news-widget.shaking { animation: news-shake .5s ease; }
 
@@ -1965,14 +1971,115 @@ body.light .promo-modal .u-email{color:#4a6a50}
 </div>
 
 <script>
-function shakeNewsWidget() {
-  const w = document.getElementById('news-widget');
-  if (!w || w.style.display === 'none') return;
-  w.classList.add('shaking');
-  setTimeout(() => w.classList.remove('shaking'), 500);
-}
-setTimeout(shakeNewsWidget, 4000);
-setInterval(shakeNewsWidget, 60000);
+// ── DRAG & DROP widget noticias ──
+(function() {
+  function initDrag() {
+    const w = document.getElementById('news-widget');
+    if (!w) return;
+
+    // Restaurar posición guardada
+    const saved = localStorage.getItem('nqft_news_pos');
+    if (saved) {
+      try {
+        const {left, top} = JSON.parse(saved);
+        w.style.left = left;
+        w.style.top  = top;
+        w.style.bottom = 'auto';
+        w.style.right  = 'auto';
+      } catch(e) {}
+    }
+
+    let dragging = false, ox = 0, oy = 0;
+
+    w.addEventListener('mousedown', function(e) {
+      // Solo iniciar drag si no es click simple
+      dragging = false;
+      ox = e.clientX - w.getBoundingClientRect().left;
+      oy = e.clientY - w.getBoundingClientRect().top;
+
+      function onMove(e) {
+        dragging = true;
+        w.classList.add('dragging');
+        let nx = e.clientX - ox;
+        let ny = e.clientY - oy;
+        // Limitar dentro de la pantalla
+        nx = Math.max(0, Math.min(window.innerWidth  - w.offsetWidth,  nx));
+        ny = Math.max(0, Math.min(window.innerHeight - w.offsetHeight, ny));
+        w.style.left   = nx + 'px';
+        w.style.top    = ny + 'px';
+        w.style.bottom = 'auto';
+        w.style.right  = 'auto';
+      }
+
+      function onUp(e) {
+        document.removeEventListener('mousemove', onMove);
+        document.removeEventListener('mouseup', onUp);
+        if (dragging) {
+          w.classList.remove('dragging');
+          // Guardar posición
+          localStorage.setItem('nqft_news_pos', JSON.stringify({
+            left: w.style.left,
+            top:  w.style.top
+          }));
+          // Evitar que el click abra FF tras arrastrar
+          e.stopPropagation();
+          w.addEventListener('click', function block(ev) {
+            ev.stopPropagation();
+            ev.preventDefault();
+            w.removeEventListener('click', block);
+          }, {capture: true, once: true});
+        }
+        dragging = false;
+      }
+
+      document.addEventListener('mousemove', onMove);
+      document.addEventListener('mouseup', onUp);
+    });
+
+    // Touch support
+    w.addEventListener('touchstart', function(e) {
+      const t = e.touches[0];
+      ox = t.clientX - w.getBoundingClientRect().left;
+      oy = t.clientY - w.getBoundingClientRect().top;
+      dragging = false;
+    }, {passive: true});
+
+    w.addEventListener('touchmove', function(e) {
+      dragging = true;
+      const t = e.touches[0];
+      let nx = Math.max(0, Math.min(window.innerWidth  - w.offsetWidth,  t.clientX - ox));
+      let ny = Math.max(0, Math.min(window.innerHeight - w.offsetHeight, t.clientY - oy));
+      w.style.left = nx + 'px'; w.style.top = ny + 'px';
+      w.style.bottom = 'auto'; w.style.right = 'auto';
+      e.preventDefault();
+    }, {passive: false});
+
+    w.addEventListener('touchend', function() {
+      if (dragging) {
+        localStorage.setItem('nqft_news_pos', JSON.stringify({left: w.style.left, top: w.style.top}));
+      }
+      dragging = false;
+    });
+  }
+
+  // Shake
+  function shakeNewsWidget() {
+    const w = document.getElementById('news-widget');
+    if (!w || w.style.display === 'none') return;
+    w.classList.add('shaking');
+    setTimeout(() => w.classList.remove('shaking'), 500);
+  }
+
+  // Init when DOM ready
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initDrag);
+  } else {
+    initDrag();
+  }
+
+  setTimeout(shakeNewsWidget, 4000);
+  setInterval(shakeNewsWidget, 60000);
+})();
 </script>
 </body>
 </html>
