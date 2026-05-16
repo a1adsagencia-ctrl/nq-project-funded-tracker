@@ -1911,7 +1911,7 @@ body.light .promo-modal .u-email{color:#4a6a50}
   display: none; /* oculto por defecto, se muestra al hacer login */
   position: fixed;
   bottom: 88px;
-  right: 24px;
+  left: 24px;
   z-index: 9998;
   align-items: center;
   gap: 8px;
@@ -1929,13 +1929,7 @@ body.light .promo-modal .u-email{color:#4a6a50}
   transform: translateY(-2px);
 }
 #news-widget.shaking { animation: news-shake .5s ease; }
-.news-dot {
-  width: 7px; height: 7px; border-radius: 50%;
-  background: #ff4060;
-  flex-shrink: 0;
-  box-shadow: 0 0 6px rgba(255,64,96,.6);
-  animation: blink 2s ease-in-out infinite;
-}
+
 .news-text {
   font-size: 11px; font-weight: 600;
   color: var(--text);
@@ -1950,7 +1944,7 @@ body.light .promo-modal .u-email{color:#4a6a50}
 </style>
 
 <div id="news-widget" onclick="window.open('https://www.forexfactory.com/calendar','_blank')" title="Calendario económico - Forex Factory">
-  <span class="news-dot"></span>
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="#ff4060" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="13" height="13" style="flex-shrink:0"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/></svg>
   <span class="news-text">Noticias del día</span>
   <span class="news-arrow">↗</span>
 </div>
