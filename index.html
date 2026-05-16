@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>NQ PROJECT — Funded Tracker</title>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=DM+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Roboto+Mono:wght@300;400;500&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
@@ -48,7 +48,7 @@
   --border:rgba(0,229,160,.12);--border2:rgba(0,229,160,.2);
   --accent:#00e57a;--blue:#00ccff;--red:#ff4060;--yellow:#ffc840;--purple:#a855f7;
   --text:#f0faf2;--muted:rgba(220,245,225,.72);--muted2:rgba(220,245,225,.90);
-  --font:'Inter',sans-serif;--mono:'DM Mono',monospace;
+  --font:'Inter',sans-serif;--mono:'Roboto Mono',monospace;
   --glow:0 0 20px rgba(0,229,122,.1);
   --glow-strong:0 0 30px rgba(0,229,122,.18);
 }
@@ -941,11 +941,11 @@ function renderDashboard() {
   const sorted=[...tr].sort((a,b)=>a.fecha<b.fecha?-1:1);
   let cum=0; const pts=sorted.map(t=>{cum+=(t.pnl||0);return {x:t.fecha,y:cum};});
   if(chCap) chCap.destroy();
-  chCap=new Chart(document.getElementById('ch-capital').getContext('2d'),{type:'line',data:{labels:pts.map(p=>p.x),datasets:[{data:pts.map(p=>p.y),borderColor:'#00e5a0',backgroundColor:'rgba(0,229,160,.08)',borderWidth:2,pointRadius:0,fill:true,tension:.3}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{display:false},y:{ticks:{color:'#8aaaca',font:{family:'DM Mono',size:10}},grid:{color:'#1a2535'}}}}});
+  chCap=new Chart(document.getElementById('ch-capital').getContext('2d'),{type:'line',data:{labels:pts.map(p=>p.x),datasets:[{data:pts.map(p=>p.y),borderColor:'#00e5a0',backgroundColor:'rgba(0,229,160,.08)',borderWidth:2,pointRadius:0,fill:true,tension:.3}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{display:false},y:{ticks:{color:'#8aaaca',font:{family:'Roboto Mono',size:10}},grid:{color:'#1a2535'}}}}});
 
   const wins=tr.filter(t=>t.resultado==='win').length, losses=tr.filter(t=>t.resultado==='loss').length, bes=tr.filter(t=>t.resultado==='be').length;
   if(chDist) chDist.destroy();
-  chDist=new Chart(document.getElementById('ch-dist').getContext('2d'),{type:'doughnut',data:{labels:['Win','Loss','BE'],datasets:[{data:[wins,losses,bes],backgroundColor:['rgba(0,229,160,.7)','rgba(255,64,96,.7)','rgba(74,106,138,.5)'],borderColor:'transparent'}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'bottom',labels:{color:'#aabccc',font:{family:'DM Mono',size:10},padding:12}}}}});
+  chDist=new Chart(document.getElementById('ch-dist').getContext('2d'),{type:'doughnut',data:{labels:['Win','Loss','BE'],datasets:[{data:[wins,losses,bes],backgroundColor:['rgba(0,229,160,.7)','rgba(255,64,96,.7)','rgba(74,106,138,.5)'],borderColor:'transparent'}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'bottom',labels:{color:'#aabccc',font:{family:'Roboto Mono',size:10},padding:12}}}}});
 
   const avgRet=accounts.filter(a=>(a.retiros||[]).length).map(a=>(a.retiros||[]).reduce((s,r)=>s+r.monto,0)).reduce((s,x,_,arr)=>s+x/arr.length,0)||0;
   const needed=avgRet>0?Math.ceil(inv/avgRet):0;
