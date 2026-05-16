@@ -129,7 +129,7 @@ td,th,p,span,div,label,button,input,select,a{font-family:var(--font)}
 
 /* STATS */
 .sg{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:12px;margin-bottom:20px}
-.sc{background:rgba(0,20,10,.6);border:1px solid rgba(0,255,136,.1);border-radius:12px;padding:16px;transition:border-color .2s;backdrop-filter:blur(10px)}
+.sc{background:rgba(0,6,3,.82);border:1px solid rgba(0,255,136,.1);border-radius:12px;padding:16px;transition:border-color .2s;backdrop-filter:blur(10px)}
 .sc:hover{border-color:rgba(0,255,136,.25)}
 .sl{font-size:10px;color:var(--muted);letter-spacing:.12em;text-transform:uppercase;font-family:var(--mono);margin-bottom:6px}
 .sv{font-size:22px;font-weight:800;color:var(--text)}
@@ -140,7 +140,7 @@ td,th,p,span,div,label,button,input,select,a{font-family:var(--font)}
 .g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;margin-bottom:16px}
 
 /* CARD */
-.card{background:rgba(0,20,10,.5);border:1px solid rgba(0,255,136,.08);border-radius:14px;padding:20px;margin-bottom:0;backdrop-filter:blur(10px);transition:border-color .2s}
+.card{background:rgba(0,6,3,.82);border:1px solid rgba(0,255,136,.08);border-radius:14px;padding:20px;margin-bottom:0;backdrop-filter:blur(10px);transition:border-color .2s}
 .card:hover{border-color:rgba(0,255,136,.2)}
 .ct{font-size:10px;color:var(--muted);letter-spacing:.12em;text-transform:uppercase;font-family:var(--mono);margin-bottom:14px}
 
@@ -627,13 +627,12 @@ body.light #contact-menu span[style*="letter-spacing"] { color:#4a6a50 !importan
     </div>
 
     <!-- STATS EMOCIONALES -->
-    <div class="g2" style="margin-top:16px">
+    <div style="margin-top:16px">
       <div class="card"><div class="ct">⚡ Emociones más frecuentes</div><div id="a-emo-freq" style="padding:4px 0"></div></div>
-      <div class="card"><div class="ct">📊 P&L promedio por emoción</div><div id="a-emo-perf" style="padding:4px 0"></div></div>
     </div>
     <div class="g2" style="margin-top:0">
       <div class="card"><div class="ct">✅ Cumplimiento de reglas</div><div id="a-rules-stats" style="padding:4px 0"></div></div>
-      <div class="card"><div class="ct">⭐ Confianza por resultado</div><div id="a-stars-stats" style="padding:8px 0;display:flex;gap:20px;align-items:center;justify-content:center"></div></div>
+      <div class="card"><div class="ct">⭐ Resultados por nivel de confianza</div><div id="a-stars-stats" style="padding:4px 0"></div></div>
     </div>
   </div>
 </div>
@@ -737,7 +736,7 @@ body.light #contact-menu span[style*="letter-spacing"] { color:#4a6a50 !importan
         <button type="button" class="emo-chip" data-emo="Impulsivo"    style="--chip-color:#ff4060;--chip-bg:rgba(255,64,96,.1)"     onclick="toggleEmo(this)">⚡ Impulsivo</button>
         <button type="button" class="emo-chip" data-emo="Frustrado"    style="--chip-color:#ff7043;--chip-bg:rgba(255,112,67,.1)"    onclick="toggleEmo(this)">😤 Frustrado</button>
         <button type="button" class="emo-chip" data-emo="Neutral"      style="--chip-color:rgba(255,255,255,.5);--chip-bg:rgba(255,255,255,.06)" onclick="toggleEmo(this)">😐 Neutral</button>
-        <button type="button" class="emo-chip" data-emo="Revenge"      style="--chip-color:#ff4060;--chip-bg:rgba(255,64,96,.1)"     onclick="toggleEmo(this)">🔥 Revenge</button>
+        <button type="button" class="emo-chip" data-emo="Impulsivo/Miedo" style="--chip-color:#ff4060;--chip-bg:rgba(255,64,96,.1)"  onclick="toggleEmo(this)">🔥 Impulsivo/Miedo</button>
       </div>
 
       <div class="emo-label">Checklist de reglas</div>
@@ -1426,24 +1425,44 @@ function renderEmocionalStats() {
       : '<div style="text-align:center;padding:20px;color:var(--muted);font-size:12px;font-family:var(--mono)">Sin datos aún</div>';
   }
 
-  // Confianza por resultado
+  // Resultados por nivel de confianza (1-5 estrellas)
   const starsEl = document.getElementById('a-stars-stats');
   if (starsEl) {
     const ws = allTrades().filter(t => t.emo && t.emo.confianza);
-    const g = {win:[],loss:[],be:[]};
-    ws.forEach(t => { if(g[t.resultado]) g[t.resultado].push(t.emo.confianza); });
-    const avg = arr => arr.length ? (arr.reduce((a,b)=>a+b,0)/arr.length).toFixed(1) : '—';
-    const labels = {win:'Win 🟢',loss:'Loss 🔴',be:'BE ⚪'};
-    const cols = {win:'var(--accent)',loss:'var(--red)',be:'rgba(255,255,255,.4)'};
-    starsEl.innerHTML = ws.length
-      ? Object.entries(g).map(([k,v],i,arr) =>
-          `<div style="text-align:center">
-            <div style="font-size:28px;font-weight:800;color:${cols[k]};font-family:var(--mono)">${avg(v)}</div>
-            <div style="font-size:10px;color:var(--muted);margin-top:4px">${labels[k]}</div>
-            <div style="font-size:10px;color:var(--muted);font-family:var(--mono)">${v.length} trades</div>
-          </div>${i<arr.length-1?'<div style="width:1px;background:var(--border);align-self:stretch"></div>':''}`
-        ).join('')
-      : '<div style="color:var(--muted);font-size:12px;font-family:var(--mono)">Sin datos aún</div>';
+    if (!ws.length) {
+      starsEl.innerHTML = '<div style="color:var(--muted);font-size:12px;font-family:var(--mono);text-align:center;width:100%">Sin datos aún</div>';
+    } else {
+      // Group by star level 1-5
+      const byStars = {};
+      ws.forEach(t => {
+        const s = t.emo.confianza;
+        if (!byStars[s]) byStars[s] = {win:0, loss:0, be:0, total:0};
+        byStars[s][t.resultado] = (byStars[s][t.resultado]||0) + 1;
+        byStars[s].total++;
+      });
+      starsEl.innerHTML = '<div style="width:100%">' +
+        [1,2,3,4,5].filter(s => byStars[s]).map(s => {
+          const d = byStars[s];
+          const wr = d.total ? Math.round(d.win/d.total*100) : 0;
+          const wPct = d.total ? Math.round(d.win/d.total*100) : 0;
+          const lPct = d.total ? Math.round(d.loss/d.total*100) : 0;
+          const bPct = d.total ? Math.round(d.be/d.total*100) : 0;
+          const stars = '⭐'.repeat(s);
+          return `<div style="display:flex;align-items:center;gap:10px;padding:7px 0;border-bottom:1px solid var(--border)">
+            <div style="font-size:13px;min-width:72px">${stars}</div>
+            <div style="flex:1;display:flex;height:8px;border-radius:4px;overflow:hidden;gap:1px">
+              <div style="width:${wPct}%;background:var(--accent);transition:width .5s"></div>
+              <div style="width:${lPct}%;background:var(--red);transition:width .5s"></div>
+              <div style="width:${bPct}%;background:rgba(255,255,255,.2);transition:width .5s"></div>
+            </div>
+            <div style="font-family:var(--mono);font-size:10px;color:var(--muted);min-width:80px;text-align:right">
+              <span style="color:var(--accent)">${d.win}W</span> <span style="color:var(--red)">${d.loss}L</span> <span style="color:var(--muted)">${d.be}BE</span>
+            </div>
+            <div style="font-family:var(--mono);font-size:11px;font-weight:700;min-width:36px;text-align:right;color:${wr>=60?'var(--accent)':wr>=50?'var(--yellow)':'var(--red)'}">${wr}%</div>
+          </div>`;
+        }).join('') +
+      '</div>';
+    }
   }
 }
 
