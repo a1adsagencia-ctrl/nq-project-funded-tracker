@@ -1016,6 +1016,10 @@ body.light .note-card.color-orange:hover{border-color:rgba(210,110,0,.6)!importa
       <label class="fl">Descripción pública del evento</label>
       <textarea class="fi" id="ev-desc" placeholder="Describe el evento..." style="min-height:80px;resize:vertical;font-family:var(--font);font-size:13px;line-height:1.6;"></textarea>
     </div>
+    <div class="fg">
+      <label class="fl">Imagen del evento (URL — se muestra en la card y al registrarse)</label>
+      <input class="fi" id="ev-post-img" type="url" placeholder="https://... (jpg, png, gif)">
+    </div>
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
       <div class="fg">
         <label class="fl">Estado</label>
@@ -1062,10 +1066,6 @@ body.light .note-card.color-orange:hover{border-color:rgba(210,110,0,.6)!importa
       <label class="fl">Texto del botón de comunidad</label>
       <input class="fi" id="ev-post-btn" type="text" placeholder="Ej: 💬 Unirse al grupo privado" maxlength="60">
     </div>
-    <div class="fg">
-      <label class="fl">URL de imagen (opcional, se muestra sobre el botón)</label>
-      <input class="fi" id="ev-post-img" type="url" placeholder="https://... (jpg, png, gif)">
-    </div>
 
     <div style="display:flex;justify-content:space-between;align-items:center;margin-top:14px;">
       <button id="ev-btn-delete" onclick="deleteEvento()" style="display:none;background:none;border:1px solid rgba(255,64,96,.3);color:var(--red);padding:8px 14px;border-radius:8px;font-size:12px;cursor:pointer;font-family:var(--font);font-weight:600;transition:all .2s;" onmouseover="this.style.background='rgba(255,64,96,.1)'" onmouseout="this.style.background='none'">🗑 Eliminar</button>
@@ -1079,12 +1079,22 @@ body.light .note-card.color-orange:hover{border-color:rgba(210,110,0,.6)!importa
 
 <!-- MODAL REGISTRO EVENTO -->
 <div class="ov" id="ov-ev-registro">
-  <div class="modal" style="width:460px;max-width:96vw;">
+  <div class="modal" style="width:480px;max-width:96vw;">
     <div class="mhdr">
       <span class="mtitle" id="ev-reg-titulo">📅 Acceder al Evento</span>
       <button class="mx" onclick="closeOv('ev-registro')">×</button>
     </div>
-    <p id="ev-reg-desc-txt" style="font-size:13px;color:var(--muted);margin-bottom:20px;line-height:1.6;">Ingresa tu nombre y correo para unirte a la comunidad del evento.</p>
+    <!-- Imagen del evento -->
+    <div id="ev-reg-img-wrap" style="display:none;margin-bottom:14px;border-radius:10px;overflow:hidden;">
+      <img id="ev-reg-img-el" src="" alt="" style="width:100%;max-height:160px;object-fit:cover;display:block;">
+    </div>
+    <!-- Info del evento -->
+    <div id="ev-reg-event-info" style="display:none;background:rgba(255,255,255,.04);border:1px solid var(--border);border-radius:10px;padding:12px 14px;margin-bottom:16px;">
+      <div id="ev-reg-event-titulo" style="font-size:14px;font-weight:700;color:var(--text);margin-bottom:4px;"></div>
+      <div id="ev-reg-event-meta" style="font-size:11px;font-family:var(--mono);color:var(--muted);"></div>
+      <div id="ev-reg-event-desc" style="font-size:12px;color:var(--muted);margin-top:6px;line-height:1.6;"></div>
+    </div>
+    <p id="ev-reg-desc-txt" style="font-size:13px;color:var(--muted);margin-bottom:14px;line-height:1.6;">Ingresa tu nombre y correo para unirte a la comunidad del evento.</p>
     <input class="ev-reg-input" id="ev-reg-nombre" type="text" placeholder="Tu nombre completo" maxlength="60" oninput="checkEvRegForm()">
     <input class="ev-reg-input" id="ev-reg-email" type="email" placeholder="Tu correo electrónico" maxlength="80" oninput="checkEvRegForm()">
     <button id="ev-reg-btn" onclick="submitEvReg()" disabled style="width:100%;background:rgba(0,229,160,.25);color:rgba(0,0,0,.4);border:none;padding:13px;border-radius:10px;font-weight:800;font-size:14px;cursor:not-allowed;margin-bottom:8px;transition:all .3s;">
@@ -3039,6 +3049,7 @@ function renderEventoCard(ev) {
 
   return `
     <div class="ev-card ${ev.estado === 'live' ? 'ev-live' : ev.estado === 'finalizado' ? 'ev-finalizado' : ''}">
+      ${ev.postImg ? `<div style="margin-bottom:16px;border-radius:10px;overflow:hidden;max-height:220px;"><img src="${ev.postImg}" alt="${ev.titulo||''}" style="width:100%;object-fit:cover;max-height:220px;display:block;"></div>` : ''}
       <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:12px;flex-wrap:wrap;">
         <div style="display:flex;flex-direction:column;gap:10px;flex:1;min-width:0;">
           <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
@@ -3068,22 +3079,54 @@ window.checkEvRegForm = function() {
 };
 
 window.openEvRegistro = async function(eventoId) {
-  // Cargar datos del evento para personalizar el modal
   let ev = null;
   try {
     const snap = await getDocs(collection(db3, 'eventos'));
     snap.forEach(d => { if (d.id === eventoId) ev = { id: d.id, ...d.data() }; });
   } catch(e) {}
 
-  // Aplicar personalización al modal de registro
+  // ── Imagen del evento ──
+  const imgWrap = document.getElementById('ev-reg-img-wrap');
+  const imgEl   = document.getElementById('ev-reg-img-el');
+  if (ev?.postImg && imgWrap && imgEl) {
+    imgEl.src = ev.postImg;
+    imgWrap.style.display = 'block';
+  } else if (imgWrap) {
+    imgWrap.style.display = 'none';
+  }
+
+  // ── Info del evento (título, fecha, descripción) ──
+  const infoWrap  = document.getElementById('ev-reg-event-info');
+  const infoTit   = document.getElementById('ev-reg-event-titulo');
+  const infoMeta  = document.getElementById('ev-reg-event-meta');
+  const infoDesc  = document.getElementById('ev-reg-event-desc');
+  if (ev && infoWrap) {
+    infoTit.textContent = ev.titulo || '';
+    // Formatear fecha
+    let meta = '';
+    if (ev.fecha) {
+      const [y,m,d] = ev.fecha.split('-');
+      const meses = ['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'];
+      meta = `📅 ${parseInt(d)} ${meses[parseInt(m)-1]} ${y}`;
+    }
+    if (ev.hora) meta += (meta ? ' · ' : '') + `⏰ ${ev.hora}`;
+    infoMeta.textContent = meta;
+    infoDesc.textContent = ev.desc || '';
+    infoDesc.style.display = ev.desc ? 'block' : 'none';
+    infoWrap.style.display = (ev.titulo || ev.fecha || ev.desc) ? 'block' : 'none';
+  } else if (infoWrap) {
+    infoWrap.style.display = 'none';
+  }
+
+  // ── Textos personalizados ──
   const titulo = document.getElementById('ev-reg-titulo');
   const desc   = document.getElementById('ev-reg-desc-txt');
   const btn    = document.getElementById('ev-reg-btn');
-  if (titulo) titulo.textContent = ev?.regTitulo  || '📅 Acceder al Evento';
-  if (desc)   desc.textContent   = ev?.regDesc    || 'Ingresa tu nombre y correo para unirte a la comunidad del evento.';
+  if (titulo) titulo.textContent = ev?.regTitulo || '📅 Acceder al Evento';
+  if (desc)   desc.textContent   = ev?.regDesc   || 'Ingresa tu nombre y correo para unirte a la comunidad del evento.';
   if (btn)    btn.textContent    = ev?.regBtn     || 'Acceder a la comunidad →';
 
-  // Pre-fill con datos del usuario si está logueado
+  // ── Pre-fill usuario ──
   const nombre = document.getElementById('ev-reg-nombre');
   const email  = document.getElementById('ev-reg-email');
   if (window._user) {
