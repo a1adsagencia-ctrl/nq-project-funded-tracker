@@ -620,15 +620,25 @@ body.light .d-fopt.active{color:var(--accent)!important;}
 .ev-card.ev-live{border-color:rgba(255,64,96,.4);animation:ev-pulse 2s ease-in-out infinite;}
 .ev-card.ev-finalizado{opacity:.55;}
 @keyframes ev-pulse{0%,100%{border-color:rgba(255,64,96,.4);box-shadow:none}50%{border-color:rgba(255,64,96,.7);box-shadow:0 0 18px rgba(255,64,96,.15)}}
+@keyframes ev-dot-blink{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.3;transform:scale(.7)}}
+@keyframes ev-live-text{0%,100%{opacity:1}50%{opacity:.2}}
+.ev-live-label{animation:ev-live-text .9s ease-in-out infinite;color:#ff4060;font-weight:800;font-family:var(--mono);font-size:12px;letter-spacing:.1em;}
 .ev-badge{display:inline-flex;align-items:center;gap:5px;padding:3px 10px;border-radius:20px;font-size:10px;font-family:var(--mono);font-weight:700;letter-spacing:.08em;text-transform:uppercase;}
 .ev-badge.proximo{background:rgba(255,200,64,.12);color:#ffc840;border:1px solid rgba(255,200,64,.3);}
 .ev-badge.live{background:rgba(255,64,96,.12);color:#ff4060;border:1px solid rgba(255,64,96,.35);}
 .ev-badge.finalizado{background:rgba(255,255,255,.05);color:var(--muted);border:1px solid rgba(255,255,255,.1);}
-.ev-live-dot{width:7px;height:7px;border-radius:50%;background:#ff4060;animation:blink 1s infinite;}
+.ev-live-dot{width:7px;height:7px;border-radius:50%;background:#ff4060;animation:ev-dot-blink .8s infinite;display:inline-block;}
 .ev-join-btn{display:inline-flex;align-items:center;gap:8px;background:var(--accent);color:#000;border:none;padding:11px 22px;border-radius:10px;font-weight:700;font-size:13px;cursor:pointer;text-decoration:none;transition:all .2s;}
 .ev-join-btn:hover{background:#00ffb3;transform:translateY(-1px);}
-.ev-join-btn.finished{background:rgba(255,255,255,.08);color:var(--muted);cursor:default;}
-.ev-join-btn.finished:hover{background:rgba(255,255,255,.08);transform:none;}
+.ev-join-btn.finished{background:rgba(255,255,255,.08);color:var(--muted);cursor:default;pointer-events:none;}
+/* Modal registro evento */
+.ev-reg-input{width:100%;background:#0d0d0d;border:1px solid rgba(0,255,136,.15);color:var(--text);padding:12px 14px;border-radius:10px;font-family:var(--font);font-size:14px;outline:none;transition:border-color .2s;margin-bottom:12px;}
+.ev-reg-input:focus{border-color:rgba(0,255,136,.4);}
+.ev-reg-input::placeholder{color:var(--muted);}
+.ev-community-btn{display:flex;align-items:center;gap:12px;width:100%;padding:14px 18px;border-radius:12px;border:1px solid;font-weight:700;font-size:14px;cursor:pointer;text-decoration:none;transition:all .2s;margin-bottom:10px;}
+.ev-community-btn:hover{transform:translateY(-1px);filter:brightness(1.1);}
+.ev-wa-btn{background:rgba(37,211,102,.1);border-color:rgba(37,211,102,.3);color:#25D366;}
+.ev-tg-btn{background:rgba(0,136,204,.1);border-color:rgba(0,136,204,.3);color:#229ED9;}
 
 /* Colores en modo light */
 body.light .folder-item.active{background:rgba(0,122,69,.08)!important;border-color:rgba(0,122,69,.25)!important;}
@@ -717,7 +727,11 @@ body.light .note-card.color-orange:hover{border-color:rgba(210,110,0,.6)!importa
   <div class="tab" onclick="goTab('diario')">Diario de Trades</div>
   <div class="tab" onclick="goTab('analisis')">Analisis</div>
   <div class="tab" onclick="goTab('notas')">📝 Notas</div>
-  <div class="tab" onclick="goTab('eventos')">📅 Eventos</div>
+  <div class="tab" onclick="goTab('eventos')" id="tab-eventos" style="position:relative;">
+    📅 Eventos
+    <span id="ev-dot" style="display:none;position:absolute;top:6px;right:2px;width:8px;height:8px;border-radius:50%;background:#ffc840;animation:ev-dot-blink 1.2s ease-in-out infinite;"></span>
+    <span id="ev-dot-live" style="display:none;position:absolute;top:6px;right:2px;width:8px;height:8px;border-radius:50%;background:#ff4060;animation:ev-dot-blink .8s ease-in-out infinite;"></span>
+  </div>
 </div>
 
 <div class="content">
@@ -1004,6 +1018,14 @@ body.light .note-card.color-orange:hover{border-color:rgba(210,110,0,.6)!importa
       <input class="fi" id="ev-link" type="url" placeholder="https://zoom.us/j/...">
     </div>
     <div class="fg">
+      <label class="fl">Link de WhatsApp (comunidad)</label>
+      <input class="fi" id="ev-link-wa" type="url" placeholder="https://chat.whatsapp.com/...">
+    </div>
+    <div class="fg">
+      <label class="fl">Link de Telegram (comunidad)</label>
+      <input class="fi" id="ev-link-tg" type="url" placeholder="https://t.me/...">
+    </div>
+    <div class="fg">
       <label class="fl">Estado</label>
       <select class="fi" id="ev-estado" style="font-family:var(--font);">
         <option value="proximo">🟡 Próximo</option>
@@ -1018,6 +1040,41 @@ body.light .note-card.color-orange:hover{border-color:rgba(210,110,0,.6)!importa
         <button class="bf" onclick="saveEvento()" style="width:auto;padding:10px 22px;margin-top:0;">Publicar</button>
       </div>
     </div>
+  </div>
+</div>
+
+<!-- MODAL REGISTRO EVENTO -->
+<div class="ov" id="ov-ev-registro">
+  <div class="modal" style="width:480px;max-width:96vw;">
+    <div class="mhdr">
+      <span class="mtitle" id="ev-reg-titulo">📅 Registrarse al Evento</span>
+      <button class="mx" onclick="closeOv('ev-registro')">×</button>
+    </div>
+    <p style="font-size:13px;color:var(--muted);margin-bottom:18px;line-height:1.6;">Regístrate para acceder al evento y unirte a nuestra comunidad.</p>
+    <input class="ev-reg-input" id="ev-reg-nombre" type="text" placeholder="Tu nombre completo" maxlength="60">
+    <input class="ev-reg-input" id="ev-reg-email" type="email" placeholder="Tu correo electrónico" maxlength="80">
+    <button onclick="submitEvReg()" style="width:100%;background:var(--accent);color:#000;border:none;padding:13px;border-radius:10px;font-weight:800;font-size:14px;cursor:pointer;margin-bottom:8px;transition:all .2s;" onmouseover="this.style.background='#00ffb3'" onmouseout="this.style.background='var(--accent)'">Registrarme y ver comunidad →</button>
+    <p id="ev-reg-error" style="color:var(--red);font-size:12px;font-family:var(--mono);display:none;margin-top:4px;"></p>
+  </div>
+</div>
+
+<!-- MODAL COMUNIDAD (post-registro) -->
+<div class="ov" id="ov-ev-comunidad">
+  <div class="modal" style="width:480px;max-width:96vw;text-align:center;">
+    <div class="mhdr">
+      <span class="mtitle">🎉 ¡Ya estás registrado!</span>
+      <button class="mx" onclick="closeOv('ev-comunidad')">×</button>
+    </div>
+    <p style="font-size:13px;color:var(--muted);margin-bottom:24px;line-height:1.6;">Únete a nuestra comunidad para no perderte ningún detalle del evento.</p>
+    <div id="ev-comunidad-btns" style="display:flex;flex-direction:column;gap:10px;margin-bottom:16px;"></div>
+    <div id="ev-zoom-link-wrap" style="display:none;margin-top:12px;padding-top:16px;border-top:1px solid var(--border);">
+      <p style="font-size:12px;color:var(--muted);margin-bottom:10px;font-family:var(--mono);">LINK DEL EVENTO</p>
+      <a id="ev-zoom-link-btn" href="#" target="_blank" class="ev-join-btn" style="justify-content:center;width:100%;box-sizing:border-box;">
+        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2" ry="2"/></svg>
+        Unirse al Zoom
+      </a>
+    </div>
+    <button onclick="closeOv('ev-comunidad')" style="margin-top:14px;background:none;border:1px solid var(--border);color:var(--muted);padding:8px 20px;border-radius:8px;cursor:pointer;font-size:12px;font-family:var(--mono);transition:all .2s;" onmouseover="this.style.borderColor='var(--accent)'" onmouseout="this.style.borderColor='var(--border)'">Cerrar</button>
   </div>
 </div>
 
@@ -2844,21 +2901,40 @@ function isAdmin() {
   return window._user && window._user.uid === ADMIN_UID;
 }
 
+// ── ACTUALIZAR DOT EN TAB ──
+function updateEvDot(eventos) {
+  const dot     = document.getElementById('ev-dot');
+  const dotLive = document.getElementById('ev-dot-live');
+  if (!dot || !dotLive) return;
+  const hasLive    = eventos.some(e => e.estado === 'live');
+  const hasProximo = eventos.some(e => e.estado === 'proximo');
+  dotLive.style.display = hasLive ? 'block' : 'none';
+  dot.style.display     = !hasLive && hasProximo ? 'block' : 'none';
+}
+
+async function checkEvDotOnLoad() {
+  try {
+    const snap = await getDocs(collection(db3, 'eventos'));
+    const eventos = [];
+    snap.forEach(d => eventos.push({ id: d.id, ...d.data() }));
+    updateEvDot(eventos);
+  } catch(e) {}
+}
+setTimeout(checkEvDotOnLoad, 2000);
+
 // ── RENDER EVENTOS ──
 window.renderEventos = async function() {
   const adminBar = document.getElementById('ev-admin-bar');
   if (adminBar) adminBar.style.display = isAdmin() ? 'block' : 'none';
-
   const list = document.getElementById('ev-list');
   if (!list) return;
   list.innerHTML = `<div style="text-align:center;padding:40px;color:var(--muted);font-family:var(--mono);font-size:12px;">Cargando...</div>`;
-
   try {
     const q = query(collection(db3, 'eventos'), orderBy('creadoEn', 'desc'));
     const snap = await getDocs(q);
     const eventos = [];
     snap.forEach(d => eventos.push({ id: d.id, ...d.data() }));
-
+    updateEvDot(eventos);
     if (!eventos.length) {
       list.innerHTML = `
         <div style="text-align:center;padding:60px 20px;color:var(--muted);">
@@ -2868,7 +2944,6 @@ window.renderEventos = async function() {
         </div>`;
       return;
     }
-
     list.innerHTML = eventos.map(ev => renderEventoCard(ev)).join('');
   } catch(e) {
     list.innerHTML = `<div style="text-align:center;padding:40px;color:var(--red);font-family:var(--mono);font-size:12px;">Error al cargar eventos</div>`;
@@ -2877,13 +2952,11 @@ window.renderEventos = async function() {
 
 function renderEventoCard(ev) {
   const badgeMap = {
-    proximo: '<span class="ev-badge proximo">🟡 Próximo</span>',
-    live:    '<span class="ev-badge live"><span class="ev-live-dot"></span> En Vivo</span>',
-    finalizado: '<span class="ev-badge finalizado">⚫ Finalizado</span>',
+    proximo:    `<span class="ev-badge proximo">🟡 Próximo</span>`,
+    live:       `<span class="ev-badge live"><span class="ev-live-dot"></span> <span class="ev-live-label">EN VIVO</span></span>`,
+    finalizado: `<span class="ev-badge finalizado">⚫ Finalizado</span>`,
   };
   const badge = badgeMap[ev.estado] || badgeMap.proximo;
-
-  // Formatear fecha
   let fechaStr = '';
   if (ev.fecha) {
     const [y,m,d] = ev.fecha.split('-');
@@ -2891,48 +2964,124 @@ function renderEventoCard(ev) {
     fechaStr = `${parseInt(d)} ${meses[parseInt(m)-1]} ${y}`;
   }
   const horaStr = ev.hora || '';
-
   const adminBtns = isAdmin() ? `
-    <div style="display:flex;gap:8px;">
-      <button onclick="editEvento('${ev.id}')" style="background:none;border:1px solid rgba(255,255,255,.15);color:var(--muted2);padding:6px 12px;border-radius:7px;font-size:11px;font-family:var(--mono);cursor:pointer;transition:all .2s;" onmouseover="this.style.borderColor='rgba(0,255,136,.4)';this.style.color='var(--accent)'" onmouseout="this.style.borderColor='rgba(255,255,255,.15)';this.style.color='var(--muted2)'">✏️ Editar</button>
-    </div>` : '';
+    <button onclick="editEvento('${ev.id}')" style="background:none;border:1px solid rgba(255,255,255,.15);color:var(--muted2);padding:6px 12px;border-radius:7px;font-size:11px;font-family:var(--mono);cursor:pointer;transition:all .2s;flex-shrink:0;" onmouseover="this.style.borderColor='rgba(0,255,136,.4)';this.style.color='var(--accent)'" onmouseout="this.style.borderColor='rgba(255,255,255,.15)';this.style.color='var(--muted2)'">✏️ Editar</button>` : '';
 
-  const linkBtn = ev.link && ev.estado !== 'finalizado'
-    ? `<a href="${ev.link}" target="_blank" class="ev-join-btn">
-        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2" ry="2"/></svg>
-        ${ev.estado === 'live' ? '¡Unirse Ahora!' : 'Ver Link'}
-      </a>`
-    : ev.estado === 'finalizado' && ev.link
-    ? `<span class="ev-join-btn finished">Evento finalizado</span>`
-    : '';
+  let accessBtn = '';
+  if (ev.estado !== 'finalizado') {
+    accessBtn = `<button onclick="openEvRegistro('${ev.id}')" style="display:inline-flex;align-items:center;gap:8px;background:var(--accent);color:#000;border:none;padding:11px 22px;border-radius:10px;font-weight:700;font-size:13px;cursor:pointer;transition:all .2s;" onmouseover="this.style.background='#00ffb3'" onmouseout="this.style.background='var(--accent)'">
+      <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><polyline points="10 17 15 12 10 7"/><line x1="15" y1="12" x2="3" y2="12"/></svg>
+      ${ev.estado === 'live' ? '¡Unirse Ahora!' : 'Registrarme'}
+    </button>`;
+  } else {
+    accessBtn = `<span style="font-size:12px;font-family:var(--mono);color:var(--muted);padding:8px 0;display:inline-block;">Este evento ha finalizado</span>`;
+  }
 
   return `
     <div class="ev-card ${ev.estado === 'live' ? 'ev-live' : ev.estado === 'finalizado' ? 'ev-finalizado' : ''}">
       <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:12px;flex-wrap:wrap;">
-        <div style="display:flex;flex-direction:column;gap:10px;flex:1;">
+        <div style="display:flex;flex-direction:column;gap:10px;flex:1;min-width:0;">
           <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
             ${badge}
-            ${fechaStr ? `<span style="font-family:var(--mono);font-size:11px;color:var(--muted);">📅 ${fechaStr}${horaStr ? ' · ⏰ ' + horaStr : ''}</span>` : ''}
+            ${fechaStr ? `<span style="font-family:var(--mono);font-size:11px;color:var(--muted);">📅 ${fechaStr}${horaStr ? ' · ⏰ '+horaStr : ''}</span>` : ''}
           </div>
-          <div style="font-size:18px;font-weight:800;color:var(--text);line-height:1.3;">${ev.titulo || 'Sin título'}</div>
+          <div style="font-size:18px;font-weight:800;color:var(--text);line-height:1.3;">${ev.titulo||'Sin título'}</div>
           ${ev.desc ? `<div style="font-size:13px;color:var(--muted);line-height:1.65;max-width:560px;">${ev.desc.replace(/\n/g,'<br>')}</div>` : ''}
         </div>
         ${adminBtns}
       </div>
-      ${linkBtn ? `<div style="margin-top:18px;">${linkBtn}</div>` : ''}
+      <div style="margin-top:18px;">${accessBtn}</div>
     </div>`;
 }
 
-// ── MODAL ──
+// ── REGISTRO USUARIO ──
+window.openEvRegistro = function(eventoId) {
+  const nombre = document.getElementById('ev-reg-nombre');
+  const email  = document.getElementById('ev-reg-email');
+  if (window._user) {
+    if (nombre) nombre.value = window._user.displayName || '';
+    if (email)  email.value  = window._user.email || '';
+  }
+  window._evRegId = eventoId;
+  const error = document.getElementById('ev-reg-error');
+  if (error) error.style.display = 'none';
+  openOv('ev-registro');
+  setTimeout(() => { if (nombre && !nombre.value) nombre.focus(); }, 100);
+};
+
+window.submitEvReg = async function() {
+  const nombre = document.getElementById('ev-reg-nombre').value.trim();
+  const email  = document.getElementById('ev-reg-email').value.trim();
+  const error  = document.getElementById('ev-reg-error');
+  if (!nombre || !email) {
+    error.textContent = 'Por favor completa nombre y correo.';
+    error.style.display = 'block'; return;
+  }
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+    error.textContent = 'Ingresa un correo válido.';
+    error.style.display = 'block'; return;
+  }
+  try {
+    await addDoc(collection(db3, 'ev_registros'), {
+      eventoId: window._evRegId,
+      nombre, email,
+      uid: window._user?.uid || null,
+      fecha: new Date().toISOString()
+    });
+    const snap = await getDocs(collection(db3, 'eventos'));
+    let ev = null;
+    snap.forEach(d => { if (d.id === window._evRegId) ev = { id: d.id, ...d.data() }; });
+    closeOv('ev-registro');
+    openComunidadModal(ev);
+  } catch(e) {
+    error.textContent = 'Error al registrar. Intenta de nuevo.';
+    error.style.display = 'block';
+  }
+};
+
+function openComunidadModal(ev) {
+  const btns     = document.getElementById('ev-comunidad-btns');
+  const zoomWrap = document.getElementById('ev-zoom-link-wrap');
+  const zoomBtn  = document.getElementById('ev-zoom-link-btn');
+  if (!btns) return;
+  btns.innerHTML = '';
+  if (ev?.linkWa) {
+    btns.innerHTML += `<a href="${ev.linkWa}" target="_blank" class="ev-community-btn ev-wa-btn">
+      <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51a12.8 12.8 0 0 0-.57-.01c-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/></svg>
+      Unirse al grupo de WhatsApp
+    </a>`;
+  }
+  if (ev?.linkTg) {
+    btns.innerHTML += `<a href="${ev.linkTg}" target="_blank" class="ev-community-btn ev-tg-btn">
+      <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm5.562 8.248-1.97 9.29c-.145.658-.537.818-1.084.508l-3-2.21-1.447 1.394c-.16.16-.295.295-.605.295l.213-3.053 5.56-5.023c.242-.213-.054-.333-.373-.12L7.17 13.662l-2.96-.924c-.643-.204-.657-.643.136-.953l11.57-4.461c.537-.194 1.006.131.646.924z"/></svg>
+      Unirse al grupo de Telegram
+    </a>`;
+  }
+  if (!ev?.linkWa && !ev?.linkTg) {
+    btns.innerHTML = `<p style="color:var(--muted);font-size:13px;font-family:var(--mono);">No hay grupos de comunidad para este evento.</p>`;
+  }
+  if (ev?.link && ev?.estado !== 'finalizado') {
+    zoomWrap.style.display = 'block';
+    zoomBtn.href = ev.link;
+    zoomBtn.textContent = ev.estado === 'live' ? '🔴 Unirse al evento EN VIVO' : '🎥 Ver link del evento';
+  } else {
+    zoomWrap.style.display = 'none';
+  }
+  openOv('ev-comunidad');
+}
+
+// ── MODAL CREAR/EDITAR ──
 window.openNewEventoModal = function() {
   _editingEventoId = null;
   document.getElementById('ev-modal-title').textContent = '📅 Nuevo Evento';
-  document.getElementById('ev-titulo').value = '';
-  document.getElementById('ev-fecha').value = '';
-  document.getElementById('ev-hora').value = '';
-  document.getElementById('ev-desc').value = '';
-  document.getElementById('ev-link').value = '';
-  document.getElementById('ev-estado').value = 'proximo';
+  document.getElementById('ev-titulo').value   = '';
+  document.getElementById('ev-fecha').value    = '';
+  document.getElementById('ev-hora').value     = '';
+  document.getElementById('ev-desc').value     = '';
+  document.getElementById('ev-link').value     = '';
+  document.getElementById('ev-link-wa').value  = '';
+  document.getElementById('ev-link-tg').value  = '';
+  document.getElementById('ev-estado').value   = 'proximo';
   document.getElementById('ev-btn-delete').style.display = 'none';
   openOv('evento');
   setTimeout(() => document.getElementById('ev-titulo').focus(), 100);
@@ -2946,12 +3095,14 @@ window.editEvento = async function(id) {
     if (!ev) return;
     _editingEventoId = id;
     document.getElementById('ev-modal-title').textContent = '✏️ Editar Evento';
-    document.getElementById('ev-titulo').value = ev.titulo || '';
-    document.getElementById('ev-fecha').value = ev.fecha || '';
-    document.getElementById('ev-hora').value = ev.hora || '';
-    document.getElementById('ev-desc').value = ev.desc || '';
-    document.getElementById('ev-link').value = ev.link || '';
-    document.getElementById('ev-estado').value = ev.estado || 'proximo';
+    document.getElementById('ev-titulo').value   = ev.titulo  || '';
+    document.getElementById('ev-fecha').value    = ev.fecha   || '';
+    document.getElementById('ev-hora').value     = ev.hora    || '';
+    document.getElementById('ev-desc').value     = ev.desc    || '';
+    document.getElementById('ev-link').value     = ev.link    || '';
+    document.getElementById('ev-link-wa').value  = ev.linkWa  || '';
+    document.getElementById('ev-link-tg').value  = ev.linkTg  || '';
+    document.getElementById('ev-estado').value   = ev.estado  || 'proximo';
     document.getElementById('ev-btn-delete').style.display = 'block';
     openOv('evento');
   } catch(e) { console.error(e); }
@@ -2967,6 +3118,8 @@ window.saveEvento = async function() {
     hora:   document.getElementById('ev-hora').value,
     desc:   document.getElementById('ev-desc').value.trim(),
     link:   document.getElementById('ev-link').value.trim(),
+    linkWa: document.getElementById('ev-link-wa').value.trim(),
+    linkTg: document.getElementById('ev-link-tg').value.trim(),
     estado: document.getElementById('ev-estado').value,
   };
   try {
