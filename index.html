@@ -806,11 +806,20 @@ body.light .note-card.color-orange:hover{border-color:rgba(210,110,0,.6)!importa
 
     <!-- STATS EMOCIONALES -->
     <div style="margin-top:16px">
-      <div class="card"><div class="ct">⚡ Emociones más frecuentes</div><div id="a-emo-freq" style="padding:4px 0"></div></div>
+      <div class="card">
+        <div class="ct">⚡ Emociones más frecuentes</div>
+        <div style="height:220px;position:relative;"><canvas id="ch-emo-freq"></canvas></div>
+      </div>
     </div>
     <div class="g2" style="margin-top:0">
-      <div class="card"><div class="ct">✅ Cumplimiento de reglas</div><div id="a-rules-stats" style="padding:4px 0"></div></div>
-      <div class="card"><div class="ct">⭐ Resultados por nivel de confianza</div><div id="a-stars-stats" style="padding:4px 0"></div></div>
+      <div class="card">
+        <div class="ct">✅ Cumplimiento de reglas</div>
+        <div id="a-rules-stats-wrap" style="height:220px;position:relative;"><canvas id="ch-rules-stats"></canvas></div>
+      </div>
+      <div class="card">
+        <div class="ct">⭐ Resultados por nivel de confianza</div>
+        <div id="a-stars-stats-wrap" style="height:220px;position:relative;"><canvas id="ch-stars-stats"></canvas></div>
+      </div>
     </div>
   </div>
 
@@ -1082,6 +1091,7 @@ let accounts = [];
 let editAcctId = null, editRetiros = [], editTradeId = null, editTradeAcctId = null;
 let calDate = new Date();
 let chCap = null, chDist = null, chWeekday = null, chHour = null;
+let chEmoFreq = null, chRules = null, chStars = null;
 let _dashFilterDays = 0;
 let _dashFilterFrom = null;
 let _dashFilterTo = null;
@@ -1876,92 +1886,152 @@ function loadEmoData(emo) {
 }
 
 function renderEmocionalStats() {
-  const colorMap = {'Calmado':'#00e57a','Disciplinado':'#00ccff','Confiado':'#a855f7','Ansioso':'#ffc840','Impulsivo':'#ff4060','Frustrado':'#ff7043','Neutral':'rgba(255,255,255,.4)','Revenge':'#ff4060'};
+  const colorMap = {'Calmado':'#00e57a','Disciplinado':'#00ccff','Confiado':'#a855f7','Ansioso':'#ffc840','Impulsivo':'#ff4060','Frustrado':'#ff7043','Neutral':'#6b7e8a','Revenge':'#ff1744'};
+  const CHART_DEFAULTS = {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: { legend: { display: false } },
+  };
+  const AXIS_STYLE = { ticks: { color: '#8aaaca', font: { family: 'Roboto Mono', size: 10 } }, grid: { display: false }, border: { display: false } };
+
+  // ── EMOCIONES MÁS FRECUENTES ──
   const tr = allTrades().filter(t => t.emo && t.emo.emociones && t.emo.emociones.length);
+  const freq = {};
+  tr.forEach(t => (t.emo.emociones||[]).forEach(e => { freq[e] = (freq[e]||0) + 1; }));
+  const sortedEmo = Object.entries(freq).sort((a,b) => b[1]-a[1]);
+  const emoLabels = sortedEmo.map(([e])=>e);
+  const emoCounts = sortedEmo.map(([,c])=>c);
+  const emoColors = emoLabels.map(e => colorMap[e] || '#00e57a');
 
-  // Frecuencia
-  const freqEl = document.getElementById('a-emo-freq');
-  if (freqEl) {
-    const freq = {};
-    tr.forEach(t => (t.emo.emociones||[]).forEach(e => { freq[e] = (freq[e]||0) + 1; }));
-    const total = Object.values(freq).reduce((a,b)=>a+b,0)||1;
-    const sorted = Object.entries(freq).sort((a,b)=>b[1]-a[1]);
-    freqEl.innerHTML = sorted.length
-      ? sorted.map(([emo,cnt]) => `<div class="emo-bar-row"><div class="emo-bar-label">${emo}</div><div class="emo-bar-track"><div class="emo-bar-fill" style="width:${Math.round(cnt/total*100)}%;background:${colorMap[emo]||'#00e57a'}"></div></div><div class="emo-bar-count">${cnt}</div></div>`).join('')
-      : '<div style="text-align:center;padding:20px;color:var(--muted);font-size:12px;font-family:var(--mono)">Sin datos aún</div>';
-  }
-
-  // Rendimiento por emoción
-  const perfEl = document.getElementById('a-emo-perf');
-  if (perfEl) {
-    const perfMap = {};
-    tr.forEach(t => (t.emo.emociones||[]).forEach(e => {
-      if (!perfMap[e]) perfMap[e] = {sum:0,cnt:0};
-      perfMap[e].sum += (t.pnl||0); perfMap[e].cnt++;
-    }));
-    const perfArr = Object.entries(perfMap).map(([e,v]) => [e, v.cnt ? v.sum/v.cnt : 0]).sort((a,b)=>b[1]-a[1]);
-    const maxAbs = Math.max(...perfArr.map(x=>Math.abs(x[1])),1);
-    perfEl.innerHTML = perfArr.length
-      ? perfArr.map(([emo,avg]) => {
-          const col = avg >= 0 ? 'var(--accent)' : 'var(--red)';
-          return `<div class="emo-bar-row"><div class="emo-bar-label">${emo}</div><div class="emo-bar-track"><div class="emo-bar-fill" style="width:${Math.round(Math.abs(avg)/maxAbs*100)}%;background:${col}"></div></div><div class="emo-bar-count" style="color:${col};width:50px">${avg>=0?'+':''}$${Math.abs(avg).toFixed(0)}</div></div>`;
-        }).join('')
-      : '<div style="text-align:center;padding:20px;color:var(--muted);font-size:12px;font-family:var(--mono)">Sin datos aún</div>';
-  }
-
-  // Cumplimiento de reglas
-  const rulesEl = document.getElementById('a-rules-stats');
-  if (rulesEl) {
-    const allR = allTrades().filter(t => t.emo && t.emo.reglas);
-    const tot = {}, pass = {};
-    allR.forEach(t => Object.entries(t.emo.reglas).forEach(([r,v]) => { tot[r]=(tot[r]||0)+1; if(v) pass[r]=(pass[r]||0)+1; }));
-    const rules = Object.keys(tot);
-    rulesEl.innerHTML = rules.length
-      ? rules.map(r => {
-          const pct = Math.round((pass[r]||0)/tot[r]*100);
-          const col = pct>=80?'var(--accent)':pct>=50?'var(--yellow)':'var(--red)';
-          return `<div class="emo-bar-row"><div class="emo-bar-label" style="width:175px;font-size:10px">${r}</div><div class="emo-bar-track"><div class="emo-bar-fill" style="width:${pct}%;background:${col}"></div></div><div class="emo-bar-count" style="color:${col};width:36px">${pct}%</div></div>`;
-        }).join('')
-      : '<div style="text-align:center;padding:20px;color:var(--muted);font-size:12px;font-family:var(--mono)">Sin datos aún</div>';
-  }
-
-  // Resultados por nivel de confianza (1-5 estrellas)
-  const starsEl = document.getElementById('a-stars-stats');
-  if (starsEl) {
-    const ws = allTrades().filter(t => t.emo && t.emo.confianza);
-    if (!ws.length) {
-      starsEl.innerHTML = '<div style="color:var(--muted);font-size:12px;font-family:var(--mono);text-align:center;width:100%">Sin datos aún</div>';
+  if (chEmoFreq) chEmoFreq.destroy();
+  const ctxFreq = document.getElementById('ch-emo-freq');
+  if (ctxFreq) {
+    if (!emoLabels.length) {
+      ctxFreq.parentElement.innerHTML = '<div style="display:flex;align-items:center;justify-content:center;height:100%;color:var(--muted);font-family:var(--mono);font-size:12px;"><canvas id="ch-emo-freq" style="display:none"></canvas>Sin datos aún</div>';
     } else {
-      // Group by star level 1-5
-      const byStars = {};
-      ws.forEach(t => {
-        const s = t.emo.confianza;
-        if (!byStars[s]) byStars[s] = {win:0, loss:0, be:0, total:0};
-        byStars[s][t.resultado] = (byStars[s][t.resultado]||0) + 1;
-        byStars[s].total++;
+      chEmoFreq = new Chart(ctxFreq.getContext('2d'), {
+        type: 'bar',
+        data: {
+          labels: emoLabels,
+          datasets: [{ data: emoCounts, backgroundColor: emoColors, borderColor: 'transparent', borderRadius: 6 }]
+        },
+        options: {
+          ...CHART_DEFAULTS,
+          indexAxis: 'y',
+          plugins: {
+            legend: { display: false },
+            tooltip: { callbacks: { label: ctx => ' ' + ctx.parsed.x + ' trades' } }
+          },
+          scales: {
+            x: { ...AXIS_STYLE, ticks: { ...AXIS_STYLE.ticks, stepSize: 1 } },
+            y: { ...AXIS_STYLE, ticks: { color: '#aabccc', font: { family: 'Roboto Mono', size: 11 } } }
+          }
+        }
       });
-      starsEl.innerHTML = '<div style="width:100%">' +
-        [1,2,3,4,5].filter(s => byStars[s]).map(s => {
-          const d = byStars[s];
-          const wr = d.total ? Math.round(d.win/d.total*100) : 0;
-          const wPct = d.total ? Math.round(d.win/d.total*100) : 0;
-          const lPct = d.total ? Math.round(d.loss/d.total*100) : 0;
-          const bPct = d.total ? Math.round(d.be/d.total*100) : 0;
-          const stars = '⭐'.repeat(s);
-          return `<div style="display:flex;align-items:center;gap:10px;padding:7px 0;border-bottom:1px solid var(--border)">
-            <div style="font-size:13px;min-width:72px">${stars}</div>
-            <div style="flex:1;display:flex;height:8px;border-radius:4px;overflow:hidden;gap:1px">
-              <div style="width:${wPct}%;background:var(--accent);transition:width .5s"></div>
-              <div style="width:${lPct}%;background:var(--red);transition:width .5s"></div>
-              <div style="width:${bPct}%;background:rgba(255,255,255,.2);transition:width .5s"></div>
-            </div>
-            <div style="font-family:var(--mono);font-size:10px;color:var(--muted);min-width:80px;text-align:right">
-              <span style="color:var(--accent)">${d.win}W</span> <span style="color:var(--red)">${d.loss}L</span> <span style="color:var(--muted)">${d.be}BE</span>
-            </div>
-            <div style="font-family:var(--mono);font-size:11px;font-weight:700;min-width:36px;text-align:right;color:${wr>=60?'var(--accent)':wr>=50?'var(--yellow)':'var(--red)'}">${wr}%</div>
-          </div>`;
-        }).join('') +
-      '</div>';
+    }
+  }
+
+  // ── CUMPLIMIENTO DE REGLAS ──
+  const allR = allTrades().filter(t => t.emo && t.emo.reglas);
+  const tot = {}, pass = {};
+  allR.forEach(t => Object.entries(t.emo.reglas).forEach(([r,v]) => {
+    tot[r] = (tot[r]||0) + 1;
+    if (v) pass[r] = (pass[r]||0) + 1;
+  }));
+  const ruleKeys = Object.keys(tot);
+  const rulePcts = ruleKeys.map(r => Math.round((pass[r]||0) / tot[r] * 100));
+  const ruleColors = rulePcts.map(p => p >= 80 ? '#00e5a0' : p >= 50 ? '#ffc840' : '#ff4060');
+  // Abreviar etiquetas largas
+  const ruleLabels = ruleKeys.map(r => r.length > 22 ? r.slice(0,22)+'…' : r);
+
+  if (chRules) chRules.destroy();
+  const ctxRules = document.getElementById('ch-rules-stats');
+  if (ctxRules) {
+    if (!ruleKeys.length) {
+      ctxRules.parentElement.innerHTML = '<div style="display:flex;align-items:center;justify-content:center;height:100%;color:var(--muted);font-family:var(--mono);font-size:12px;"><canvas id="ch-rules-stats" style="display:none"></canvas>Sin datos aún</div>';
+    } else {
+      chRules = new Chart(ctxRules.getContext('2d'), {
+        type: 'bar',
+        data: {
+          labels: ruleLabels,
+          datasets: [{ data: rulePcts, backgroundColor: ruleColors, borderColor: 'transparent', borderRadius: 6 }]
+        },
+        options: {
+          ...CHART_DEFAULTS,
+          indexAxis: 'y',
+          plugins: {
+            legend: { display: false },
+            tooltip: {
+              callbacks: {
+                title: (items) => ruleKeys[items[0].dataIndex],
+                label: ctx => ' ' + ctx.parsed.x + '% cumplimiento'
+              }
+            }
+          },
+          scales: {
+            x: { ...AXIS_STYLE, min: 0, max: 100, ticks: { ...AXIS_STYLE.ticks, callback: v => v + '%' } },
+            y: { ...AXIS_STYLE, ticks: { color: '#aabccc', font: { family: 'Roboto Mono', size: 10 } } }
+          }
+        }
+      });
+    }
+  }
+
+  // ── RESULTADOS POR NIVEL DE CONFIANZA ──
+  const ws = allTrades().filter(t => t.emo && t.emo.confianza);
+  const byStars = {};
+  ws.forEach(t => {
+    const s = t.emo.confianza;
+    if (!byStars[s]) byStars[s] = { win:0, loss:0, be:0, total:0 };
+    byStars[s][t.resultado] = (byStars[s][t.resultado]||0) + 1;
+    byStars[s].total++;
+  });
+  const starLevels = [1,2,3,4,5].filter(s => byStars[s]);
+  const starLabels = starLevels.map(s => '★'.repeat(s));
+  const starWin  = starLevels.map(s => byStars[s].total ? Math.round(byStars[s].win  / byStars[s].total * 100) : 0);
+  const starLoss = starLevels.map(s => byStars[s].total ? Math.round(byStars[s].loss / byStars[s].total * 100) : 0);
+  const starBE   = starLevels.map(s => byStars[s].total ? Math.round(byStars[s].be   / byStars[s].total * 100) : 0);
+
+  if (chStars) chStars.destroy();
+  const ctxStars = document.getElementById('ch-stars-stats');
+  if (ctxStars) {
+    if (!starLevels.length) {
+      ctxStars.parentElement.innerHTML = '<div style="display:flex;align-items:center;justify-content:center;height:100%;color:var(--muted);font-family:var(--mono);font-size:12px;"><canvas id="ch-stars-stats" style="display:none"></canvas>Sin datos aún</div>';
+    } else {
+      chStars = new Chart(ctxStars.getContext('2d'), {
+        type: 'bar',
+        data: {
+          labels: starLabels,
+          datasets: [
+            { label: 'Win %',  data: starWin,  backgroundColor: '#00e5a0', borderRadius: 4, borderColor: 'transparent' },
+            { label: 'Loss %', data: starLoss, backgroundColor: '#ff4060', borderRadius: 4, borderColor: 'transparent' },
+            { label: 'BE %',   data: starBE,   backgroundColor: '#4a6a8a', borderRadius: 4, borderColor: 'transparent' },
+          ]
+        },
+        options: {
+          ...CHART_DEFAULTS,
+          plugins: {
+            legend: {
+              display: true,
+              position: 'bottom',
+              labels: { color: '#aabccc', font: { family: 'Roboto Mono', size: 10 }, padding: 12, boxWidth: 12 }
+            },
+            tooltip: {
+              callbacks: {
+                afterLabel: (ctx) => {
+                  const s = starLevels[ctx.dataIndex];
+                  const d = byStars[s];
+                  return `Total: ${d.total} trades`;
+                }
+              }
+            }
+          },
+          scales: {
+            x: { ...AXIS_STYLE },
+            y: { ...AXIS_STYLE, min: 0, max: 100, ticks: { ...AXIS_STYLE.ticks, callback: v => v + '%' } }
+          }
+        }
+      });
     }
   }
 }
