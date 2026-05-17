@@ -613,6 +613,22 @@ body.light #d-filter-dropdown{background:#ffffff!important;border-color:#d0ddd0!
 body.light .d-fopt{color:#333!important;}
 body.light .d-fopt.active{color:var(--accent)!important;}
 
+/* Eventos */
+.ev-card{border:1px solid rgba(0,255,136,.12);border-radius:16px;padding:24px;transition:border-color .2s;position:relative;overflow:hidden;}
+.ev-card:hover{border-color:rgba(0,255,136,.28);}
+.ev-card.ev-live{border-color:rgba(255,64,96,.4);animation:ev-pulse 2s ease-in-out infinite;}
+.ev-card.ev-finalizado{opacity:.55;}
+@keyframes ev-pulse{0%,100%{border-color:rgba(255,64,96,.4);box-shadow:none}50%{border-color:rgba(255,64,96,.7);box-shadow:0 0 18px rgba(255,64,96,.15)}}
+.ev-badge{display:inline-flex;align-items:center;gap:5px;padding:3px 10px;border-radius:20px;font-size:10px;font-family:var(--mono);font-weight:700;letter-spacing:.08em;text-transform:uppercase;}
+.ev-badge.proximo{background:rgba(255,200,64,.12);color:#ffc840;border:1px solid rgba(255,200,64,.3);}
+.ev-badge.live{background:rgba(255,64,96,.12);color:#ff4060;border:1px solid rgba(255,64,96,.35);}
+.ev-badge.finalizado{background:rgba(255,255,255,.05);color:var(--muted);border:1px solid rgba(255,255,255,.1);}
+.ev-live-dot{width:7px;height:7px;border-radius:50%;background:#ff4060;animation:blink 1s infinite;}
+.ev-join-btn{display:inline-flex;align-items:center;gap:8px;background:var(--accent);color:#000;border:none;padding:11px 22px;border-radius:10px;font-weight:700;font-size:13px;cursor:pointer;text-decoration:none;transition:all .2s;}
+.ev-join-btn:hover{background:#00ffb3;transform:translateY(-1px);}
+.ev-join-btn.finished{background:rgba(255,255,255,.08);color:var(--muted);cursor:default;}
+.ev-join-btn.finished:hover{background:rgba(255,255,255,.08);transform:none;}
+
 /* Colores en modo light */
 body.light .folder-item.active{background:rgba(0,122,69,.08)!important;border-color:rgba(0,122,69,.25)!important;}
 body.light #notes-sidebar{background:#ffffff!important;border-color:#d8e8d8!important;}
@@ -700,6 +716,7 @@ body.light .note-card.color-orange:hover{border-color:rgba(210,110,0,.6)!importa
   <div class="tab" onclick="goTab('diario')">Diario de Trades</div>
   <div class="tab" onclick="goTab('analisis')">Analisis</div>
   <div class="tab" onclick="goTab('notas')">📝 Notas</div>
+  <div class="tab" onclick="goTab('eventos')">📅 Eventos</div>
 </div>
 
 <div class="content">
@@ -934,6 +951,72 @@ body.light .note-card.color-orange:hover{border-color:rgba(210,110,0,.6)!importa
       <div style="display:flex;gap:10px;">
         <button class="bf2" onclick="closeNoteEditor()" style="width:auto;padding:10px 18px;margin-top:0;">Cancelar</button>
         <button class="bf" onclick="saveNote()" style="width:auto;padding:10px 22px;margin-top:0;">Guardar Nota</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+  <!-- PANE EVENTOS -->
+  <div class="pane" id="pane-eventos">
+    <!-- Header admin -->
+    <div id="ev-admin-bar" style="display:none;margin-bottom:20px;">
+      <button onclick="openNewEventoModal()" style="background:var(--accent);color:#000;border:none;padding:10px 20px;border-radius:10px;font-weight:700;font-size:13px;cursor:pointer;display:flex;align-items:center;gap:8px;transition:all .2s;" onmouseover="this.style.background='#00ffb3'" onmouseout="this.style.background='var(--accent)'">
+        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+        Publicar Evento
+      </button>
+    </div>
+
+    <!-- Lista de eventos -->
+    <div id="ev-list" style="display:flex;flex-direction:column;gap:16px;max-width:780px;">
+      <div style="text-align:center;padding:60px 20px;color:var(--muted);">
+        <div style="font-size:48px;margin-bottom:16px;opacity:.4;">📅</div>
+        <div style="font-size:14px;font-weight:600;color:var(--muted2);">Cargando eventos...</div>
+      </div>
+    </div>
+  </div>
+
+<!-- MODAL NUEVO/EDITAR EVENTO (solo admin) -->
+<div class="ov" id="ov-evento">
+  <div class="modal" style="width:560px;max-width:96vw;">
+    <div class="mhdr">
+      <span class="mtitle" id="ev-modal-title">📅 Nuevo Evento</span>
+      <button class="mx" onclick="closeOv('evento')">×</button>
+    </div>
+    <div class="fg">
+      <label class="fl">Título del evento</label>
+      <input class="fi" id="ev-titulo" type="text" placeholder="Ej: Operativas en Vivo — Zoom Gratis" maxlength="80">
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+      <div class="fg">
+        <label class="fl">Fecha</label>
+        <input class="fi" id="ev-fecha" type="date">
+      </div>
+      <div class="fg">
+        <label class="fl">Hora</label>
+        <input class="fi" id="ev-hora" type="time">
+      </div>
+    </div>
+    <div class="fg">
+      <label class="fl">Descripción</label>
+      <textarea class="fi" id="ev-desc" placeholder="Describe el evento, qué verán, qué necesitan, etc..." style="min-height:100px;resize:vertical;font-family:var(--font);font-size:13px;line-height:1.6;"></textarea>
+    </div>
+    <div class="fg">
+      <label class="fl">Link (Zoom, Meet, etc.)</label>
+      <input class="fi" id="ev-link" type="url" placeholder="https://zoom.us/j/...">
+    </div>
+    <div class="fg">
+      <label class="fl">Estado</label>
+      <select class="fi" id="ev-estado" style="font-family:var(--font);">
+        <option value="proximo">🟡 Próximo</option>
+        <option value="live">🔴 En Vivo</option>
+        <option value="finalizado">⚫ Finalizado</option>
+      </select>
+    </div>
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-top:6px;">
+      <button id="ev-btn-delete" onclick="deleteEvento()" style="display:none;background:none;border:1px solid rgba(255,64,96,.3);color:var(--red);padding:8px 14px;border-radius:8px;font-size:12px;cursor:pointer;font-family:var(--font);font-weight:600;transition:all .2s;" onmouseover="this.style.background='rgba(255,64,96,.1)'" onmouseout="this.style.background='none'">🗑 Eliminar</button>
+      <div style="display:flex;gap:10px;margin-left:auto;">
+        <button class="bf2" onclick="closeOv('evento')" style="width:auto;padding:10px 18px;margin-top:0;">Cancelar</button>
+        <button class="bf" onclick="saveEvento()" style="width:auto;padding:10px 22px;margin-top:0;">Publicar</button>
       </div>
     </div>
   </div>
@@ -1239,7 +1322,7 @@ window._init = function() {
 // TABS
 function goTab(name) {
   document.querySelectorAll('.tab').forEach((t,i)=>{
-    t.classList.toggle('active',['dashboard','cuentas','diario','analisis','notas'][i]===name);
+    t.classList.toggle('active',['dashboard','cuentas','diario','analisis','notas','eventos'][i]===name);
   });
   document.querySelectorAll('.pane').forEach(p=>p.classList.remove('active'));
   document.getElementById('pane-'+name).classList.add('active');
@@ -1248,6 +1331,7 @@ function goTab(name) {
   else if(name==='diario') renderDiario();
   else if(name==='analisis') renderAnalisis();
   else if(name==='notas') renderFolders();
+  else if(name==='eventos') renderEventos();
 }
 
 // THEME - 3 modos: dark / gray / light
@@ -2745,6 +2829,166 @@ function enableFolderDrag() {
     });
   });
 }
+</script>
+
+<script type="module">
+// ── MÓDULO DE EVENTOS ──
+import { getFirestore, collection, addDoc, getDocs, doc, updateDoc, deleteDoc, query, orderBy } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+import { getApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+
+const ADMIN_UID = 'yeHemG95QUaAr15WAiSYYd5y6Gs1';
+const db3 = getFirestore(getApp());
+let _editingEventoId = null;
+
+function isAdmin() {
+  return window._user && window._user.uid === ADMIN_UID;
+}
+
+// ── RENDER EVENTOS ──
+window.renderEventos = async function() {
+  const adminBar = document.getElementById('ev-admin-bar');
+  if (adminBar) adminBar.style.display = isAdmin() ? 'block' : 'none';
+
+  const list = document.getElementById('ev-list');
+  if (!list) return;
+  list.innerHTML = `<div style="text-align:center;padding:40px;color:var(--muted);font-family:var(--mono);font-size:12px;">Cargando...</div>`;
+
+  try {
+    const q = query(collection(db3, 'eventos'), orderBy('creadoEn', 'desc'));
+    const snap = await getDocs(q);
+    const eventos = [];
+    snap.forEach(d => eventos.push({ id: d.id, ...d.data() }));
+
+    if (!eventos.length) {
+      list.innerHTML = `
+        <div style="text-align:center;padding:60px 20px;color:var(--muted);">
+          <div style="font-size:48px;margin-bottom:16px;opacity:.4;">📅</div>
+          <div style="font-size:14px;font-weight:600;color:var(--muted2);margin-bottom:6px;">No hay eventos publicados aún</div>
+          <div style="font-size:12px;font-family:var(--mono);opacity:.6;">Vuelve pronto para ver los próximos eventos en vivo</div>
+        </div>`;
+      return;
+    }
+
+    list.innerHTML = eventos.map(ev => renderEventoCard(ev)).join('');
+  } catch(e) {
+    list.innerHTML = `<div style="text-align:center;padding:40px;color:var(--red);font-family:var(--mono);font-size:12px;">Error al cargar eventos</div>`;
+  }
+};
+
+function renderEventoCard(ev) {
+  const badgeMap = {
+    proximo: '<span class="ev-badge proximo">🟡 Próximo</span>',
+    live:    '<span class="ev-badge live"><span class="ev-live-dot"></span> En Vivo</span>',
+    finalizado: '<span class="ev-badge finalizado">⚫ Finalizado</span>',
+  };
+  const badge = badgeMap[ev.estado] || badgeMap.proximo;
+
+  // Formatear fecha
+  let fechaStr = '';
+  if (ev.fecha) {
+    const [y,m,d] = ev.fecha.split('-');
+    const meses = ['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'];
+    fechaStr = `${parseInt(d)} ${meses[parseInt(m)-1]} ${y}`;
+  }
+  const horaStr = ev.hora || '';
+
+  const adminBtns = isAdmin() ? `
+    <div style="display:flex;gap:8px;">
+      <button onclick="editEvento('${ev.id}')" style="background:none;border:1px solid rgba(255,255,255,.15);color:var(--muted2);padding:6px 12px;border-radius:7px;font-size:11px;font-family:var(--mono);cursor:pointer;transition:all .2s;" onmouseover="this.style.borderColor='rgba(0,255,136,.4)';this.style.color='var(--accent)'" onmouseout="this.style.borderColor='rgba(255,255,255,.15)';this.style.color='var(--muted2)'">✏️ Editar</button>
+    </div>` : '';
+
+  const linkBtn = ev.link && ev.estado !== 'finalizado'
+    ? `<a href="${ev.link}" target="_blank" class="ev-join-btn">
+        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2" ry="2"/></svg>
+        ${ev.estado === 'live' ? '¡Unirse Ahora!' : 'Ver Link'}
+      </a>`
+    : ev.estado === 'finalizado' && ev.link
+    ? `<span class="ev-join-btn finished">Evento finalizado</span>`
+    : '';
+
+  return `
+    <div class="ev-card ${ev.estado === 'live' ? 'ev-live' : ev.estado === 'finalizado' ? 'ev-finalizado' : ''}">
+      <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:12px;flex-wrap:wrap;">
+        <div style="display:flex;flex-direction:column;gap:10px;flex:1;">
+          <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
+            ${badge}
+            ${fechaStr ? `<span style="font-family:var(--mono);font-size:11px;color:var(--muted);">📅 ${fechaStr}${horaStr ? ' · ⏰ ' + horaStr : ''}</span>` : ''}
+          </div>
+          <div style="font-size:18px;font-weight:800;color:var(--text);line-height:1.3;">${ev.titulo || 'Sin título'}</div>
+          ${ev.desc ? `<div style="font-size:13px;color:var(--muted);line-height:1.65;max-width:560px;">${ev.desc.replace(/\n/g,'<br>')}</div>` : ''}
+        </div>
+        ${adminBtns}
+      </div>
+      ${linkBtn ? `<div style="margin-top:18px;">${linkBtn}</div>` : ''}
+    </div>`;
+}
+
+// ── MODAL ──
+window.openNewEventoModal = function() {
+  _editingEventoId = null;
+  document.getElementById('ev-modal-title').textContent = '📅 Nuevo Evento';
+  document.getElementById('ev-titulo').value = '';
+  document.getElementById('ev-fecha').value = '';
+  document.getElementById('ev-hora').value = '';
+  document.getElementById('ev-desc').value = '';
+  document.getElementById('ev-link').value = '';
+  document.getElementById('ev-estado').value = 'proximo';
+  document.getElementById('ev-btn-delete').style.display = 'none';
+  openOv('evento');
+  setTimeout(() => document.getElementById('ev-titulo').focus(), 100);
+};
+
+window.editEvento = async function(id) {
+  try {
+    const snap = await getDocs(collection(db3, 'eventos'));
+    let ev = null;
+    snap.forEach(d => { if (d.id === id) ev = { id: d.id, ...d.data() }; });
+    if (!ev) return;
+    _editingEventoId = id;
+    document.getElementById('ev-modal-title').textContent = '✏️ Editar Evento';
+    document.getElementById('ev-titulo').value = ev.titulo || '';
+    document.getElementById('ev-fecha').value = ev.fecha || '';
+    document.getElementById('ev-hora').value = ev.hora || '';
+    document.getElementById('ev-desc').value = ev.desc || '';
+    document.getElementById('ev-link').value = ev.link || '';
+    document.getElementById('ev-estado').value = ev.estado || 'proximo';
+    document.getElementById('ev-btn-delete').style.display = 'block';
+    openOv('evento');
+  } catch(e) { console.error(e); }
+};
+
+window.saveEvento = async function() {
+  if (!isAdmin()) return;
+  const titulo = document.getElementById('ev-titulo').value.trim();
+  if (!titulo) { document.getElementById('ev-titulo').focus(); return; }
+  const data = {
+    titulo,
+    fecha:  document.getElementById('ev-fecha').value,
+    hora:   document.getElementById('ev-hora').value,
+    desc:   document.getElementById('ev-desc').value.trim(),
+    link:   document.getElementById('ev-link').value.trim(),
+    estado: document.getElementById('ev-estado').value,
+  };
+  try {
+    if (_editingEventoId) {
+      await updateDoc(doc(db3, 'eventos', _editingEventoId), data);
+    } else {
+      await addDoc(collection(db3, 'eventos'), { ...data, creadoEn: Date.now() });
+    }
+    closeOv('evento');
+    renderEventos();
+  } catch(e) { alert('Error al guardar: ' + e.message); }
+};
+
+window.deleteEvento = async function() {
+  if (!isAdmin() || !_editingEventoId) return;
+  if (!confirm('¿Eliminar este evento?')) return;
+  try {
+    await deleteDoc(doc(db3, 'eventos', _editingEventoId));
+    closeOv('evento');
+    renderEventos();
+  } catch(e) { alert('Error al eliminar: ' + e.message); }
+};
 </script>
 
     <div onclick="openWhatsApp()" style="background:linear-gradient(135deg,#0e1f14,#0a1a10);border:1px solid rgba(0,229,160,.3);border-radius:16px 0 0 16px;border-right:none;padding:14px 18px;display:flex;align-items:center;gap:14px;cursor:pointer;max-width:270px;transition:all .2s">
