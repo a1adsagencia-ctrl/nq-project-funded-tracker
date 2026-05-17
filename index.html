@@ -607,13 +607,11 @@ body.gray .note-card.color-purple:hover{border-color:rgba(168,85,247,.6)!importa
 body.gray .note-card.color-orange{background:#2a1800!important;border-color:rgba(255,140,0,.35)!important;}
 body.gray .note-card.color-orange:hover{border-color:rgba(255,140,0,.6)!important;}
 
-/* Filtros dashboard */
-.d-filter-btn.active{background:rgba(0,255,136,.12)!important;border-color:var(--accent)!important;color:var(--accent)!important;}
-.d-filter-btn:hover:not(.active){border-color:rgba(0,255,136,.3)!important;color:var(--muted2)!important;}
-body.gray .d-filter-btn{border-color:rgba(255,255,255,.15)!important;}
-body.gray .d-filter-btn.active{border-color:var(--accent)!important;background:rgba(0,229,122,.1)!important;}
-body.light .d-filter-btn{border-color:#ccc!important;color:#666!important;}
-body.light .d-filter-btn.active{border-color:var(--accent)!important;background:rgba(0,122,69,.08)!important;color:var(--accent)!important;}
+/* Filtro dropdown dashboard */
+.d-fopt:hover:not(.active){background:rgba(0,255,136,.05)!important;color:var(--accent)!important;}
+body.light #d-filter-dropdown{background:#ffffff!important;border-color:#d0ddd0!important;}
+body.light .d-fopt{color:#333!important;}
+body.light .d-fopt.active{color:var(--accent)!important;}
 
 /* Colores en modo light */
 body.light .folder-item.active{background:rgba(0,122,69,.08)!important;border-color:rgba(0,122,69,.25)!important;}
@@ -706,18 +704,40 @@ body.light .note-card.color-orange:hover{border-color:rgba(210,110,0,.6)!importa
 
 <div class="content">
   <div class="pane active" id="pane-dashboard">
-    <!-- FILTRO DE DÍAS -->
-    <div style="display:flex;align-items:center;gap:8px;margin-bottom:14px;flex-wrap:wrap;">
-      <span style="font-size:11px;font-family:var(--mono);color:var(--muted);letter-spacing:.08em;">FILTRAR:</span>
-      <div id="d-filter-btns" style="display:flex;gap:6px;flex-wrap:wrap;">
-        <button class="d-filter-btn active" data-days="0" onclick="setDashFilter(0)" style="font-size:11px;font-family:var(--mono);padding:5px 12px;border-radius:20px;border:1px solid var(--accent);background:rgba(0,255,136,.12);color:var(--accent);cursor:pointer;transition:all .2s;">Todo</button>
-        <button class="d-filter-btn" data-days="7" onclick="setDashFilter(7)" style="font-size:11px;font-family:var(--mono);padding:5px 12px;border-radius:20px;border:1px solid var(--border);background:none;color:var(--muted);cursor:pointer;transition:all .2s;">7 días</button>
-        <button class="d-filter-btn" data-days="14" onclick="setDashFilter(14)" style="font-size:11px;font-family:var(--mono);padding:5px 12px;border-radius:20px;border:1px solid var(--border);background:none;color:var(--muted);cursor:pointer;transition:all .2s;">14 días</button>
-        <button class="d-filter-btn" data-days="30" onclick="setDashFilter(30)" style="font-size:11px;font-family:var(--mono);padding:5px 12px;border-radius:20px;border:1px solid var(--border);background:none;color:var(--muted);cursor:pointer;transition:all .2s;">30 días</button>
-        <button class="d-filter-btn" data-days="90" onclick="setDashFilter(90)" style="font-size:11px;font-family:var(--mono);padding:5px 12px;border-radius:20px;border:1px solid var(--border);background:none;color:var(--muted);cursor:pointer;transition:all .2s;">90 días</button>
-        <button class="d-filter-btn" data-days="180" onclick="setDashFilter(180)" style="font-size:11px;font-family:var(--mono);padding:5px 12px;border-radius:20px;border:1px solid var(--border);background:none;color:var(--muted);cursor:pointer;transition:all .2s;">6 meses</button>
+    <!-- FILTRO DROPDOWN -->
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px;position:relative;">
+      <button id="d-filter-trigger" onclick="toggleFilterDropdown()" style="display:flex;align-items:center;gap:8px;background:var(--s2);border:1px solid var(--border);color:var(--text);padding:8px 14px;border-radius:10px;cursor:pointer;font-family:var(--mono);font-size:11px;transition:all .2s;white-space:nowrap;" onmouseover="this.style.borderColor='rgba(0,255,136,.35)'" onmouseout="this.style.borderColor='var(--border)'">
+        <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+        <span id="d-filter-label">Todo el período</span>
+        <svg xmlns="http://www.w3.org/2000/svg" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" id="d-filter-chevron"><polyline points="6 9 12 15 18 9"/></svg>
+      </button>
+
+      <!-- Dropdown -->
+      <div id="d-filter-dropdown" style="display:none;position:absolute;top:44px;left:0;background:var(--s1);border:1px solid var(--border2);border-radius:12px;padding:8px;z-index:100;min-width:220px;box-shadow:0 8px 32px rgba(0,0,0,.5);">
+        <div style="font-size:10px;font-family:var(--mono);color:var(--muted);letter-spacing:.1em;padding:4px 8px 8px;text-transform:uppercase;">Rangos rápidos</div>
+        <div id="d-filter-options" style="display:flex;flex-direction:column;gap:2px;">
+          <div class="d-fopt active" data-days="0" onclick="setDashFilter(0,this,'Todo el período')" style="padding:8px 12px;border-radius:8px;cursor:pointer;font-family:var(--mono);font-size:12px;color:var(--accent);background:rgba(0,255,136,.08);transition:all .15s;">✓ Todo el período</div>
+          <div class="d-fopt" data-days="7" onclick="setDashFilter(7,this,'Últimos 7 días')" style="padding:8px 12px;border-radius:8px;cursor:pointer;font-family:var(--mono);font-size:12px;color:var(--text);transition:all .15s;">Últimos 7 días</div>
+          <div class="d-fopt" data-days="14" onclick="setDashFilter(14,this,'Últimos 14 días')" style="padding:8px 12px;border-radius:8px;cursor:pointer;font-family:var(--mono);font-size:12px;color:var(--text);transition:all .15s;">Últimos 14 días</div>
+          <div class="d-fopt" data-days="30" onclick="setDashFilter(30,this,'Últimos 30 días')" style="padding:8px 12px;border-radius:8px;cursor:pointer;font-family:var(--mono);font-size:12px;color:var(--text);transition:all .15s;">Últimos 30 días</div>
+          <div class="d-fopt" data-days="90" onclick="setDashFilter(90,this,'Últimos 90 días')" style="padding:8px 12px;border-radius:8px;cursor:pointer;font-family:var(--mono);font-size:12px;color:var(--text);transition:all .15s;">Últimos 90 días</div>
+          <div class="d-fopt" data-days="180" onclick="setDashFilter(180,this,'Últimos 6 meses')" style="padding:8px 12px;border-radius:8px;cursor:pointer;font-family:var(--mono);font-size:12px;color:var(--text);transition:all .15s;">Últimos 6 meses</div>
+          <div class="d-fopt" data-days="365" onclick="setDashFilter(365,this,'Último año')" style="padding:8px 12px;border-radius:8px;cursor:pointer;font-family:var(--mono);font-size:12px;color:var(--text);transition:all .15s;">Último año</div>
+        </div>
+        <div style="border-top:1px solid var(--border);margin:8px 0 4px;"></div>
+        <div style="font-size:10px;font-family:var(--mono);color:var(--muted);letter-spacing:.1em;padding:4px 8px 8px;text-transform:uppercase;">Rango personalizado</div>
+        <div style="display:flex;flex-direction:column;gap:8px;padding:0 4px 4px;">
+          <div style="display:flex;align-items:center;gap:8px;">
+            <label style="font-size:11px;font-family:var(--mono);color:var(--muted);width:32px;">Desde</label>
+            <input type="date" id="d-filter-from" class="fi" style="flex:1;padding:6px 8px;font-size:11px;font-family:var(--mono);">
+          </div>
+          <div style="display:flex;align-items:center;gap:8px;">
+            <label style="font-size:11px;font-family:var(--mono);color:var(--muted);width:32px;">Hasta</label>
+            <input type="date" id="d-filter-to" class="fi" style="flex:1;padding:6px 8px;font-size:11px;font-family:var(--mono);">
+          </div>
+          <button onclick="applyCustomFilter()" style="background:var(--accent);color:#000;border:none;padding:8px;border-radius:8px;font-weight:700;font-size:11px;font-family:var(--mono);cursor:pointer;transition:all .2s;width:100%;" onmouseover="this.style.background='#00ffb3'" onmouseout="this.style.background='var(--accent)'">Aplicar rango</button>
+        </div>
       </div>
-      <span id="d-filter-label" style="font-size:10px;font-family:var(--mono);color:var(--muted);margin-left:4px;"></span>
     </div>
 
     <div class="sg" id="d-stats"></div>
@@ -1062,24 +1082,85 @@ let accounts = [];
 let editAcctId = null, editRetiros = [], editTradeId = null, editTradeAcctId = null;
 let calDate = new Date();
 let chCap = null, chDist = null, chWeekday = null, chHour = null;
-let _dashFilterDays = 0; // 0 = todo
+let _dashFilterDays = 0;
+let _dashFilterFrom = null;
+let _dashFilterTo = null;
 
-function setDashFilter(days) {
+function toggleFilterDropdown() {
+  const dd = document.getElementById('d-filter-dropdown');
+  const ch = document.getElementById('d-filter-chevron');
+  const open = dd.style.display === 'block';
+  dd.style.display = open ? 'none' : 'block';
+  ch.style.transform = open ? '' : 'rotate(180deg)';
+}
+
+function closeFilterDropdown() {
+  const dd = document.getElementById('d-filter-dropdown');
+  const ch = document.getElementById('d-filter-chevron');
+  if (dd) { dd.style.display = 'none'; }
+  if (ch) { ch.style.transform = ''; }
+}
+
+// Cerrar dropdown al hacer click afuera
+document.addEventListener('click', function(e) {
+  const trigger = document.getElementById('d-filter-trigger');
+  const dd = document.getElementById('d-filter-dropdown');
+  if (dd && trigger && !trigger.contains(e.target) && !dd.contains(e.target)) {
+    closeFilterDropdown();
+  }
+});
+
+function setDashFilter(days, el, label) {
   _dashFilterDays = days;
-  document.querySelectorAll('.d-filter-btn').forEach(b => {
-    const active = parseInt(b.dataset.days) === days;
-    b.classList.toggle('active', active);
-    b.style.background = active ? 'rgba(0,255,136,.12)' : 'none';
-    b.style.borderColor = active ? 'var(--accent)' : 'var(--border)';
-    b.style.color = active ? 'var(--accent)' : 'var(--muted)';
+  _dashFilterFrom = null;
+  _dashFilterTo = null;
+  if (label) {
+    const lbl = document.getElementById('d-filter-label');
+    if (lbl) lbl.textContent = label;
+  }
+  // Actualizar opciones activas
+  document.querySelectorAll('.d-fopt').forEach(b => {
+    const isActive = parseInt(b.dataset.days) === days;
+    b.classList.toggle('active', isActive);
+    b.style.color = isActive ? 'var(--accent)' : 'var(--text)';
+    b.style.background = isActive ? 'rgba(0,255,136,.08)' : 'none';
+    b.textContent = isActive ? ('✓ ' + b.textContent.replace('✓ ','')) : b.textContent.replace('✓ ','');
   });
+  closeFilterDropdown();
+  renderDashboard();
+}
+
+function applyCustomFilter() {
+  const from = document.getElementById('d-filter-from').value;
+  const to   = document.getElementById('d-filter-to').value;
+  if (!from && !to) return;
+  _dashFilterDays = -1; // señal de rango personalizado
+  _dashFilterFrom = from || null;
+  _dashFilterTo   = to   || null;
   const lbl = document.getElementById('d-filter-label');
-  if (lbl) lbl.textContent = days > 0 ? ('— últimos ' + days + ' días') : '';
+  if (lbl) lbl.textContent = (from||'…') + ' → ' + (to||'hoy');
+  // Quitar activo de opciones predefinidas
+  document.querySelectorAll('.d-fopt').forEach(b => {
+    b.classList.remove('active');
+    b.style.color = 'var(--text)';
+    b.style.background = 'none';
+    b.textContent = b.textContent.replace('✓ ','');
+  });
+  closeFilterDropdown();
   renderDashboard();
 }
 
 function getFilteredTrades() {
   const tr = allTrades();
+  if (_dashFilterDays === -1) {
+    // Rango personalizado
+    return tr.filter(t => {
+      if (!t.fecha) return false;
+      if (_dashFilterFrom && t.fecha < _dashFilterFrom) return false;
+      if (_dashFilterTo   && t.fecha > _dashFilterTo)   return false;
+      return true;
+    });
+  }
   if (!_dashFilterDays) return tr;
   const cutoff = new Date();
   cutoff.setDate(cutoff.getDate() - _dashFilterDays);
@@ -1271,7 +1352,7 @@ function renderDashboard() {
     else dayData[d].bes++;
     dayData[d].pnl += (t.pnl||0);
   });
-  const dayColors = dayData.map(d => d.pnl > 0 ? 'rgba(0,229,160,.7)' : d.pnl < 0 ? 'rgba(255,64,96,.7)' : 'rgba(74,106,138,.5)');
+  const dayColors = dayData.map(d => d.pnl > 0 ? '#00e5a0' : d.pnl < 0 ? '#ff4060' : '#4a6a8a');
   if(chWeekday) chWeekday.destroy();
   chWeekday = new Chart(document.getElementById('ch-weekday').getContext('2d'), {
     type:'bar',
@@ -1292,8 +1373,8 @@ function renderDashboard() {
         tooltip:{callbacks:{label:ctx=>' PnL: $'+ctx.parsed.y.toFixed(2)+' | W:'+dayData[ctx.dataIndex].wins+' L:'+dayData[ctx.dataIndex].losses}}
       },
       scales:{
-        x:{ticks:{color:'#8aaaca',font:{family:'Roboto Mono',size:10}},grid:{display:false}},
-        y:{ticks:{color:'#8aaaca',font:{family:'Roboto Mono',size:10}},grid:{color:'#1a2535'}}
+        x:{ticks:{color:'#8aaaca',font:{family:'Roboto Mono',size:10}},grid:{display:false},border:{display:false}},
+        y:{ticks:{color:'#8aaaca',font:{family:'Roboto Mono',size:10}},grid:{display:false},border:{display:false}}
       }
     }
   });
@@ -1309,10 +1390,9 @@ function renderDashboard() {
     else hourData[h].bes++;
     hourData[h].pnl += (t.pnl||0);
   });
-  // Solo mostrar horas con trades
   const activeHours = hourData.map((d,i)=>({...d,h:i})).filter(d=>d.wins+d.losses+d.bes>0);
   const hourLabels = activeHours.map(d=>d.h.toString().padStart(2,'0')+':00');
-  const hourColors = activeHours.map(d => d.pnl > 0 ? 'rgba(0,229,160,.7)' : d.pnl < 0 ? 'rgba(255,64,96,.7)' : 'rgba(74,106,138,.5)');
+  const hourColors = activeHours.map(d => d.pnl > 0 ? '#00e5a0' : d.pnl < 0 ? '#ff4060' : '#4a6a8a');
   if(chHour) chHour.destroy();
   chHour = new Chart(document.getElementById('ch-hour').getContext('2d'), {
     type:'bar',
@@ -1321,7 +1401,7 @@ function renderDashboard() {
       datasets:[{
         label:'PnL',
         data: activeHours.length ? activeHours.map(d=>d.pnl) : [0],
-        backgroundColor: hourColors.length ? hourColors : ['rgba(74,106,138,.3)'],
+        backgroundColor: hourColors.length ? hourColors : ['#4a6a8a'],
         borderColor:'transparent',
         borderRadius:6,
       }]
@@ -1333,8 +1413,8 @@ function renderDashboard() {
         tooltip:{callbacks:{label:ctx=>' PnL: $'+ctx.parsed.y.toFixed(2)+' | W:'+activeHours[ctx.dataIndex]?.wins+' L:'+activeHours[ctx.dataIndex]?.losses}}
       },
       scales:{
-        x:{ticks:{color:'#8aaaca',font:{family:'Roboto Mono',size:9},maxRotation:45},grid:{display:false}},
-        y:{ticks:{color:'#8aaaca',font:{family:'Roboto Mono',size:10}},grid:{color:'#1a2535'}}
+        x:{ticks:{color:'#8aaaca',font:{family:'Roboto Mono',size:9},maxRotation:45},grid:{display:false},border:{display:false}},
+        y:{ticks:{color:'#8aaaca',font:{family:'Roboto Mono',size:10}},grid:{display:false},border:{display:false}}
       }
     }
   });
