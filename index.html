@@ -607,6 +607,14 @@ body.gray .note-card.color-purple:hover{border-color:rgba(168,85,247,.6)!importa
 body.gray .note-card.color-orange{background:#2a1800!important;border-color:rgba(255,140,0,.35)!important;}
 body.gray .note-card.color-orange:hover{border-color:rgba(255,140,0,.6)!important;}
 
+/* Filtros dashboard */
+.d-filter-btn.active{background:rgba(0,255,136,.12)!important;border-color:var(--accent)!important;color:var(--accent)!important;}
+.d-filter-btn:hover:not(.active){border-color:rgba(0,255,136,.3)!important;color:var(--muted2)!important;}
+body.gray .d-filter-btn{border-color:rgba(255,255,255,.15)!important;}
+body.gray .d-filter-btn.active{border-color:var(--accent)!important;background:rgba(0,229,122,.1)!important;}
+body.light .d-filter-btn{border-color:#ccc!important;color:#666!important;}
+body.light .d-filter-btn.active{border-color:var(--accent)!important;background:rgba(0,122,69,.08)!important;color:var(--accent)!important;}
+
 /* Colores en modo light */
 body.light .folder-item.active{background:rgba(0,122,69,.08)!important;border-color:rgba(0,122,69,.25)!important;}
 body.light #notes-sidebar{background:#ffffff!important;border-color:#d8e8d8!important;}
@@ -698,10 +706,28 @@ body.light .note-card.color-orange:hover{border-color:rgba(210,110,0,.6)!importa
 
 <div class="content">
   <div class="pane active" id="pane-dashboard">
+    <!-- FILTRO DE DÍAS -->
+    <div style="display:flex;align-items:center;gap:8px;margin-bottom:14px;flex-wrap:wrap;">
+      <span style="font-size:11px;font-family:var(--mono);color:var(--muted);letter-spacing:.08em;">FILTRAR:</span>
+      <div id="d-filter-btns" style="display:flex;gap:6px;flex-wrap:wrap;">
+        <button class="d-filter-btn active" data-days="0" onclick="setDashFilter(0)" style="font-size:11px;font-family:var(--mono);padding:5px 12px;border-radius:20px;border:1px solid var(--accent);background:rgba(0,255,136,.12);color:var(--accent);cursor:pointer;transition:all .2s;">Todo</button>
+        <button class="d-filter-btn" data-days="7" onclick="setDashFilter(7)" style="font-size:11px;font-family:var(--mono);padding:5px 12px;border-radius:20px;border:1px solid var(--border);background:none;color:var(--muted);cursor:pointer;transition:all .2s;">7 días</button>
+        <button class="d-filter-btn" data-days="14" onclick="setDashFilter(14)" style="font-size:11px;font-family:var(--mono);padding:5px 12px;border-radius:20px;border:1px solid var(--border);background:none;color:var(--muted);cursor:pointer;transition:all .2s;">14 días</button>
+        <button class="d-filter-btn" data-days="30" onclick="setDashFilter(30)" style="font-size:11px;font-family:var(--mono);padding:5px 12px;border-radius:20px;border:1px solid var(--border);background:none;color:var(--muted);cursor:pointer;transition:all .2s;">30 días</button>
+        <button class="d-filter-btn" data-days="90" onclick="setDashFilter(90)" style="font-size:11px;font-family:var(--mono);padding:5px 12px;border-radius:20px;border:1px solid var(--border);background:none;color:var(--muted);cursor:pointer;transition:all .2s;">90 días</button>
+        <button class="d-filter-btn" data-days="180" onclick="setDashFilter(180)" style="font-size:11px;font-family:var(--mono);padding:5px 12px;border-radius:20px;border:1px solid var(--border);background:none;color:var(--muted);cursor:pointer;transition:all .2s;">6 meses</button>
+      </div>
+      <span id="d-filter-label" style="font-size:10px;font-family:var(--mono);color:var(--muted);margin-left:4px;"></span>
+    </div>
+
     <div class="sg" id="d-stats"></div>
     <div class="g2">
       <div class="card"><div class="ct">Curva de Capital</div><div class="ch"><canvas id="ch-capital"></canvas></div></div>
       <div class="card"><div class="ct">Distribucion W/L/BE</div><div class="ch"><canvas id="ch-dist"></canvas></div></div>
+    </div>
+    <div class="g2">
+      <div class="card"><div class="ct">Mejor Día de la Semana</div><div class="ch" style="height:200px"><canvas id="ch-weekday"></canvas></div></div>
+      <div class="card"><div class="ct">Mejor Horario</div><div class="ch" style="height:200px"><canvas id="ch-hour"></canvas></div></div>
     </div>
     <div class="g3">
       <div class="card"><div class="ct">Cuentas para Recuperar Inversion</div><div id="d-recovery"></div></div>
@@ -1035,7 +1061,31 @@ body.light .note-card.color-orange:hover{border-color:rgba(210,110,0,.6)!importa
 let accounts = [];
 let editAcctId = null, editRetiros = [], editTradeId = null, editTradeAcctId = null;
 let calDate = new Date();
-let chCap = null, chDist = null;
+let chCap = null, chDist = null, chWeekday = null, chHour = null;
+let _dashFilterDays = 0; // 0 = todo
+
+function setDashFilter(days) {
+  _dashFilterDays = days;
+  document.querySelectorAll('.d-filter-btn').forEach(b => {
+    const active = parseInt(b.dataset.days) === days;
+    b.classList.toggle('active', active);
+    b.style.background = active ? 'rgba(0,255,136,.12)' : 'none';
+    b.style.borderColor = active ? 'var(--accent)' : 'var(--border)';
+    b.style.color = active ? 'var(--accent)' : 'var(--muted)';
+  });
+  const lbl = document.getElementById('d-filter-label');
+  if (lbl) lbl.textContent = days > 0 ? ('— últimos ' + days + ' días') : '';
+  renderDashboard();
+}
+
+function getFilteredTrades() {
+  const tr = allTrades();
+  if (!_dashFilterDays) return tr;
+  const cutoff = new Date();
+  cutoff.setDate(cutoff.getDate() - _dashFilterDays);
+  const cutStr = cutoff.toISOString().slice(0,10);
+  return tr.filter(t => t.fecha && t.fecha >= cutStr);
+}
 let siTimer = null;
 
 const DAYS = ['Dom','Lun','Mar','Mie','Jue','Vie','Sab'];
@@ -1153,6 +1203,7 @@ function streak(trades) {
 
 // DASHBOARD
 function renderDashboard() {
+  const tr = getFilteredTrades();
   const inv=accounts.reduce((s,a)=>s+(a.inversion||0),0);
   const ret=accounts.reduce((s,a)=>s+(a.retiros||[]).reduce((x,r)=>x+r.monto,0),0);
   const neta=ret-inv;
@@ -1162,7 +1213,6 @@ function renderDashboard() {
   const term=pasadas+fallidas;
   const apr=term?pasadas/term*100:0;
   const roi=inv?neta/inv*100:0;
-  const tr=allTrades();
   const wr=winRate(tr);
   document.getElementById('d-stats').innerHTML=[
     ['Total Invertido',fmt(inv),'red'],
@@ -1199,14 +1249,95 @@ function renderDashboard() {
     }, step);
   });
 
+  // Curva de Capital
   const sorted=[...tr].sort((a,b)=>a.fecha<b.fecha?-1:1);
   let cum=0; const pts=sorted.map(t=>{cum+=(t.pnl||0);return {x:t.fecha,y:cum};});
   if(chCap) chCap.destroy();
   chCap=new Chart(document.getElementById('ch-capital').getContext('2d'),{type:'line',data:{labels:pts.map(p=>p.x),datasets:[{data:pts.map(p=>p.y),borderColor:'#00e5a0',backgroundColor:'rgba(0,229,160,.08)',borderWidth:2,pointRadius:0,fill:true,tension:.3}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{display:false},y:{ticks:{color:'#8aaaca',font:{family:'Roboto Mono',size:10}},grid:{color:'#1a2535'}}}}});
 
+  // Distribución W/L/BE
   const wins=tr.filter(t=>t.resultado==='win').length, losses=tr.filter(t=>t.resultado==='loss').length, bes=tr.filter(t=>t.resultado==='be').length;
   if(chDist) chDist.destroy();
   chDist=new Chart(document.getElementById('ch-dist').getContext('2d'),{type:'doughnut',data:{labels:['Win','Loss','BE'],datasets:[{data:[wins,losses,bes],backgroundColor:['rgba(0,229,160,.7)','rgba(255,64,96,.7)','rgba(74,106,138,.5)'],borderColor:'transparent'}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'bottom',labels:{color:'#aabccc',font:{family:'Roboto Mono',size:10},padding:12}}}}});
+
+  // ── MEJOR DÍA DE LA SEMANA ──
+  const dias = ['Dom','Lun','Mar','Mié','Jue','Vie','Sáb'];
+  const dayData = Array(7).fill(null).map(()=>({wins:0,losses:0,bes:0,pnl:0}));
+  tr.forEach(t => {
+    if (!t.fecha) return;
+    const d = new Date(t.fecha + 'T12:00:00').getDay();
+    if (t.resultado==='win') dayData[d].wins++;
+    else if (t.resultado==='loss') dayData[d].losses++;
+    else dayData[d].bes++;
+    dayData[d].pnl += (t.pnl||0);
+  });
+  const dayColors = dayData.map(d => d.pnl > 0 ? 'rgba(0,229,160,.7)' : d.pnl < 0 ? 'rgba(255,64,96,.7)' : 'rgba(74,106,138,.5)');
+  if(chWeekday) chWeekday.destroy();
+  chWeekday = new Chart(document.getElementById('ch-weekday').getContext('2d'), {
+    type:'bar',
+    data:{
+      labels: dias,
+      datasets:[{
+        label:'PnL',
+        data: dayData.map(d=>d.pnl),
+        backgroundColor: dayColors,
+        borderColor: 'transparent',
+        borderRadius: 6,
+      }]
+    },
+    options:{
+      responsive:true, maintainAspectRatio:false,
+      plugins:{
+        legend:{display:false},
+        tooltip:{callbacks:{label:ctx=>' PnL: $'+ctx.parsed.y.toFixed(2)+' | W:'+dayData[ctx.dataIndex].wins+' L:'+dayData[ctx.dataIndex].losses}}
+      },
+      scales:{
+        x:{ticks:{color:'#8aaaca',font:{family:'Roboto Mono',size:10}},grid:{display:false}},
+        y:{ticks:{color:'#8aaaca',font:{family:'Roboto Mono',size:10}},grid:{color:'#1a2535'}}
+      }
+    }
+  });
+
+  // ── MEJOR HORARIO ──
+  const hourData = Array(24).fill(null).map(()=>({wins:0,losses:0,bes:0,pnl:0}));
+  tr.forEach(t => {
+    if (!t.hora) return;
+    const h = parseInt((t.hora||'00:00').split(':')[0]);
+    if (isNaN(h)) return;
+    if (t.resultado==='win') hourData[h].wins++;
+    else if (t.resultado==='loss') hourData[h].losses++;
+    else hourData[h].bes++;
+    hourData[h].pnl += (t.pnl||0);
+  });
+  // Solo mostrar horas con trades
+  const activeHours = hourData.map((d,i)=>({...d,h:i})).filter(d=>d.wins+d.losses+d.bes>0);
+  const hourLabels = activeHours.map(d=>d.h.toString().padStart(2,'0')+':00');
+  const hourColors = activeHours.map(d => d.pnl > 0 ? 'rgba(0,229,160,.7)' : d.pnl < 0 ? 'rgba(255,64,96,.7)' : 'rgba(74,106,138,.5)');
+  if(chHour) chHour.destroy();
+  chHour = new Chart(document.getElementById('ch-hour').getContext('2d'), {
+    type:'bar',
+    data:{
+      labels: hourLabels.length ? hourLabels : ['Sin datos'],
+      datasets:[{
+        label:'PnL',
+        data: activeHours.length ? activeHours.map(d=>d.pnl) : [0],
+        backgroundColor: hourColors.length ? hourColors : ['rgba(74,106,138,.3)'],
+        borderColor:'transparent',
+        borderRadius:6,
+      }]
+    },
+    options:{
+      responsive:true, maintainAspectRatio:false,
+      plugins:{
+        legend:{display:false},
+        tooltip:{callbacks:{label:ctx=>' PnL: $'+ctx.parsed.y.toFixed(2)+' | W:'+activeHours[ctx.dataIndex]?.wins+' L:'+activeHours[ctx.dataIndex]?.losses}}
+      },
+      scales:{
+        x:{ticks:{color:'#8aaaca',font:{family:'Roboto Mono',size:9},maxRotation:45},grid:{display:false}},
+        y:{ticks:{color:'#8aaaca',font:{family:'Roboto Mono',size:10}},grid:{color:'#1a2535'}}
+      }
+    }
+  });
 
   const avgRet=accounts.filter(a=>(a.retiros||[]).length).map(a=>(a.retiros||[]).reduce((s,r)=>s+r.monto,0)).reduce((s,x,_,arr)=>s+x/arr.length,0)||0;
   const needed=avgRet>0?Math.ceil(inv/avgRet):0;
