@@ -1017,8 +1017,21 @@ body.light .note-card.color-orange:hover{border-color:rgba(210,110,0,.6)!importa
       <textarea class="fi" id="ev-desc" placeholder="Describe el evento..." style="min-height:80px;resize:vertical;font-family:var(--font);font-size:13px;line-height:1.6;"></textarea>
     </div>
     <div class="fg">
-      <label class="fl">Imagen del evento (URL — se muestra en la card y al registrarse)</label>
-      <input class="fi" id="ev-post-img" type="url" placeholder="https://... (jpg, png, gif)">
+      <label class="fl">Imagen del evento (se muestra en la card y al registrarse)</label>
+      <div style="display:flex;flex-direction:column;gap:8px;">
+        <!-- Preview -->
+        <div id="ev-img-preview-wrap" style="display:none;position:relative;border-radius:8px;overflow:hidden;max-height:140px;">
+          <img id="ev-img-preview" src="" style="width:100%;max-height:140px;object-fit:cover;display:block;">
+          <button onclick="clearEvImg()" style="position:absolute;top:6px;right:6px;background:rgba(0,0,0,.7);border:none;color:#fff;width:24px;height:24px;border-radius:50%;cursor:pointer;font-size:13px;display:flex;align-items:center;justify-content:center;" title="Quitar imagen">×</button>
+        </div>
+        <!-- Botón subir -->
+        <label style="display:flex;align-items:center;gap:10px;background:rgba(255,255,255,.04);border:1px dashed rgba(0,255,136,.2);border-radius:8px;padding:12px 16px;cursor:pointer;transition:all .2s;font-size:13px;color:var(--muted);" onmouseover="this.style.borderColor='rgba(0,255,136,.4)'" onmouseout="this.style.borderColor='rgba(0,255,136,.2)'">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+          <span id="ev-img-label" style="color:var(--muted2);">Subir imagen desde tu PC</span>
+          <input type="file" id="ev-img-file" accept="image/*" style="display:none;" onchange="previewEvImg(this)">
+        </label>
+        <input class="fi" id="ev-post-img" type="hidden">
+      </div>
     </div>
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
       <div class="fg">
@@ -1085,14 +1098,16 @@ body.light .note-card.color-orange:hover{border-color:rgba(210,110,0,.6)!importa
       <button class="mx" onclick="closeOv('ev-registro')">×</button>
     </div>
     <!-- Imagen del evento -->
-    <div id="ev-reg-img-wrap" style="display:none;margin-bottom:14px;border-radius:10px;overflow:hidden;">
-      <img id="ev-reg-img-el" src="" alt="" style="width:100%;max-height:160px;object-fit:cover;display:block;">
+    <div id="ev-reg-img-wrap" style="display:none;margin:-28px -28px 20px -28px;overflow:hidden;border-radius:14px 14px 0 0;">
+      <img id="ev-reg-img-el" src="" alt="" style="width:100%;max-height:180px;object-fit:cover;display:block;">
     </div>
-    <!-- Info del evento -->
-    <div id="ev-reg-event-info" style="display:none;background:rgba(255,255,255,.04);border:1px solid var(--border);border-radius:10px;padding:12px 14px;margin-bottom:16px;">
-      <div id="ev-reg-event-titulo" style="font-size:14px;font-weight:700;color:var(--text);margin-bottom:4px;"></div>
-      <div id="ev-reg-event-meta" style="font-size:11px;font-family:var(--mono);color:var(--muted);"></div>
-      <div id="ev-reg-event-desc" style="font-size:12px;color:var(--muted);margin-top:6px;line-height:1.6;"></div>
+    <!-- Meta del evento (fecha/hora) -->
+    <div id="ev-reg-event-meta-wrap" style="display:none;margin-bottom:6px;">
+      <span id="ev-reg-event-meta" style="font-size:11px;font-family:var(--mono);color:var(--muted);"></span>
+    </div>
+    <!-- Descripción del evento -->
+    <div id="ev-reg-event-desc-wrap" style="display:none;margin-bottom:14px;padding-bottom:14px;border-bottom:1px solid var(--border);">
+      <div id="ev-reg-event-desc" style="font-size:13px;color:var(--muted);line-height:1.6;"></div>
     </div>
     <p id="ev-reg-desc-txt" style="font-size:13px;color:var(--muted);margin-bottom:14px;line-height:1.6;">Ingresa tu nombre y correo para unirte a la comunidad del evento.</p>
     <input class="ev-reg-input" id="ev-reg-nombre" type="text" placeholder="Tu nombre completo" maxlength="60" oninput="checkEvRegForm()">
@@ -3095,14 +3110,12 @@ window.openEvRegistro = async function(eventoId) {
     imgWrap.style.display = 'none';
   }
 
-  // ── Info del evento (título, fecha, descripción) ──
-  const infoWrap  = document.getElementById('ev-reg-event-info');
-  const infoTit   = document.getElementById('ev-reg-event-titulo');
-  const infoMeta  = document.getElementById('ev-reg-event-meta');
-  const infoDesc  = document.getElementById('ev-reg-event-desc');
-  if (ev && infoWrap) {
-    infoTit.textContent = ev.titulo || '';
-    // Formatear fecha
+  // ── Info del evento (fecha/hora y descripción, SIN repetir título) ──
+  const metaWrap = document.getElementById('ev-reg-event-meta-wrap');
+  const metaEl   = document.getElementById('ev-reg-event-meta');
+  const descWrap = document.getElementById('ev-reg-event-desc-wrap');
+  const descEl2  = document.getElementById('ev-reg-event-desc');
+  if (ev) {
     let meta = '';
     if (ev.fecha) {
       const [y,m,d] = ev.fecha.split('-');
@@ -3110,12 +3123,13 @@ window.openEvRegistro = async function(eventoId) {
       meta = `📅 ${parseInt(d)} ${meses[parseInt(m)-1]} ${y}`;
     }
     if (ev.hora) meta += (meta ? ' · ' : '') + `⏰ ${ev.hora}`;
-    infoMeta.textContent = meta;
-    infoDesc.textContent = ev.desc || '';
-    infoDesc.style.display = ev.desc ? 'block' : 'none';
-    infoWrap.style.display = (ev.titulo || ev.fecha || ev.desc) ? 'block' : 'none';
-  } else if (infoWrap) {
-    infoWrap.style.display = 'none';
+    if (metaEl)   metaEl.textContent = meta;
+    if (metaWrap) metaWrap.style.display = meta ? 'block' : 'none';
+    if (descEl2)  descEl2.textContent = ev.desc || '';
+    if (descWrap) descWrap.style.display = ev.desc ? 'block' : 'none';
+  } else {
+    if (metaWrap) metaWrap.style.display = 'none';
+    if (descWrap) descWrap.style.display = 'none';
   }
 
   // ── Textos personalizados ──
@@ -3208,7 +3222,56 @@ function openComunidadModal(ev) {
   openOv('ev-comunidad');
 }
 
-// ── MODAL CREAR/EDITAR ──
+// ── IMAGEN DEL EVENTO (subida desde PC → base64) ──
+window.previewEvImg = function(input) {
+  const file = input.files[0];
+  if (!file) return;
+  // Comprimir si es muy grande
+  const reader = new FileReader();
+  reader.onload = e => {
+    const img = new Image();
+    img.onload = () => {
+      const canvas = document.createElement('canvas');
+      const MAX = 900;
+      let w = img.width, h = img.height;
+      if (w > MAX) { h = Math.round(h * MAX / w); w = MAX; }
+      canvas.width = w; canvas.height = h;
+      canvas.getContext('2d').drawImage(img, 0, 0, w, h);
+      const b64 = canvas.toDataURL('image/jpeg', 0.82);
+      document.getElementById('ev-post-img').value = b64;
+      const prev = document.getElementById('ev-img-preview');
+      const wrap = document.getElementById('ev-img-preview-wrap');
+      const lbl  = document.getElementById('ev-img-label');
+      if (prev) prev.src = b64;
+      if (wrap) wrap.style.display = 'block';
+      if (lbl)  lbl.textContent = file.name;
+    };
+    img.src = e.target.result;
+  };
+  reader.readAsDataURL(file);
+};
+
+window.clearEvImg = function() {
+  document.getElementById('ev-post-img').value = '';
+  document.getElementById('ev-img-file').value = '';
+  const prev = document.getElementById('ev-img-preview');
+  const wrap = document.getElementById('ev-img-preview-wrap');
+  const lbl  = document.getElementById('ev-img-label');
+  if (prev) prev.src = '';
+  if (wrap) wrap.style.display = 'none';
+  if (lbl)  lbl.textContent = 'Subir imagen desde tu PC';
+};
+
+function setEvImgPreview(src) {
+  const prev = document.getElementById('ev-img-preview');
+  const wrap = document.getElementById('ev-img-preview-wrap');
+  const lbl  = document.getElementById('ev-img-label');
+  if (!src) { clearEvImg(); return; }
+  if (prev) prev.src = src;
+  if (wrap) wrap.style.display = 'block';
+  if (lbl)  lbl.textContent = 'Imagen cargada';
+  document.getElementById('ev-post-img').value = src;
+}
 window.openNewEventoModal = function() {
   _editingEventoId = null;
   document.getElementById('ev-modal-title').textContent = '📅 Nuevo Evento';
@@ -3218,6 +3281,7 @@ window.openNewEventoModal = function() {
   document.getElementById('ev-desc').value              = '';
   document.getElementById('ev-link-wa').value           = '';
   document.getElementById('ev-estado').value            = 'proximo';
+  clearEvImg();
   document.getElementById('ev-reg-custom-titulo').value = '';
   document.getElementById('ev-reg-custom-desc').value   = '';
   document.getElementById('ev-reg-custom-btn').value    = '';
@@ -3244,6 +3308,7 @@ window.editEvento = async function(id) {
     document.getElementById('ev-desc').value                = ev.desc        || '';
     document.getElementById('ev-link-wa').value             = ev.linkWa      || '';
     document.getElementById('ev-estado').value              = ev.estado      || 'proximo';
+    setEvImgPreview(ev.postImg || '');
     document.getElementById('ev-reg-custom-titulo').value   = ev.regTitulo   || '';
     document.getElementById('ev-reg-custom-desc').value     = ev.regDesc     || '';
     document.getElementById('ev-reg-custom-btn').value      = ev.regBtn      || '';
