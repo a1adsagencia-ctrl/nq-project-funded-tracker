@@ -882,10 +882,27 @@ body.light .note-card.color-orange:hover{border-color:rgba(210,110,0,.6)!importa
     </div>
   </div>
 
+  <!-- PANE EVENTOS -->
+  <div class="pane" id="pane-eventos">
+    <!-- Header admin -->
+    <div id="ev-admin-bar" style="display:none;">
+      <button onclick="openNewEventoModal()" style="background:var(--accent);color:#000;border:none;padding:10px 20px;border-radius:10px;font-weight:700;font-size:13px;cursor:pointer;display:flex;align-items:center;gap:8px;transition:all .2s;" onmouseover="this.style.background='#00ffb3'" onmouseout="this.style.background='var(--accent)'">
+        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+        Publicar Evento
+      </button>
+    </div>
+    <!-- Lista de eventos -->
+    <div id="ev-list" style="display:flex;flex-direction:column;gap:16px;max-width:780px;width:100%;">
+      <div style="text-align:center;padding:60px 20px;color:var(--muted);">
+        <div style="font-size:48px;margin-bottom:16px;opacity:.4;">📅</div>
+        <div style="font-size:14px;font-weight:600;color:var(--muted2);">Cargando eventos...</div>
+      </div>
+    </div>
+  </div>
+
 </div>
 
-<!-- MODAL NUEVA CARPETA -->
-<div class="ov" id="ov-new-folder">
+<!-- MODAL NUEVA CARPETA --><div class="ov" id="ov-new-folder">
   <div class="modal" style="width:380px;max-width:96vw;">
     <div class="mhdr">
       <span class="mtitle">📁 Nueva Carpeta</span>
@@ -956,24 +973,6 @@ body.light .note-card.color-orange:hover{border-color:rgba(210,110,0,.6)!importa
     </div>
   </div>
 </div>
-
-  <!-- PANE EVENTOS -->
-  <div class="pane" id="pane-eventos">
-    <!-- Header admin -->
-    <div id="ev-admin-bar" style="display:none;">
-      <button onclick="openNewEventoModal()" style="background:var(--accent);color:#000;border:none;padding:10px 20px;border-radius:10px;font-weight:700;font-size:13px;cursor:pointer;display:flex;align-items:center;gap:8px;transition:all .2s;" onmouseover="this.style.background='#00ffb3'" onmouseout="this.style.background='var(--accent)'">
-        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-        Publicar Evento
-      </button>
-    </div>
-    <!-- Lista de eventos -->
-    <div id="ev-list" style="display:flex;flex-direction:column;gap:16px;max-width:780px;width:100%;">
-      <div style="text-align:center;padding:60px 20px;color:var(--muted);">
-        <div style="font-size:48px;margin-bottom:16px;opacity:.4;">📅</div>
-        <div style="font-size:14px;font-weight:600;color:var(--muted2);">Cargando eventos...</div>
-      </div>
-    </div>
-  </div>
 
 <!-- MODAL NUEVO/EDITAR EVENTO (solo admin) -->
 <div class="ov" id="ov-evento">
