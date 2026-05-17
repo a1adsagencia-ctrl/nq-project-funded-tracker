@@ -1014,16 +1014,8 @@ body.light .note-card.color-orange:hover{border-color:rgba(210,110,0,.6)!importa
       <textarea class="fi" id="ev-desc" placeholder="Describe el evento, qué verán, qué necesitan, etc..." style="min-height:100px;resize:vertical;font-family:var(--font);font-size:13px;line-height:1.6;"></textarea>
     </div>
     <div class="fg">
-      <label class="fl">Link (Zoom, Meet, etc.)</label>
-      <input class="fi" id="ev-link" type="url" placeholder="https://zoom.us/j/...">
-    </div>
-    <div class="fg">
-      <label class="fl">Link de WhatsApp (comunidad)</label>
-      <input class="fi" id="ev-link-wa" type="url" placeholder="https://chat.whatsapp.com/...">
-    </div>
-    <div class="fg">
-      <label class="fl">Link de Telegram (comunidad)</label>
-      <input class="fi" id="ev-link-tg" type="url" placeholder="https://t.me/...">
+      <label class="fl">Link de comunidad (WhatsApp, Telegram, etc.)</label>
+      <input class="fi" id="ev-link-wa" type="url" placeholder="https://chat.whatsapp.com/... o https://t.me/...">
     </div>
     <div class="fg">
       <label class="fl">Estado</label>
@@ -1045,36 +1037,31 @@ body.light .note-card.color-orange:hover{border-color:rgba(210,110,0,.6)!importa
 
 <!-- MODAL REGISTRO EVENTO -->
 <div class="ov" id="ov-ev-registro">
-  <div class="modal" style="width:480px;max-width:96vw;">
+  <div class="modal" style="width:460px;max-width:96vw;">
     <div class="mhdr">
-      <span class="mtitle" id="ev-reg-titulo">📅 Registrarse al Evento</span>
+      <span class="mtitle" id="ev-reg-titulo">📅 Acceder al Evento</span>
       <button class="mx" onclick="closeOv('ev-registro')">×</button>
     </div>
-    <p style="font-size:13px;color:var(--muted);margin-bottom:18px;line-height:1.6;">Regístrate para acceder al evento y unirte a nuestra comunidad.</p>
-    <input class="ev-reg-input" id="ev-reg-nombre" type="text" placeholder="Tu nombre completo" maxlength="60">
-    <input class="ev-reg-input" id="ev-reg-email" type="email" placeholder="Tu correo electrónico" maxlength="80">
-    <button onclick="submitEvReg()" style="width:100%;background:var(--accent);color:#000;border:none;padding:13px;border-radius:10px;font-weight:800;font-size:14px;cursor:pointer;margin-bottom:8px;transition:all .2s;" onmouseover="this.style.background='#00ffb3'" onmouseout="this.style.background='var(--accent)'">Registrarme y ver comunidad →</button>
+    <p style="font-size:13px;color:var(--muted);margin-bottom:20px;line-height:1.6;">Ingresa tu nombre y correo para unirte a la comunidad del evento.</p>
+    <input class="ev-reg-input" id="ev-reg-nombre" type="text" placeholder="Tu nombre completo" maxlength="60" oninput="checkEvRegForm()">
+    <input class="ev-reg-input" id="ev-reg-email" type="email" placeholder="Tu correo electrónico" maxlength="80" oninput="checkEvRegForm()">
+    <button id="ev-reg-btn" onclick="submitEvReg()" disabled style="width:100%;background:rgba(0,229,160,.25);color:rgba(0,0,0,.4);border:none;padding:13px;border-radius:10px;font-weight:800;font-size:14px;cursor:not-allowed;margin-bottom:8px;transition:all .3s;">
+      Acceder a la comunidad →
+    </button>
     <p id="ev-reg-error" style="color:var(--red);font-size:12px;font-family:var(--mono);display:none;margin-top:4px;"></p>
   </div>
 </div>
 
 <!-- MODAL COMUNIDAD (post-registro) -->
 <div class="ov" id="ov-ev-comunidad">
-  <div class="modal" style="width:480px;max-width:96vw;text-align:center;">
+  <div class="modal" style="width:460px;max-width:96vw;text-align:center;">
     <div class="mhdr">
-      <span class="mtitle">🎉 ¡Ya estás registrado!</span>
+      <span class="mtitle">🎉 ¡Registro exitoso!</span>
       <button class="mx" onclick="closeOv('ev-comunidad')">×</button>
     </div>
-    <p style="font-size:13px;color:var(--muted);margin-bottom:24px;line-height:1.6;">Únete a nuestra comunidad para no perderte ningún detalle del evento.</p>
+    <p style="font-size:13px;color:var(--muted);margin-bottom:24px;line-height:1.6;">¡Listo! Haz clic en el botón para unirte a la comunidad del evento.</p>
     <div id="ev-comunidad-btns" style="display:flex;flex-direction:column;gap:10px;margin-bottom:16px;"></div>
-    <div id="ev-zoom-link-wrap" style="display:none;margin-top:12px;padding-top:16px;border-top:1px solid var(--border);">
-      <p style="font-size:12px;color:var(--muted);margin-bottom:10px;font-family:var(--mono);">LINK DEL EVENTO</p>
-      <a id="ev-zoom-link-btn" href="#" target="_blank" class="ev-join-btn" style="justify-content:center;width:100%;box-sizing:border-box;">
-        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2" ry="2"/></svg>
-        Unirse al Zoom
-      </a>
-    </div>
-    <button onclick="closeOv('ev-comunidad')" style="margin-top:14px;background:none;border:1px solid var(--border);color:var(--muted);padding:8px 20px;border-radius:8px;cursor:pointer;font-size:12px;font-family:var(--mono);transition:all .2s;" onmouseover="this.style.borderColor='var(--accent)'" onmouseout="this.style.borderColor='var(--border)'">Cerrar</button>
+    <button onclick="closeOv('ev-comunidad')" style="margin-top:8px;background:none;border:1px solid var(--border);color:var(--muted);padding:8px 20px;border-radius:8px;cursor:pointer;font-size:12px;font-family:var(--mono);transition:all .2s;" onmouseover="this.style.borderColor='var(--accent)'" onmouseout="this.style.borderColor='var(--border)'">Cerrar</button>
   </div>
 </div>
 
@@ -2922,6 +2909,36 @@ async function checkEvDotOnLoad() {
 }
 setTimeout(checkEvDotOnLoad, 2000);
 
+// ── AUTO EN VIVO ──
+// Cada minuto revisa si algún evento "proximo" ya llegó a su hora de inicio
+async function autoCheckLive() {
+  try {
+    const snap = await getDocs(collection(db3, 'eventos'));
+    const ahora = new Date();
+    const promesas = [];
+    snap.forEach(d => {
+      const ev = d.data();
+      // Solo procesar eventos próximos que tengan fecha y hora
+      if (ev.estado !== 'proximo' || !ev.fecha || !ev.hora) return;
+      const inicio = new Date(`${ev.fecha}T${ev.hora}:00`);
+      if (ahora >= inicio) {
+        // Ya llegó la hora — cambiar a en vivo
+        promesas.push(updateDoc(doc(db3, 'eventos', d.id), { estado: 'live' }));
+      }
+    });
+    if (promesas.length) {
+      await Promise.all(promesas);
+      // Si el usuario está en el tab de eventos, refrescar la lista
+      const pane = document.getElementById('pane-eventos');
+      if (pane && pane.classList.contains('active')) renderEventos();
+      else checkEvDotOnLoad(); // solo actualizar el dot
+    }
+  } catch(e) {}
+}
+// Correr al cargar y luego cada 60 segundos
+setTimeout(autoCheckLive, 3000);
+setInterval(autoCheckLive, 60000);
+
 // ── RENDER EVENTOS ──
 window.renderEventos = async function() {
   const adminBar = document.getElementById('ev-admin-bar');
@@ -2995,18 +3012,34 @@ function renderEventoCard(ev) {
 }
 
 // ── REGISTRO USUARIO ──
+window.checkEvRegForm = function() {
+  const nombre = document.getElementById('ev-reg-nombre').value.trim();
+  const email  = document.getElementById('ev-reg-email').value.trim();
+  const btn    = document.getElementById('ev-reg-btn');
+  if (!btn) return;
+  const valid = nombre.length > 0 && email.length > 0;
+  btn.disabled = !valid;
+  btn.style.background  = valid ? 'var(--accent)' : 'rgba(0,229,160,.2)';
+  btn.style.color       = valid ? '#000' : 'rgba(0,0,0,.35)';
+  btn.style.cursor      = valid ? 'pointer' : 'not-allowed';
+};
+
 window.openEvRegistro = function(eventoId) {
   const nombre = document.getElementById('ev-reg-nombre');
   const email  = document.getElementById('ev-reg-email');
   if (window._user) {
     if (nombre) nombre.value = window._user.displayName || '';
     if (email)  email.value  = window._user.email || '';
+  } else {
+    if (nombre) nombre.value = '';
+    if (email)  email.value  = '';
   }
   window._evRegId = eventoId;
   const error = document.getElementById('ev-reg-error');
   if (error) error.style.display = 'none';
+  checkEvRegForm();
   openOv('ev-registro');
-  setTimeout(() => { if (nombre && !nombre.value) nombre.focus(); }, 100);
+  setTimeout(() => { if (nombre && !nombre.value) nombre.focus(); else if (email && !email.value) email.focus(); }, 100);
 };
 
 window.submitEvReg = async function() {
@@ -3040,32 +3073,16 @@ window.submitEvReg = async function() {
 };
 
 function openComunidadModal(ev) {
-  const btns     = document.getElementById('ev-comunidad-btns');
-  const zoomWrap = document.getElementById('ev-zoom-link-wrap');
-  const zoomBtn  = document.getElementById('ev-zoom-link-btn');
+  const btns = document.getElementById('ev-comunidad-btns');
   if (!btns) return;
   btns.innerHTML = '';
   if (ev?.linkWa) {
-    btns.innerHTML += `<a href="${ev.linkWa}" target="_blank" class="ev-community-btn ev-wa-btn">
-      <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51a12.8 12.8 0 0 0-.57-.01c-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/></svg>
-      Unirse al grupo de WhatsApp
+    btns.innerHTML = `<a href="${ev.linkWa}" target="_blank" class="ev-community-btn ev-wa-btn" style="justify-content:center;text-decoration:none;">
+      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.373 0 0 5.373 0 12c0 2.123.554 4.122 1.528 5.856L0 24l6.293-1.508A11.933 11.933 0 0 0 12 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm5.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51a12.8 12.8 0 0 0-.57-.01c-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413z"/></svg>
+      Unirse a la comunidad
     </a>`;
-  }
-  if (ev?.linkTg) {
-    btns.innerHTML += `<a href="${ev.linkTg}" target="_blank" class="ev-community-btn ev-tg-btn">
-      <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm5.562 8.248-1.97 9.29c-.145.658-.537.818-1.084.508l-3-2.21-1.447 1.394c-.16.16-.295.295-.605.295l.213-3.053 5.56-5.023c.242-.213-.054-.333-.373-.12L7.17 13.662l-2.96-.924c-.643-.204-.657-.643.136-.953l11.57-4.461c.537-.194 1.006.131.646.924z"/></svg>
-      Unirse al grupo de Telegram
-    </a>`;
-  }
-  if (!ev?.linkWa && !ev?.linkTg) {
-    btns.innerHTML = `<p style="color:var(--muted);font-size:13px;font-family:var(--mono);">No hay grupos de comunidad para este evento.</p>`;
-  }
-  if (ev?.link && ev?.estado !== 'finalizado') {
-    zoomWrap.style.display = 'block';
-    zoomBtn.href = ev.link;
-    zoomBtn.textContent = ev.estado === 'live' ? '🔴 Unirse al evento EN VIVO' : '🎥 Ver link del evento';
   } else {
-    zoomWrap.style.display = 'none';
+    btns.innerHTML = `<p style="color:var(--muted);font-size:13px;font-family:var(--mono);text-align:center;">El link de comunidad no está disponible aún.</p>`;
   }
   openOv('ev-comunidad');
 }
@@ -3078,9 +3095,7 @@ window.openNewEventoModal = function() {
   document.getElementById('ev-fecha').value    = '';
   document.getElementById('ev-hora').value     = '';
   document.getElementById('ev-desc').value     = '';
-  document.getElementById('ev-link').value     = '';
   document.getElementById('ev-link-wa').value  = '';
-  document.getElementById('ev-link-tg').value  = '';
   document.getElementById('ev-estado').value   = 'proximo';
   document.getElementById('ev-btn-delete').style.display = 'none';
   openOv('evento');
@@ -3099,9 +3114,7 @@ window.editEvento = async function(id) {
     document.getElementById('ev-fecha').value    = ev.fecha   || '';
     document.getElementById('ev-hora').value     = ev.hora    || '';
     document.getElementById('ev-desc').value     = ev.desc    || '';
-    document.getElementById('ev-link').value     = ev.link    || '';
     document.getElementById('ev-link-wa').value  = ev.linkWa  || '';
-    document.getElementById('ev-link-tg').value  = ev.linkTg  || '';
     document.getElementById('ev-estado').value   = ev.estado  || 'proximo';
     document.getElementById('ev-btn-delete').style.display = 'block';
     openOv('evento');
@@ -3117,9 +3130,7 @@ window.saveEvento = async function() {
     fecha:  document.getElementById('ev-fecha').value,
     hora:   document.getElementById('ev-hora').value,
     desc:   document.getElementById('ev-desc').value.trim(),
-    link:   document.getElementById('ev-link').value.trim(),
     linkWa: document.getElementById('ev-link-wa').value.trim(),
-    linkTg: document.getElementById('ev-link-tg').value.trim(),
     estado: document.getElementById('ev-estado').value,
   };
   try {
