@@ -808,7 +808,7 @@ body.light .note-card.color-orange:hover{border-color:rgba(210,110,0,.6)!importa
     <div style="margin-top:16px">
       <div class="card">
         <div class="ct">⚡ Emociones más frecuentes</div>
-        <div style="height:220px;position:relative;"><canvas id="ch-emo-freq"></canvas></div>
+        <div style="height:260px;position:relative;"><canvas id="ch-emo-freq"></canvas></div>
       </div>
     </div>
     <div class="g2" style="margin-top:0">
@@ -1913,18 +1913,17 @@ function renderEmocionalStats() {
         type: 'bar',
         data: {
           labels: emoLabels,
-          datasets: [{ data: emoCounts, backgroundColor: emoColors, borderColor: 'transparent', borderRadius: 6 }]
+          datasets: [{ data: emoCounts, backgroundColor: emoColors, borderColor: 'transparent', borderRadius: 6, barThickness: 18 }]
         },
         options: {
           ...CHART_DEFAULTS,
-          indexAxis: 'y',
           plugins: {
             legend: { display: false },
-            tooltip: { callbacks: { label: ctx => ' ' + ctx.parsed.x + ' trades' } }
+            tooltip: { callbacks: { label: ctx => ' ' + ctx.parsed.y + ' trades' } }
           },
           scales: {
-            x: { ...AXIS_STYLE, ticks: { ...AXIS_STYLE.ticks, stepSize: 1 } },
-            y: { ...AXIS_STYLE, ticks: { color: '#aabccc', font: { family: 'Roboto Mono', size: 11 } } }
+            x: { ...AXIS_STYLE, ticks: { color: '#aabccc', font: { family: 'Roboto Mono', size: 11 } } },
+            y: { ...AXIS_STYLE, ticks: { ...AXIS_STYLE.ticks, stepSize: 1 } }
           }
         }
       });
@@ -2003,9 +2002,9 @@ function renderEmocionalStats() {
         data: {
           labels: starLabels,
           datasets: [
-            { label: 'Win %',  data: starWin,  backgroundColor: '#00e5a0', borderRadius: 4, borderColor: 'transparent' },
-            { label: 'Loss %', data: starLoss, backgroundColor: '#ff4060', borderRadius: 4, borderColor: 'transparent' },
-            { label: 'BE %',   data: starBE,   backgroundColor: '#4a6a8a', borderRadius: 4, borderColor: 'transparent' },
+            { label: 'Win %',  data: starWin,  backgroundColor: '#00e5a0', borderRadius: 4, borderColor: 'transparent', barThickness: 14 },
+            { label: 'Loss %', data: starLoss, backgroundColor: '#ff4060', borderRadius: 4, borderColor: 'transparent', barThickness: 14 },
+            { label: 'BE %',   data: starBE,   backgroundColor: '#4a6a8a', borderRadius: 4, borderColor: 'transparent', barThickness: 14 },
           ]
         },
         options: {
