@@ -990,11 +990,14 @@ body.light .note-card.color-orange:hover{border-color:rgba(210,110,0,.6)!importa
 
 <!-- MODAL NUEVO/EDITAR EVENTO (solo admin) -->
 <div class="ov" id="ov-evento">
-  <div class="modal" style="width:560px;max-width:96vw;">
+  <div class="modal" style="width:600px;max-width:96vw;">
     <div class="mhdr">
       <span class="mtitle" id="ev-modal-title">📅 Nuevo Evento</span>
       <button class="mx" onclick="closeOv('evento')">×</button>
     </div>
+
+    <!-- INFO BÁSICA -->
+    <div style="font-size:10px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);font-family:var(--mono);margin-bottom:10px;padding-bottom:6px;border-bottom:1px solid var(--border);">📋 Información del evento</div>
     <div class="fg">
       <label class="fl">Título del evento</label>
       <input class="fi" id="ev-titulo" type="text" placeholder="Ej: Operativas en Vivo — Zoom Gratis" maxlength="80">
@@ -1010,22 +1013,61 @@ body.light .note-card.color-orange:hover{border-color:rgba(210,110,0,.6)!importa
       </div>
     </div>
     <div class="fg">
-      <label class="fl">Descripción</label>
-      <textarea class="fi" id="ev-desc" placeholder="Describe el evento, qué verán, qué necesitan, etc..." style="min-height:100px;resize:vertical;font-family:var(--font);font-size:13px;line-height:1.6;"></textarea>
+      <label class="fl">Descripción pública del evento</label>
+      <textarea class="fi" id="ev-desc" placeholder="Describe el evento..." style="min-height:80px;resize:vertical;font-family:var(--font);font-size:13px;line-height:1.6;"></textarea>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+      <div class="fg">
+        <label class="fl">Estado</label>
+        <select class="fi" id="ev-estado" style="font-family:var(--font);">
+          <option value="proximo">🟡 Próximo</option>
+          <option value="live">🔴 En Vivo</option>
+          <option value="finalizado">⚫ Finalizado</option>
+        </select>
+      </div>
+      <div class="fg">
+        <label class="fl">Link de comunidad</label>
+        <input class="fi" id="ev-link-wa" type="url" placeholder="https://chat.whatsapp.com/...">
+      </div>
+    </div>
+
+    <!-- PERSONALIZAR MODAL DE REGISTRO -->
+    <div style="font-size:10px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);font-family:var(--mono);margin:14px 0 10px;padding-top:14px;border-top:1px solid var(--border);">✏️ Personalizar ventana de registro</div>
+    <div style="font-size:11px;color:var(--muted);font-family:var(--mono);margin-bottom:10px;">Lo que verán los usuarios ANTES de registrarse</div>
+    <div class="fg">
+      <label class="fl">Título (con emojis si quieres)</label>
+      <input class="fi" id="ev-reg-custom-titulo" type="text" placeholder="Ej: 🎯 Únete al Backtesting en Vivo" maxlength="80">
     </div>
     <div class="fg">
-      <label class="fl">Link de comunidad (WhatsApp, Telegram, etc.)</label>
-      <input class="fi" id="ev-link-wa" type="url" placeholder="https://chat.whatsapp.com/... o https://t.me/...">
+      <label class="fl">Texto descriptivo</label>
+      <textarea class="fi" id="ev-reg-custom-desc" placeholder="Ej: Regístrate gratis y accede al grupo privado donde compartiremos el análisis completo." style="min-height:70px;resize:vertical;font-family:var(--font);font-size:13px;line-height:1.6;"></textarea>
     </div>
     <div class="fg">
-      <label class="fl">Estado</label>
-      <select class="fi" id="ev-estado" style="font-family:var(--font);">
-        <option value="proximo">🟡 Próximo</option>
-        <option value="live">🔴 En Vivo</option>
-        <option value="finalizado">⚫ Finalizado</option>
-      </select>
+      <label class="fl">Texto del botón de acceso</label>
+      <input class="fi" id="ev-reg-custom-btn" type="text" placeholder="Ej: Quiero acceder gratis →" maxlength="60">
     </div>
-    <div style="display:flex;justify-content:space-between;align-items:center;margin-top:6px;">
+
+    <!-- PERSONALIZAR MODAL POST-REGISTRO -->
+    <div style="font-size:10px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);font-family:var(--mono);margin:14px 0 10px;padding-top:14px;border-top:1px solid var(--border);">🎉 Personalizar ventana post-registro</div>
+    <div style="font-size:11px;color:var(--muted);font-family:var(--mono);margin-bottom:10px;">Lo que verán DESPUÉS de registrarse</div>
+    <div class="fg">
+      <label class="fl">Título</label>
+      <input class="fi" id="ev-post-titulo" type="text" placeholder="Ej: 🎉 ¡Ya tienes acceso!" maxlength="80">
+    </div>
+    <div class="fg">
+      <label class="fl">Texto</label>
+      <textarea class="fi" id="ev-post-desc" placeholder="Ej: Haz clic en el botón para unirte al grupo privado de WhatsApp." style="min-height:70px;resize:vertical;font-family:var(--font);font-size:13px;line-height:1.6;"></textarea>
+    </div>
+    <div class="fg">
+      <label class="fl">Texto del botón de comunidad</label>
+      <input class="fi" id="ev-post-btn" type="text" placeholder="Ej: 💬 Unirse al grupo privado" maxlength="60">
+    </div>
+    <div class="fg">
+      <label class="fl">URL de imagen (opcional, se muestra sobre el botón)</label>
+      <input class="fi" id="ev-post-img" type="url" placeholder="https://... (jpg, png, gif)">
+    </div>
+
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-top:14px;">
       <button id="ev-btn-delete" onclick="deleteEvento()" style="display:none;background:none;border:1px solid rgba(255,64,96,.3);color:var(--red);padding:8px 14px;border-radius:8px;font-size:12px;cursor:pointer;font-family:var(--font);font-weight:600;transition:all .2s;" onmouseover="this.style.background='rgba(255,64,96,.1)'" onmouseout="this.style.background='none'">🗑 Eliminar</button>
       <div style="display:flex;gap:10px;margin-left:auto;">
         <button class="bf2" onclick="closeOv('evento')" style="width:auto;padding:10px 18px;margin-top:0;">Cancelar</button>
@@ -1042,7 +1084,7 @@ body.light .note-card.color-orange:hover{border-color:rgba(210,110,0,.6)!importa
       <span class="mtitle" id="ev-reg-titulo">📅 Acceder al Evento</span>
       <button class="mx" onclick="closeOv('ev-registro')">×</button>
     </div>
-    <p style="font-size:13px;color:var(--muted);margin-bottom:20px;line-height:1.6;">Ingresa tu nombre y correo para unirte a la comunidad del evento.</p>
+    <p id="ev-reg-desc-txt" style="font-size:13px;color:var(--muted);margin-bottom:20px;line-height:1.6;">Ingresa tu nombre y correo para unirte a la comunidad del evento.</p>
     <input class="ev-reg-input" id="ev-reg-nombre" type="text" placeholder="Tu nombre completo" maxlength="60" oninput="checkEvRegForm()">
     <input class="ev-reg-input" id="ev-reg-email" type="email" placeholder="Tu correo electrónico" maxlength="80" oninput="checkEvRegForm()">
     <button id="ev-reg-btn" onclick="submitEvReg()" disabled style="width:100%;background:rgba(0,229,160,.25);color:rgba(0,0,0,.4);border:none;padding:13px;border-radius:10px;font-weight:800;font-size:14px;cursor:not-allowed;margin-bottom:8px;transition:all .3s;">
@@ -1056,10 +1098,11 @@ body.light .note-card.color-orange:hover{border-color:rgba(210,110,0,.6)!importa
 <div class="ov" id="ov-ev-comunidad">
   <div class="modal" style="width:460px;max-width:96vw;text-align:center;">
     <div class="mhdr">
-      <span class="mtitle">🎉 ¡Registro exitoso!</span>
+      <span class="mtitle" id="ev-post-titulo-el">🎉 ¡Registro exitoso!</span>
       <button class="mx" onclick="closeOv('ev-comunidad')">×</button>
     </div>
-    <p style="font-size:13px;color:var(--muted);margin-bottom:24px;line-height:1.6;">¡Listo! Haz clic en el botón para unirte a la comunidad del evento.</p>
+    <div id="ev-post-img-wrap" style="display:none;margin-bottom:16px;"><img id="ev-post-img-el" src="" alt="" style="max-width:100%;border-radius:10px;max-height:180px;object-fit:cover;"></div>
+    <p id="ev-post-desc-el" style="font-size:13px;color:var(--muted);margin-bottom:24px;line-height:1.6;">¡Listo! Haz clic en el botón para unirte a la comunidad del evento.</p>
     <div id="ev-comunidad-btns" style="display:flex;flex-direction:column;gap:10px;margin-bottom:16px;"></div>
     <button onclick="closeOv('ev-comunidad')" style="margin-top:8px;background:none;border:1px solid var(--border);color:var(--muted);padding:8px 20px;border-radius:8px;cursor:pointer;font-size:12px;font-family:var(--mono);transition:all .2s;" onmouseover="this.style.borderColor='var(--accent)'" onmouseout="this.style.borderColor='var(--border)'">Cerrar</button>
   </div>
@@ -3024,7 +3067,23 @@ window.checkEvRegForm = function() {
   btn.style.cursor      = valid ? 'pointer' : 'not-allowed';
 };
 
-window.openEvRegistro = function(eventoId) {
+window.openEvRegistro = async function(eventoId) {
+  // Cargar datos del evento para personalizar el modal
+  let ev = null;
+  try {
+    const snap = await getDocs(collection(db3, 'eventos'));
+    snap.forEach(d => { if (d.id === eventoId) ev = { id: d.id, ...d.data() }; });
+  } catch(e) {}
+
+  // Aplicar personalización al modal de registro
+  const titulo = document.getElementById('ev-reg-titulo');
+  const desc   = document.getElementById('ev-reg-desc-txt');
+  const btn    = document.getElementById('ev-reg-btn');
+  if (titulo) titulo.textContent = ev?.regTitulo  || '📅 Acceder al Evento';
+  if (desc)   desc.textContent   = ev?.regDesc    || 'Ingresa tu nombre y correo para unirte a la comunidad del evento.';
+  if (btn)    btn.textContent    = ev?.regBtn     || 'Acceder a la comunidad →';
+
+  // Pre-fill con datos del usuario si está logueado
   const nombre = document.getElementById('ev-reg-nombre');
   const email  = document.getElementById('ev-reg-email');
   if (window._user) {
@@ -3073,13 +3132,32 @@ window.submitEvReg = async function() {
 };
 
 function openComunidadModal(ev) {
-  const btns = document.getElementById('ev-comunidad-btns');
+  // Aplicar personalización
+  const titulo  = document.getElementById('ev-post-titulo-el');
+  const descEl  = document.getElementById('ev-post-desc-el');
+  const imgWrap = document.getElementById('ev-post-img-wrap');
+  const imgEl   = document.getElementById('ev-post-img-el');
+  const btns    = document.getElementById('ev-comunidad-btns');
   if (!btns) return;
+
+  if (titulo) titulo.textContent = ev?.postTitulo || '🎉 ¡Registro exitoso!';
+  if (descEl) descEl.textContent  = ev?.postDesc   || '¡Listo! Haz clic en el botón para unirte a la comunidad del evento.';
+
+  // Imagen opcional
+  if (ev?.postImg && imgWrap && imgEl) {
+    imgEl.src = ev.postImg;
+    imgWrap.style.display = 'block';
+  } else if (imgWrap) {
+    imgWrap.style.display = 'none';
+  }
+
+  // Botón de comunidad
   btns.innerHTML = '';
+  const btnText = ev?.postBtn || 'Unirse a la comunidad';
   if (ev?.linkWa) {
-    btns.innerHTML = `<a href="${ev.linkWa}" target="_blank" class="ev-community-btn ev-wa-btn" style="justify-content:center;text-decoration:none;">
+    btns.innerHTML = `<a href="${ev.linkWa}" target="_blank" class="ev-community-btn ev-wa-btn" style="justify-content:center;text-decoration:none;font-size:14px;">
       <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.373 0 0 5.373 0 12c0 2.123.554 4.122 1.528 5.856L0 24l6.293-1.508A11.933 11.933 0 0 0 12 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm5.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51a12.8 12.8 0 0 0-.57-.01c-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413z"/></svg>
-      Unirse a la comunidad
+      ${btnText}
     </a>`;
   } else {
     btns.innerHTML = `<p style="color:var(--muted);font-size:13px;font-family:var(--mono);text-align:center;">El link de comunidad no está disponible aún.</p>`;
@@ -3091,12 +3169,19 @@ function openComunidadModal(ev) {
 window.openNewEventoModal = function() {
   _editingEventoId = null;
   document.getElementById('ev-modal-title').textContent = '📅 Nuevo Evento';
-  document.getElementById('ev-titulo').value   = '';
-  document.getElementById('ev-fecha').value    = '';
-  document.getElementById('ev-hora').value     = '';
-  document.getElementById('ev-desc').value     = '';
-  document.getElementById('ev-link-wa').value  = '';
-  document.getElementById('ev-estado').value   = 'proximo';
+  document.getElementById('ev-titulo').value            = '';
+  document.getElementById('ev-fecha').value             = '';
+  document.getElementById('ev-hora').value              = '';
+  document.getElementById('ev-desc').value              = '';
+  document.getElementById('ev-link-wa').value           = '';
+  document.getElementById('ev-estado').value            = 'proximo';
+  document.getElementById('ev-reg-custom-titulo').value = '';
+  document.getElementById('ev-reg-custom-desc').value   = '';
+  document.getElementById('ev-reg-custom-btn').value    = '';
+  document.getElementById('ev-post-titulo').value       = '';
+  document.getElementById('ev-post-desc').value         = '';
+  document.getElementById('ev-post-btn').value          = '';
+  document.getElementById('ev-post-img').value          = '';
   document.getElementById('ev-btn-delete').style.display = 'none';
   openOv('evento');
   setTimeout(() => document.getElementById('ev-titulo').focus(), 100);
@@ -3110,12 +3195,19 @@ window.editEvento = async function(id) {
     if (!ev) return;
     _editingEventoId = id;
     document.getElementById('ev-modal-title').textContent = '✏️ Editar Evento';
-    document.getElementById('ev-titulo').value   = ev.titulo  || '';
-    document.getElementById('ev-fecha').value    = ev.fecha   || '';
-    document.getElementById('ev-hora').value     = ev.hora    || '';
-    document.getElementById('ev-desc').value     = ev.desc    || '';
-    document.getElementById('ev-link-wa').value  = ev.linkWa  || '';
-    document.getElementById('ev-estado').value   = ev.estado  || 'proximo';
+    document.getElementById('ev-titulo').value              = ev.titulo      || '';
+    document.getElementById('ev-fecha').value               = ev.fecha       || '';
+    document.getElementById('ev-hora').value                = ev.hora        || '';
+    document.getElementById('ev-desc').value                = ev.desc        || '';
+    document.getElementById('ev-link-wa').value             = ev.linkWa      || '';
+    document.getElementById('ev-estado').value              = ev.estado      || 'proximo';
+    document.getElementById('ev-reg-custom-titulo').value   = ev.regTitulo   || '';
+    document.getElementById('ev-reg-custom-desc').value     = ev.regDesc     || '';
+    document.getElementById('ev-reg-custom-btn').value      = ev.regBtn      || '';
+    document.getElementById('ev-post-titulo').value         = ev.postTitulo  || '';
+    document.getElementById('ev-post-desc').value           = ev.postDesc    || '';
+    document.getElementById('ev-post-btn').value            = ev.postBtn     || '';
+    document.getElementById('ev-post-img').value            = ev.postImg     || '';
     document.getElementById('ev-btn-delete').style.display = 'block';
     openOv('evento');
   } catch(e) { console.error(e); }
@@ -3127,11 +3219,18 @@ window.saveEvento = async function() {
   if (!titulo) { document.getElementById('ev-titulo').focus(); return; }
   const data = {
     titulo,
-    fecha:  document.getElementById('ev-fecha').value,
-    hora:   document.getElementById('ev-hora').value,
-    desc:   document.getElementById('ev-desc').value.trim(),
-    linkWa: document.getElementById('ev-link-wa').value.trim(),
-    estado: document.getElementById('ev-estado').value,
+    fecha:      document.getElementById('ev-fecha').value,
+    hora:       document.getElementById('ev-hora').value,
+    desc:       document.getElementById('ev-desc').value.trim(),
+    linkWa:     document.getElementById('ev-link-wa').value.trim(),
+    estado:     document.getElementById('ev-estado').value,
+    regTitulo:  document.getElementById('ev-reg-custom-titulo').value.trim(),
+    regDesc:    document.getElementById('ev-reg-custom-desc').value.trim(),
+    regBtn:     document.getElementById('ev-reg-custom-btn').value.trim(),
+    postTitulo: document.getElementById('ev-post-titulo').value.trim(),
+    postDesc:   document.getElementById('ev-post-desc').value.trim(),
+    postBtn:    document.getElementById('ev-post-btn').value.trim(),
+    postImg:    document.getElementById('ev-post-img').value.trim(),
   };
   try {
     if (_editingEventoId) {
