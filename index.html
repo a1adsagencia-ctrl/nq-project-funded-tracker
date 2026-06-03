@@ -4139,12 +4139,16 @@ window._onMantraAuth = function() {
   setTimeout(initMantra, 1500);
 };
 
-// Hook: ejecutar cuando el usuario esté listo
+// Hook: ejecutar solo cuando el usuario esté logueado Y dentro del app (no en login)
 document.addEventListener('DOMContentLoaded', () => {
   const check = setInterval(() => {
     if (window._user) {
-      clearInterval(check);
-      setTimeout(initMantra, 1500);
+      const appScreen = document.getElementById('app-screen');
+      const dentroApp = appScreen && appScreen.style.display === 'flex';
+      if (dentroApp) {
+        clearInterval(check);
+        setTimeout(initMantra, 1500);
+      }
     }
   }, 500);
 });
