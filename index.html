@@ -1402,6 +1402,7 @@ function setDashFilter(days, el, label) {
     b.textContent = isActive ? ('✓ ' + b.textContent.replace('✓ ','')) : b.textContent.replace('✓ ','');
   });
   closeFilterDropdown();
+  window._invalidateCache && window._invalidateCache();
   renderDashboard();
 }
 
@@ -1422,6 +1423,7 @@ function applyCustomFilter() {
     b.textContent = b.textContent.replace('✓ ','');
   });
   closeFilterDropdown();
+  window._invalidateCache && window._invalidateCache();
   renderDashboard();
 }
 
@@ -1512,11 +1514,11 @@ function goTab(name) {
   document.querySelectorAll('.pane').forEach(p=>p.classList.remove('active'));
   const activePn = document.getElementById('pane-'+name);
   if(activePn) activePn.classList.add('active');
-  if(name==='dashboard') renderDashboard();
-  else if(name==='cuentas') renderCuentas();
+  if(name==='dashboard') _cachedRender('dashboard', renderDashboard, 80);
+  else if(name==='cuentas') _cachedRender('cuentas', renderCuentas, 60);
   else if(name==='traderpro') renderTraderPro();
-  else if(name==='diario') renderDiario();
-  else if(name==='analisis') renderAnalisis();
+  else if(name==='diario') _cachedRender('diario', renderDiario, 60);
+  else if(name==='analisis') _cachedRender('analisis', renderAnalisis, 80);
   else if(name==='notas') renderFolders();
   else if(name==='eventos') renderEventos();
 }
@@ -1564,6 +1566,40 @@ function streak(trades) {
 }
 
 // DASHBOARD
+// ── CACHÉ DE RENDERS Y DEBOUNCE ──
+const _renderCache = {};
+const _renderTimers = {};
+
+// Genera una clave de estado para saber si los datos cambiaron
+function _cacheKey(name) {
+  const base = JSON.stringify({
+    n: (window._accounts||[]).length,
+    t: (window._accounts||[]).reduce((s,a)=>(s+(a.trades||[]).length),0),
+    g: window._dashGrupoFilter||'',
+    f: window._currentFilter||0,
+    fr: window._customFrom||'',
+    to: window._customTo||''
+  });
+  return name + ':' + base;
+}
+
+// Wrapper con caché + debounce
+function _cachedRender(name, fn, delay) {
+  delay = delay || 0;
+  clearTimeout(_renderTimers[name]);
+  _renderTimers[name] = setTimeout(() => {
+    const key = _cacheKey(name);
+    if (_renderCache[name] === key) return; // sin cambios, skip
+    _renderCache[name] = key;
+    fn();
+  }, delay);
+}
+
+// Invalidar caché (llamar cuando hay cambios reales en datos)
+window._invalidateCache = function() {
+  Object.keys(_renderCache).forEach(k => delete _renderCache[k]);
+};
+
 function renderDashboard() {
   const tr = getFilteredTrades();
   const inv=accounts.reduce((s,a)=>s+(a.inversion||0),0);
@@ -2339,6 +2375,7 @@ async function deleteTrade(acctId,tradeId) {
 
 // RENDER ALL
 function renderAll() {
+  window._invalidateCache && window._invalidateCache();
   const names=['dashboard','cuentas','diario','analisis'];
   const active=document.querySelector('.tab.active');
   const idx=[...document.querySelectorAll('.tab')].indexOf(active);
