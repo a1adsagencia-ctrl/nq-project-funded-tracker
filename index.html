@@ -229,6 +229,8 @@ td{padding:12px 14px;vertical-align:middle;color:var(--text)}
 .cg{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;margin-top:8px}
 .cdh{font-size:9px;color:var(--muted);font-family:var(--mono);text-align:center;padding:3px 0}
 .cd{min-height:64px;border-radius:8px;background:#0d0d0d;position:relative;border:1px solid rgba(0,255,136,.05);cursor:default;padding:4px;display:flex;flex-direction:column;justify-content:space-between;transition:all .15s}
+.cd:hover .cd-add-btn{opacity:1!important;}
+.cd-add-btn:hover{color:var(--accent)!important;}
 .cd.win{background:rgba(0,255,136,.12);border-color:rgba(0,255,136,.3);cursor:pointer}
 .cd.loss{background:rgba(255,64,96,.1);border-color:rgba(255,64,96,.25);cursor:pointer}
 .cd.be{background:rgba(255,255,255,.04);border-color:rgba(255,255,255,.1);cursor:pointer}
@@ -1952,13 +1954,19 @@ function renderCalendar() {
     if(data){
       const pclr=data.pnl>=0?'var(--accent)':'var(--red)';
       html+='<div class="cd '+cls+'" '+onclick+'>'
+        +'<div style="display:flex;align-items:flex-start;justify-content:space-between;">'
         +'<div class="cd-num">'+d+'</div>'
+        +'<button onclick="event.stopPropagation();openTradeModalWithDate(&quot;'+key+'&quot;)" style="background:none;border:none;color:var(--muted);cursor:pointer;font-size:16px;line-height:1;padding:0 2px;opacity:0;transition:opacity .15s;" class="cd-add-btn" title="Agregar trade">+</button>'
+        +'</div>'
         +'<div class="cd-pnl" style="color:'+pclr+'">'+(data.pnl>=0?'+':'')+data.pnl.toFixed(0)+'</div>'
         +'<div class="cd-meta">'+data.count+'t &middot; '+data.wins+'W '+data.losses+'L</div>'
         +'</div>';
     } else {
       html+='<div class="cd '+cls+'">'
+        +'<div style="display:flex;align-items:flex-start;justify-content:space-between;">'
         +'<div class="cd-num">'+d+'</div>'
+        +'<button onclick="openTradeModalWithDate(&quot;'+key+'&quot;)" style="background:none;border:none;color:var(--muted);cursor:pointer;font-size:16px;line-height:1;padding:0 2px;opacity:0;transition:opacity .15s;" class="cd-add-btn" title="Agregar trade">+</button>'
+        +'</div>'
         +'</div>';
     }
   }
@@ -2117,6 +2125,20 @@ function openTradeModal() {
   document.getElementById('trade-btn').textContent='GUARDAR TRADE';
   document.getElementById('t-cuenta').innerHTML=accounts.map(a=>'<option value="'+a.id+'">'+a.firma+'</option>').join('');
   document.getElementById('t-fecha').value=today();
+  document.getElementById('t-inst').value='';
+  document.getElementById('t-pnl').value='';
+  document.getElementById('t-notas').value='';
+  document.getElementById('t-foto').value='';
+  openOv('trade');
+}
+
+function openTradeModalWithDate(fecha) {
+  editTradeId=null; editTradeAcctId=null;
+  resetEmoForm();
+  document.getElementById('trade-title').textContent='Registrar Trade';
+  document.getElementById('trade-btn').textContent='GUARDAR TRADE';
+  document.getElementById('t-cuenta').innerHTML=accounts.map(a=>'<option value="'+a.id+'">'+a.firma+'</option>').join('');
+  document.getElementById('t-fecha').value=fecha;
   document.getElementById('t-inst').value='';
   document.getElementById('t-pnl').value='';
   document.getElementById('t-notas').value='';
