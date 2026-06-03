@@ -4016,8 +4016,15 @@ El ciclo termina. El crecimiento nunca para.`
 ];
 
 function getTodayMantraIndex() {
-  const day = new Date().getDate(); // 1-31
-  return ((day - 1) % MANTRAS.length); // 0-29
+  const d = new Date();
+  const dateStr = `${d.getFullYear()}-${d.getMonth()}-${d.getDate()}`;
+  const uid = window._user?.uid || 'guest';
+  const seed = uid + dateStr;
+  let hash = 0;
+  for (let i = 0; i < seed.length; i++) {
+    hash = (hash * 31 + seed.charCodeAt(i)) % MANTRAS.length;
+  }
+  return hash;
 }
 
 function getDayLabel() {
