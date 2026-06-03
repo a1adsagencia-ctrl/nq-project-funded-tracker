@@ -1476,6 +1476,9 @@ async function save() {
 
 window._init = function() {
   accounts = window._accounts || [];
+  // Exponer setter para que módulos externos puedan filtrar accounts
+  window._setAccountsFilter = function(filtered) { accounts = filtered; };
+  window._clearAccountsFilter = function() { accounts = window._accounts || []; };
   // Asignar numero a cuentas que no lo tienen, por firma, en orden de fecha
   if(!window._firmCounters) window._firmCounters = {};
   const sinNumero = accounts.filter(a => !a.numero);
@@ -4325,31 +4328,17 @@ window.guardarGrupoCuentas = async function() {
 // Filtro de grupo en Dashboard — filtra window._accounts antes de renderizar
 window.setGrupoFilter = function(grupoId) {
   _dashGrupoFilter = grupoId;
-  if(!grupoId) {
+  if (!grupoId) {
     // Sin filtro — restaurar todas las cuentas
-    window._accounts = window._allAccountsBackup || window._accounts;
-    window._allAccountsBackup = null;
+    if (window._clearAccountsFilter) window._clearAccountsFilter();
   } else {
-    // Guardar backup de todas las cuentas si no existe
-    if(!window._allAccountsBackup) {
-      window._allAccountsBackup = window._accounts ? [...window._accounts] : [];
-    }
-    const g = _grupos.find(x=>x.id===grupoId);
+    const g = _grupos.find(x => x.id === grupoId);
     const ids = g?.cuentaIds || [];
-    // Filtrar: solo las cuentas del grupo (o array vacío si no tiene ninguna)
-    window._accounts = (window._allAccountsBackup||[]).filter(a=>ids.includes(a.id));
+    const todas = window._accounts || [];
+    const filtradas = todas.filter(a => ids.includes(a.id));
+    if (window._setAccountsFilter) window._setAccountsFilter(filtradas);
   }
   renderDashboard();
-};
-
-// Al cargar nuevas cuentas, limpiar el backup para que se actualice
-const _origInit = window._init;
-window._init = function() {
-  window._allAccountsBackup = null;
-  _dashGrupoFilter = '';
-  const sel = document.getElementById('d-grupo-select');
-  if(sel) sel.value = '';
-  if(_origInit) _origInit();
 };
 
 function actualizarSelectGrupo() {
