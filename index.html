@@ -608,6 +608,10 @@ body.gray .note-card.color-purple:hover{border-color:rgba(168,85,247,.6)!importa
 body.gray .note-card.color-orange{background:#2a1800!important;border-color:rgba(255,140,0,.35)!important;}
 body.gray .note-card.color-orange:hover{border-color:rgba(255,140,0,.6)!important;}
 
+/* Mantra */
+@keyframes mantra-slide-in{from{opacity:0;transform:translateX(-50%) translateY(20px)}to{opacity:1;transform:translateX(-50%) translateY(0)}}
+#mantra-toast:hover{border-color:rgba(0,229,160,.5);box-shadow:0 8px 32px rgba(0,0,0,.6),0 0 32px rgba(0,229,160,.15);}
+
 /* Filtro dropdown dashboard */
 .d-fopt:hover:not(.active){background:rgba(0,255,136,.05)!important;color:var(--accent)!important;}
 body.light #d-filter-dropdown{background:#ffffff!important;border-color:#d0ddd0!important;}
@@ -1163,6 +1167,32 @@ body.light .note-card.color-orange:hover{border-color:rgba(210,110,0,.6)!importa
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" width="20" height="20"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
   </div>
 </div>
+</div>
+
+<!-- MODAL CUENTA -->
+<!-- MANTRA FLOTANTE -->
+<div id="mantra-toast" style="display:none;position:fixed;bottom:90px;left:50%;transform:translateX(-50%);z-index:9998;max-width:420px;width:calc(100% - 40px);background:linear-gradient(135deg,#0d1a10,#0a1208);border:1px solid rgba(0,229,160,.3);border-radius:16px;padding:14px 18px;box-shadow:0 8px 32px rgba(0,0,0,.6),0 0 24px rgba(0,229,160,.08);cursor:pointer;animation:mantra-slide-in .4s ease;" onclick="openMantraModal()">
+  <div style="display:flex;align-items:center;gap:12px;">
+    <div style="font-size:22px;flex-shrink:0;">🙏</div>
+    <div style="flex:1;min-width:0;">
+      <div style="font-size:10px;font-family:var(--mono);color:var(--accent);letter-spacing:.12em;text-transform:uppercase;margin-bottom:3px;">Mantra del día</div>
+      <div id="mantra-preview" style="font-size:12px;color:var(--muted2);line-height:1.5;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">Cargando...</div>
+    </div>
+    <button onclick="event.stopPropagation();dismissMantra()" style="background:none;border:none;color:var(--muted);cursor:pointer;font-size:18px;padding:2px 4px;flex-shrink:0;line-height:1;transition:color .2s;" onmouseover="this.style.color='var(--text)'" onmouseout="this.style.color='var(--muted)'">×</button>
+  </div>
+</div>
+
+<!-- MODAL MANTRA COMPLETO -->
+<div class="ov" id="ov-mantra">
+  <div class="modal" style="width:520px;max-width:96vw;text-align:center;">
+    <div class="mhdr">
+      <span class="mtitle">🙏 Mantra del Día</span>
+      <button class="mx" onclick="closeOv('mantra')">×</button>
+    </div>
+    <div id="mantra-day-badge" style="display:inline-block;background:rgba(0,229,160,.1);border:1px solid rgba(0,229,160,.25);color:var(--accent);font-family:var(--mono);font-size:10px;letter-spacing:.12em;text-transform:uppercase;padding:4px 12px;border-radius:20px;margin-bottom:20px;"></div>
+    <div id="mantra-full-text" style="font-size:15px;color:var(--muted2);line-height:1.9;text-align:left;white-space:pre-wrap;padding:0 4px;"></div>
+    <button onclick="dismissMantra();closeOv('mantra')" style="margin-top:24px;background:none;border:1px solid var(--border);color:var(--muted);padding:9px 24px;border-radius:8px;cursor:pointer;font-size:12px;font-family:var(--mono);transition:all .2s;" onmouseover="this.style.borderColor='var(--accent)';this.style.color='var(--accent)'" onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--muted)'">Entendido — no mostrar hoy</button>
+  </div>
 </div>
 
 <!-- MODAL CUENTA -->
@@ -3636,6 +3666,429 @@ body.light .promo-modal .u-email{color:#4a6a50}
   setTimeout(shakeNewsWidget, 4000);
   setInterval(shakeNewsWidget, 60000);
 })();
+</script>
+<script>
+// ── SISTEMA DE MANTRAS DIARIOS ──
+const MANTRAS = [
+  // 1
+  `Dios de sabiduría infinita, hoy me presento ante ti como un canal de tu luz y tu guía.
+
+Aclara mi mente, aquieta mis emociones y alinea cada decisión con tu propósito.
+
+Libérame del miedo, de la codicia y de la impulsividad. Arranca de mí la duda y lléname de confianza, disciplina y gratitud. ❤️
+
+Entrego a ti cada pensamiento, cada análisis y cada acción que tome hoy.
+
+Si he de ganar, que sea con humildad y para honrarte. Si he de perder, que sea con consciencia, para aprender, crecer y mejorar.
+
+Confío plenamente en tu plan perfecto y suelto la necesidad de controlar el resultado.
+
+Gracias por este camino, por las lecciones que el mercado me ofrece y por permitirme operar con paz, enfoque y propósito.
+
+Hoy no opero solo. Hoy opero contigo.`,
+
+  // 2
+  `Señor, hoy elijo la calma sobre la reacción, la paciencia sobre la prisa.
+
+El mercado no es mi enemigo. Es un maestro que me habla a través del precio, y yo elijo escuchar con humildad.
+
+Que mis ojos vean con claridad, que mis manos actúen solo cuando exista confirmación, y que mi corazón permanezca tranquilo sin importar el resultado.
+
+No perseguiré lo que no me corresponde. Esperaré con fe lo que fue preparado para mí.
+
+Hoy soy un observador sereno, no un cazador ansioso. 🕊️
+
+Gracias por la disciplina que forjas en mí cada sesión.`,
+
+  // 3
+  `Hoy comienzo desde la gratitud.
+
+Gracias por tener acceso a los mercados, por tener una mente capaz de analizar y aprender, y por cada pérdida que me enseñó algo que el éxito no pudo.
+
+Declaro que hoy operaré con intención. No por necesidad, no por venganza, no por demostrar nada a nadie.
+
+Opero porque es mi camino, y en este camino elijo crecer con gracia.
+
+Que cada trade de hoy refleje quien estoy convirtiéndome, no quien era ayer. 🌱
+
+Suelto el resultado. Abrazo el proceso.`,
+
+  // 4
+  `Antes de ver el precio, miro hacia adentro.
+
+¿Estoy en paz? ¿Mi mente está despejada? ¿Mi cuerpo está descansado? ¿Mi corazón está libre de emociones del día anterior?
+
+Si la respuesta es sí, entonces estoy listo.
+
+Si algo perturba mi interior hoy, elijo esperar. No hay trade que valga más que mi estabilidad emocional.
+
+El mercado estará aquí mañana. Pero mi disciplina, construida hoy, vivirá para siempre. 💪
+
+Hoy priorizo la calidad sobre la cantidad. La claridad sobre la ansiedad.`,
+
+  // 5
+  `Declaro que hoy no dejaré que el dinero nuble mi visión.
+
+Cada número en pantalla es solo información, no una amenaza ni una promesa. Es simplemente datos que me hablan del comportamiento humano colectivo.
+
+Yo soy el observador. Yo soy quien decide. Yo soy quien tiene el poder de no actuar cuando el setup no está claro.
+
+Que la sabiduría guíe cada entrada, y que la fortaleza proteja mi capital cuando debo salir. 🛡️
+
+Hoy no busco emoción. Busco ejecución. No busco validación. Busco resultados consistentes.`,
+
+  // 6
+  `Hoy me comprometo con mis reglas.
+
+No importa cuánto me guste un movimiento, si no cumple mis criterios, no entro. No importa cuánto duela cerrar una posición perdedora, si mi sistema lo indica, lo hago.
+
+La disciplina no es un castigo. La disciplina es el amor más grande que puedo darme a mí mismo como trader.
+
+Cada vez que respeto mis reglas, me respeto a mí mismo. ✨
+
+Gracias por darme la fuerza para honrar mis compromisos hoy, aunque el mercado pruebe mi paciencia.`,
+
+  // 7
+  `Siete días de una nueva semana. Siete oportunidades de ser mejor.
+
+Hoy no cargo el peso de operaciones pasadas. Hoy es una página en blanco, limpia y llena de posibilidades.
+
+Lo que perdí la semana pasada quedó en la semana pasada. Lo que gané fue un regalo y una lección. Hoy comienzo de cero en mi estado emocional.
+
+Fresco. Enfocado. Agradecido. 🌅
+
+Que este nuevo comienzo esté bendecido con claridad, con setups honestos y con la paciencia de esperar lo que realmente vale la pena.`,
+
+  // 8
+  `El verdadero trader no mide su éxito en dinero, sino en consistencia.
+
+Hoy me pregunto: ¿ejecuté mi plan? ¿Respeto mis reglas? ¿Opero con conciencia?
+
+Si la respuesta es sí, el día fue exitoso, independientemente del resultado financiero.
+
+El dinero es consecuencia de operar bien. Y operar bien comienza aquí, en este momento de intención, antes de abrir la primera gráfica.
+
+Que hoy sea un día de ejecución impecable. 🎯`,
+
+  // 9
+  `Hoy elijo no apresurarme.
+
+El mercado siempre dará otra oportunidad. No existe el "last trade of my life". Existe la próxima buena configuración, y llegará cuando deba llegar.
+
+Hoy practico el arte de esperar con paz, de observar sin ansiedad, de estar presente sin urgencia.
+
+La paciencia no es pasividad. Es sabiduría activa. 🧘
+
+Gracias por enseñarme que a veces no hacer nada es la decisión más poderosa que puedo tomar.`,
+
+  // 10
+  `Diez días. Diez momentos de elegir quién quiero ser.
+
+Hoy elijo ser el trader que soy capaz de ser, no el trader que el miedo me dice que soy.
+
+Me levanto por encima de la duda. Me levanto por encima de los resultados de ayer. Me levanto por encima de lo que otros piensan de mí.
+
+Hoy opero desde mi mejor versión. Con análisis, con calma, con fe en el proceso. 💫
+
+No necesito que cada trade gane. Necesito que cada trade sea ejecutado con integridad.`,
+
+  // 11
+  `Que mis ojos vean el mercado como es, no como quiero que sea.
+
+Uno de los errores más costosos del trader es operar con sesgo, viendo lo que quiere ver y no lo que el precio realmente muestra.
+
+Hoy pido claridad. Hoy pido objetividad. Hoy pido la humildad de cambiar de opinión cuando el mercado me dice que estaba equivocado.
+
+El ego cuesta dinero. La humildad lo preserva. 🌿
+
+Que hoy sea un día de lectura honesta del mercado.`,
+
+  // 12
+  `Hoy recuerdo por qué empecé.
+
+No fue por las redes sociales. No fue por los autos ni los viajes. Fue porque creí que podía construir libertad a través de disciplina y conocimiento.
+
+Ese sueño sigue vivo. Y cada día que opero con intención, lo alimento.
+
+No estoy aquí para hacerme rico rápido. Estoy aquí para construir algo real, algo sostenible, algo que le cuente con orgullo a las personas que amo. ❤️
+
+Hoy opero por algo más grande que yo mismo.`,
+
+  // 13
+  `Trece es un número que algunos temen. Yo lo abrazo.
+
+Porque el trading me ha enseñado que el miedo al número, al día, al momento, es solo proyección mental.
+
+El mercado no sabe que es martes o viernes, mañana o tarde, día 13 o día 1. Solo refleja la interacción humana colectiva.
+
+Hoy dejo ir las supersticiones. Dejo ir los miedos irracionales. 🔥
+
+Opero con lógica, con análisis y con la certeza de que mis reglas son más fuertes que cualquier narrativa mental.`,
+
+  // 14
+  `A mitad del mes, hago una pausa.
+
+¿He cumplido mis reglas? ¿He operado con la versión de mí que quiero ser? ¿He aprendido algo nuevo sobre el mercado o sobre mí mismo?
+
+Sea cual sea la respuesta, hoy es una nueva oportunidad de alinearme.
+
+No busco la perfección. Busco el progreso. No busco que cada día sea extraordinario. Busco que cada día sea honesto. 📋
+
+Que la segunda mitad del mes esté llena de ejecución clara y consistencia real.`,
+
+  // 15
+  `Quince días en el ciclo. El mercado me ha dado muchas lecciones.
+
+Hoy honro cada una de ellas. Las pérdidas que me enseñaron a gestionar el riesgo. Las ganancias que me enseñaron que el sistema funciona. Los días de duda que me enseñaron a confiar en el proceso.
+
+Todo tiene un propósito. Todo construye al trader que seré mañana.
+
+Gracias por cada experiencia, buena o mala. Todas fueron necesarias. ✨
+
+Hoy avanzo con gratitud y con la sabiduría acumulada de cada sesión vivida.`,
+
+  // 16
+  `El mercado abre hoy con posibilidades infinitas.
+
+De todas esas posibilidades, solo necesito una buena. Solo un setup limpio, confirmado, ejecutado con disciplina.
+
+No necesito estar en cada movimiento. No necesito recuperar lo que no gané ayer. Solo necesito encontrar mi oportunidad y ejecutarla bien.
+
+Menos es más. Claridad sobre cantidad. 💎
+
+Que hoy tenga la sabiduría de esperar lo bueno y la valentía de ejecutarlo cuando llegue.`,
+
+  // 17
+  `Hoy me desconecto del ruido externo.
+
+Las noticias, las opiniones, los grupos de Telegram, los tweets de los "gurús"... todo eso puede esperar.
+
+Hoy solo escucho al precio. Solo leo lo que el mercado me muestra. Solo confío en mi análisis, en mi sistema, en mi criterio.
+
+Fui formado para esto. Tengo las herramientas. Tengo el conocimiento. 🧠
+
+Hoy confío en mí mismo. Y cuando dude, recuerdo que el trabajo que hice me preparó para este momento.`,
+
+  // 18
+  `Dieciocho días de ciclo. Dieciocho veces que elegí mostrarme.
+
+Eso es consistencia. Eso es compromiso. Eso es lo que separa a los que logran resultados de los que solo hablan de lograrlos.
+
+Hoy celebro el hecho de seguir aquí, seguir aprendiendo, seguir mejorando.
+
+No necesito el aplauso de nadie. Mi crecimiento silencioso es mi mayor victoria. 🏆
+
+Que este día sume un eslabón más a la cadena de disciplina que estoy construyendo.`,
+
+  // 19
+  `Hoy elijo operar desde la abundancia, no desde el miedo.
+
+Desde la abundancia: sé que siempre habrá más oportunidades, así que no necesito forzar ninguna.
+
+Desde el miedo: creo que si no entro ahora, me pierdo de algo, y eso me hace tomar malas decisiones.
+
+Hoy elijo conscientemente la abundancia. 🌊
+
+El mercado es un océano de oportunidades. No necesito agarrar cada ola. Solo necesito estar listo para la ola correcta.`,
+
+  // 20
+  `Veinte días. Dos tercios del ciclo completados.
+
+Hoy me hago una pregunta poderosa: ¿Qué haría hoy el trader en el que me quiero convertir?
+
+Ese trader no revengea. Ese trader no sobreopera. Ese trader lee el mercado con paciencia y actúa con precisión.
+
+Hoy no seré quien fui. Seré quien estoy convirtiéndome. 🦋
+
+Cada decisión de hoy es un voto a favor de mi mejor versión como trader.`,
+
+  // 21
+  `Veintiún días, el tiempo que dicen que toma formar un hábito.
+
+¿Cuál es el hábito que quiero solidificar en el trading? La disciplina de seguir el plan sin importar las emociones del momento.
+
+Hoy practico ese hábito conscientemente. Cada vez que el mercado me tiente a saltarme una regla, recuerdo que estoy entrenando mis respuestas automáticas.
+
+El futuro trader que seré lo agradecerá. 🌟
+
+Hoy planto semillas de disciplina que cosecharé en meses.`,
+
+  // 22
+  `Hoy recuerdo que el trading es un maratón, no un sprint.
+
+Los que triunfan no son los que ganan más en un solo día. Son los que persisten, aprenden y mejoran consistentemente durante meses y años.
+
+No necesito hacer mi año en esta sesión. Solo necesito hacer bien esta sesión.
+
+Paso a paso. Trade a trade. Semana a semana. 🏃
+
+Que hoy sea otro buen paso en el maratón de mi crecimiento.`,
+
+  // 23
+  `Hoy reconozco mis límites y los honro.
+
+Hay días en que el mercado no me habla con claridad. Hay días en que mis emociones no están perfectamente calibradas. Hay días en que lo más sabio es operar poco o no operar.
+
+Reconocer esos días no es debilidad. Es inteligencia emocional aplicada al trading.
+
+Hoy evalúo honestamente mi estado antes de cada decisión. 🌀
+
+Si no es el día, está bien. Mañana llega con nuevas oportunidades y con un yo más descansado.`,
+
+  // 24
+  `Que mi gestión del riesgo hoy sea impecable.
+
+No importa qué tan bueno se vea el setup: el riesgo siempre viene primero. Primero defino cuánto puedo perder. Luego veo cuánto puedo ganar.
+
+El capital es vida. El capital preservado es la posibilidad de seguir en este juego mañana, la próxima semana, el próximo año.
+
+Un gran trader primero es un gran gestor de riesgo. 🛡️
+
+Que hoy cada posición tenga su stop claro, su tamaño correcto y su salida definida antes de entrar.`,
+
+  // 25
+  `A cinco días del final del ciclo, siento gratitud.
+
+Gratitud por seguir aquí. Por no haber abandonado cuando fue difícil. Por haber aprendido de cada tropiezo. Por haber celebrado cada pequeño avance.
+
+El trading me ha enseñado más sobre mí mismo que cualquier otra disciplina.
+
+Me ha enseñado mi tolerancia al riesgo, mi relación con el dinero, mis miedos más profundos, mi capacidad de mantener la calma. 💙
+
+Hoy opero con esa consciencia. Sabiendo que cada sesión es también un espejo.`,
+
+  // 26
+  `Hoy me libero de la comparación.
+
+No importa lo que otros traders ganen. No importa las ganancias que veo en redes sociales. No importa si alguien en mi grupo hizo 10x ayer.
+
+Mi camino es único. Mi cuenta es mía. Mi progreso es el que importa.
+
+Compararse con otros es robarle tiempo y energía a mi propio desarrollo. 🌱
+
+Hoy solo me comparo con el trader que era ayer. Y elijo ser un poco mejor.`,
+
+  // 27
+  `Hoy reconozco que no lo sé todo, y eso está bien.
+
+El mercado siempre tendrá algo nuevo que enseñarme. Siempre habrá situaciones que no había visto antes. Siempre habrá momentos que pongan a prueba mi sistema.
+
+Y yo elijo seguir siendo un estudiante permanente. Con la humildad del principiante y la calma del experto.
+
+El día que crea que ya lo sé todo, seré peligroso para mi propio capital. 📚
+
+Hoy opero con la mente abierta de quien siempre tiene algo que aprender.`,
+
+  // 28
+  `Casi al final del ciclo. Veintiochos días de elecciones conscientes.
+
+Hoy pienso en el trader que era al inicio de este ciclo y en el trader que soy hoy. ¿Hay diferencia? ¿Aprendí algo? ¿Mejoré en algún aspecto?
+
+Si la respuesta es sí, el ciclo fue exitoso, independientemente de los números.
+
+Porque el crecimiento real no siempre se mide en dinero. A veces se mide en sabiduría, en paciencia, en autoconocimiento. 🌙
+
+Gracias por este ciclo. Gracias por cada lección que vino con él.`,
+
+  // 29
+  `Penúltimo día del ciclo.
+
+Hoy no busco cerrar el mes con un gran movimiento. Hoy busco cerrar el mes como lo viví: con consistencia, con disciplina, con intención.
+
+Las grandes ganancias al final del mes para "compensar" son una trampa emocional. El mes se construye día a día, trade a trade.
+
+Si el mes fue bueno, que el cierre lo honre. Si fue difícil, que el cierre muestre que aprendí. ⭐
+
+Mañana empieza un nuevo ciclo. Hoy termino este con la frente en alto.`,
+
+  // 30
+  `Último día del ciclo. Treinta días de presencia, de aprendizaje, de crecimiento.
+
+Hoy no busco grandes cosas. Hoy celebro el hecho de haber llegado hasta aquí. De haber operado con consciencia, de haber elegido la disciplina cada vez que pude.
+
+Mañana comienza el ciclo de nuevo. Con nuevos mantras, con nuevas oportunidades, con una versión un poco más sabia de mí mismo.
+
+Pero hoy, en este último día, solo quiero decir: gracias. 🙏
+
+Gracias al mercado, a las lecciones, al proceso y a la fe que me trajo hasta aquí.
+
+El ciclo termina. El crecimiento nunca para.`
+];
+
+function getTodayMantraIndex() {
+  const day = new Date().getDate(); // 1-31
+  return ((day - 1) % MANTRAS.length); // 0-29
+}
+
+function getDayLabel() {
+  const now = new Date();
+  const dias = ['Domingo','Lunes','Martes','Miércoles','Jueves','Viernes','Sábado'];
+  const meses = ['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
+  return `${dias[now.getDay()]} ${now.getDate()} de ${meses[now.getMonth()]}`;
+}
+
+function getTodayKey() {
+  const d = new Date();
+  return `${d.getFullYear()}-${d.getMonth()+1}-${d.getDate()}`;
+}
+
+window.dismissMantra = function() {
+  // Guardar que ya lo vio hoy
+  try { localStorage.setItem('mantraVisto', getTodayKey()); } catch(e) {}
+  const toast = document.getElementById('mantra-toast');
+  if (toast) {
+    toast.style.animation = 'none';
+    toast.style.opacity = '0';
+    toast.style.transform = 'translateX(-50%) translateY(20px)';
+    toast.style.transition = 'opacity .3s, transform .3s';
+    setTimeout(() => { toast.style.display = 'none'; }, 300);
+  }
+};
+
+window.openMantraModal = function() {
+  const idx = getTodayMantraIndex();
+  const mantra = MANTRAS[idx];
+  const badge = document.getElementById('mantra-day-badge');
+  const full  = document.getElementById('mantra-full-text');
+  if (badge) badge.textContent = getDayLabel() + ' · Mantra #' + (idx + 1);
+  if (full)  full.textContent  = mantra;
+  openOv('mantra');
+};
+
+function initMantra() {
+  // Solo mostrar si el usuario ya está logueado y no lo ha visto hoy
+  const yaVisto = (() => {
+    try { return localStorage.getItem('mantraVisto') === getTodayKey(); } catch(e) { return false; }
+  })();
+  if (yaVisto) return;
+
+  const idx = getTodayMantraIndex();
+  const mantra = MANTRAS[idx];
+  const preview = document.getElementById('mantra-preview');
+  const toast   = document.getElementById('mantra-toast');
+  if (!preview || !toast) return;
+
+  // Mostrar las primeras palabras como preview
+  const firstLine = mantra.split('\n')[0];
+  preview.textContent = firstLine.length > 80 ? firstLine.slice(0, 77) + '...' : firstLine;
+  toast.style.display = 'block';
+}
+
+// Esperar a que el usuario esté logueado para mostrar el mantra
+const _origOnAuth = window._onAuthReady;
+window._onMantraAuth = function() {
+  setTimeout(initMantra, 1500);
+};
+
+// Hook: ejecutar cuando el usuario esté listo
+document.addEventListener('DOMContentLoaded', () => {
+  const check = setInterval(() => {
+    if (window._user) {
+      clearInterval(check);
+      setTimeout(initMantra, 1500);
+    }
+  }, 500);
+});
 </script>
 </body>
 </html>
