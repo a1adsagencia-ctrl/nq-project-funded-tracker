@@ -1020,8 +1020,8 @@ body.light .note-card.color-orange:hover{border-color:rgba(210,110,0,.6)!importa
       <label class="fl">Imagen del evento (se muestra en la card y al registrarse)</label>
       <div style="display:flex;flex-direction:column;gap:8px;">
         <!-- Preview -->
-        <div id="ev-img-preview-wrap" style="display:none;position:relative;border-radius:8px;overflow:hidden;max-height:140px;">
-          <img id="ev-img-preview" src="" style="width:100%;max-height:140px;object-fit:cover;display:block;">
+        <div id="ev-img-preview-wrap" style="display:none;position:relative;border-radius:8px;overflow:hidden;">
+          <img id="ev-img-preview" src="" style="width:100%;height:auto;display:block;">
           <button onclick="clearEvImg()" style="position:absolute;top:6px;right:6px;background:rgba(0,0,0,.7);border:none;color:#fff;width:24px;height:24px;border-radius:50%;cursor:pointer;font-size:13px;display:flex;align-items:center;justify-content:center;" title="Quitar imagen">×</button>
         </div>
         <!-- Botón subir -->
@@ -1098,8 +1098,8 @@ body.light .note-card.color-orange:hover{border-color:rgba(210,110,0,.6)!importa
       <button class="mx" onclick="closeOv('ev-registro')">×</button>
     </div>
     <!-- Imagen del evento -->
-    <div id="ev-reg-img-wrap" style="display:none;margin:-28px -28px 20px -28px;overflow:hidden;border-radius:14px 14px 0 0;">
-      <img id="ev-reg-img-el" src="" alt="" style="width:100%;max-height:180px;object-fit:cover;display:block;">
+    <div id="ev-reg-img-wrap" style="display:none;margin-bottom:20px;border-radius:10px;overflow:hidden;">
+      <img id="ev-reg-img-el" src="" alt="" style="width:100%;height:auto;display:block;">
     </div>
     <!-- Meta del evento (fecha/hora) -->
     <div id="ev-reg-event-meta-wrap" style="display:none;margin-bottom:6px;">
@@ -1126,7 +1126,7 @@ body.light .note-card.color-orange:hover{border-color:rgba(210,110,0,.6)!importa
       <span class="mtitle" id="ev-post-titulo-el">🎉 ¡Registro exitoso!</span>
       <button class="mx" onclick="closeOv('ev-comunidad')">×</button>
     </div>
-    <div id="ev-post-img-wrap" style="display:none;margin-bottom:16px;"><img id="ev-post-img-el" src="" alt="" style="max-width:100%;border-radius:10px;max-height:180px;object-fit:cover;"></div>
+    <div id="ev-post-img-wrap" style="display:none;"></div>
     <p id="ev-post-desc-el" style="font-size:13px;color:var(--muted);margin-bottom:24px;line-height:1.6;">¡Listo! Haz clic en el botón para unirte a la comunidad del evento.</p>
     <div id="ev-comunidad-btns" style="display:flex;flex-direction:column;gap:10px;margin-bottom:16px;"></div>
     <button onclick="closeOv('ev-comunidad')" style="margin-top:8px;background:none;border:1px solid var(--border);color:var(--muted);padding:8px 20px;border-radius:8px;cursor:pointer;font-size:12px;font-family:var(--mono);transition:all .2s;" onmouseover="this.style.borderColor='var(--accent)'" onmouseout="this.style.borderColor='var(--border)'">Cerrar</button>
@@ -3064,7 +3064,7 @@ function renderEventoCard(ev) {
 
   return `
     <div class="ev-card ${ev.estado === 'live' ? 'ev-live' : ev.estado === 'finalizado' ? 'ev-finalizado' : ''}">
-      ${ev.postImg ? `<div style="margin-bottom:16px;border-radius:10px;overflow:hidden;max-height:220px;"><img src="${ev.postImg}" alt="${ev.titulo||''}" style="width:100%;object-fit:cover;max-height:220px;display:block;"></div>` : ''}
+      ${ev.postImg ? `<div style="margin-bottom:16px;border-radius:10px;overflow:hidden;"><img src="${ev.postImg}" alt="${ev.titulo||''}" style="width:100%;height:auto;display:block;"></div>` : ''}
       <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:12px;flex-wrap:wrap;">
         <div style="display:flex;flex-direction:column;gap:10px;flex:1;min-width:0;">
           <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
