@@ -4279,11 +4279,15 @@ window.abrirAsignarCuentas = function(grupoId) {
     ? `<div style="text-align:center;padding:20px;color:var(--muted);font-family:var(--mono);font-size:12px;">No tienes cuentas creadas aún</div>`
     : cuentas.map(a=>{
         const ok = asignadas.includes(a.id);
-        return `<label style="display:flex;align-items:center;gap:12px;padding:10px 14px;border-radius:10px;border:1px solid ${ok?'rgba(0,229,160,.3)':'var(--border)'};cursor:pointer;transition:border-color .2s;">
+        const otroGrupo = _grupos.find(x=>x.id!==grupoId&&(x.cuentaIds||[]).includes(a.id));
+        const aviso = otroGrupo ? `<div style="font-size:10px;font-family:var(--mono);color:#ffc840;margin-top:2px;">⚠️ Está en "${otroGrupo.nombre}" — se moverá aquí</div>` : '';
+        const borderColor = ok ? 'rgba(0,229,160,.3)' : otroGrupo ? 'rgba(255,200,64,.2)' : 'var(--border)';
+        return `<label style="display:flex;align-items:center;gap:12px;padding:10px 14px;border-radius:10px;border:1px solid ${borderColor};cursor:pointer;transition:border-color .2s;">
           <input type="checkbox" ${ok?'checked':''} value="${a.id}" style="accent-color:var(--accent);width:16px;height:16px;cursor:pointer;">
           <div>
             <div style="font-size:13px;font-weight:600;color:var(--text);">${a.firma||'Sin firma'} ${a.size||''}</div>
             <div style="font-size:11px;font-family:var(--mono);color:var(--muted);">${a.estado==='active'?'🔵 Activa':a.estado==='passed'||a.estado==='funded'?'🟢 Pasada':'🔴 Quemada'}</div>
+            ${aviso}
           </div>
         </label>`;
       }).join('');
@@ -4295,10 +4299,27 @@ window.guardarGrupoCuentas = async function() {
   const checks = document.querySelectorAll('#gc-lista input[type=checkbox]');
   const cuentaIds = Array.from(checks).filter(c=>c.checked).map(c=>c.value);
   try {
-    await updateDoc(doc(dbTP,`users/${window._user.uid}/grupos`,_editGrupoCuentasId),{cuentaIds});
+    const uid = window._user.uid;
+    const batch = [];
+
+    // Quitar estas cuentas de cualquier otro grupo donde estén
+    for (const g of _grupos) {
+      if (g.id === _editGrupoCuentasId) continue;
+      const actuales = g.cuentaIds || [];
+      const sinConflicto = actuales.filter(id => !cuentaIds.includes(id));
+      if (sinConflicto.length !== actuales.length) {
+        // Hay cuentas que se deben quitar de este grupo
+        batch.push(updateDoc(doc(dbTP, `users/${uid}/grupos`, g.id), { cuentaIds: sinConflicto }));
+      }
+    }
+
+    // Guardar en el grupo actual
+    batch.push(updateDoc(doc(dbTP, `users/${uid}/grupos`, _editGrupoCuentasId), { cuentaIds }));
+
+    await Promise.all(batch);
     closeOv('grupo-cuentas');
     renderTraderPro();
-  } catch(e){alert('Error: '+e.message);}
+  } catch(e){ alert('Error: '+e.message); }
 };
 
 // ── FILTRO EN DASHBOARD ──
