@@ -4187,7 +4187,7 @@ window.renderTraderPro = async function() {
 };
 
 function cardGrupo(g) {
-  const cuentas = (window.accounts||[]).filter(a=>(g.cuentaIds||[]).includes(a.id));
+  const cuentas = (window._accounts||window.accounts||[]).filter(a=>(g.cuentaIds||[]).includes(a.id));
   const inv  = cuentas.reduce((s,a)=>s+(a.inversion||0),0);
   const ret  = cuentas.reduce((s,a)=>s+(a.retiros||[]).reduce((x,r)=>x+r.monto,0),0);
   const neta = ret-inv;
@@ -4273,7 +4273,7 @@ window.abrirAsignarCuentas = function(grupoId) {
   if(!g) return;
   document.getElementById('gc-titulo').textContent = `Cuentas en "${g.nombre}"`;
   const asignadas = g.cuentaIds||[];
-  const cuentas = window.accounts||[];
+  const cuentas = window._accounts || window.accounts || [];
   const lista = document.getElementById('gc-lista');
   lista.innerHTML = !cuentas.length
     ? `<div style="text-align:center;padding:20px;color:var(--muted);font-family:var(--mono);font-size:12px;">No tienes cuentas creadas aún</div>`
@@ -4314,6 +4314,13 @@ window.allTrades = function() {
   if(!_dashGrupoFilter) return tr;
   const g = _grupos.find(x=>x.id===_dashGrupoFilter);
   const ids = g?.cuentaIds||[];
+  const allAcc = window._accounts||window.accounts||[];
+  // filtrar trades por cuentas del grupo
+  const cuentasGrupo = allAcc.filter(a=>ids.includes(a.id));
+  const tradeIds = new Set();
+  cuentasGrupo.forEach(a=>{
+    Object.values(a.tradesByDate||{}).forEach(arr=>(arr||[]).forEach(t=>tradeIds.add(t.id||t)));
+  });
   return tr.filter(t=>ids.includes(t.accountId||t.cuentaId||t.cuenta));
 };
 
