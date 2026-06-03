@@ -4322,27 +4322,34 @@ window.guardarGrupoCuentas = async function() {
   } catch(e){ alert('Error: '+e.message); }
 };
 
-// ── FILTRO EN DASHBOARD ──
+// Filtro de grupo en Dashboard — filtra window._accounts antes de renderizar
 window.setGrupoFilter = function(grupoId) {
   _dashGrupoFilter = grupoId;
+  if(!grupoId) {
+    // Sin filtro — restaurar todas las cuentas
+    window._accounts = window._allAccountsBackup || window._accounts;
+    window._allAccountsBackup = null;
+  } else {
+    // Guardar backup de todas las cuentas si no existe
+    if(!window._allAccountsBackup) {
+      window._allAccountsBackup = window._accounts ? [...window._accounts] : [];
+    }
+    const g = _grupos.find(x=>x.id===grupoId);
+    const ids = g?.cuentaIds || [];
+    // Filtrar: solo las cuentas del grupo (o array vacío si no tiene ninguna)
+    window._accounts = (window._allAccountsBackup||[]).filter(a=>ids.includes(a.id));
+  }
   renderDashboard();
 };
 
-// Sobreescribir allTrades para aplicar filtro de grupo
-const _origAllTrades = window.allTrades;
-window.allTrades = function() {
-  let tr = _origAllTrades ? _origAllTrades() : [];
-  if(!_dashGrupoFilter) return tr;
-  const g = _grupos.find(x=>x.id===_dashGrupoFilter);
-  const ids = g?.cuentaIds||[];
-  const allAcc = window._accounts||window.accounts||[];
-  // filtrar trades por cuentas del grupo
-  const cuentasGrupo = allAcc.filter(a=>ids.includes(a.id));
-  const tradeIds = new Set();
-  cuentasGrupo.forEach(a=>{
-    Object.values(a.tradesByDate||{}).forEach(arr=>(arr||[]).forEach(t=>tradeIds.add(t.id||t)));
-  });
-  return tr.filter(t=>ids.includes(t.accountId||t.cuentaId||t.cuenta));
+// Al cargar nuevas cuentas, limpiar el backup para que se actualice
+const _origInit = window._init;
+window._init = function() {
+  window._allAccountsBackup = null;
+  _dashGrupoFilter = '';
+  const sel = document.getElementById('d-grupo-select');
+  if(sel) sel.value = '';
+  if(_origInit) _origInit();
 };
 
 function actualizarSelectGrupo() {
