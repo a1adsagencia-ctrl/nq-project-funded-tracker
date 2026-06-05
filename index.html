@@ -4423,5 +4423,118 @@ const _tpInterval = setInterval(()=>{
   }
 },600);
 </script>
+
+<!-- ===== NQ — Línea de trading animada en el fondo del login (AÑADIDO, no modifica nada existente) ===== -->
+<script>
+(function(){
+  var canvas, ctx, W, H, dpr;
+  function ensureCanvas(){
+    var screen = document.getElementById('login-screen');
+    if(!screen) return false;
+    canvas = document.getElementById('login-wave');
+    if(!canvas){
+      canvas = document.createElement('canvas');
+      canvas.id = 'login-wave';
+      canvas.style.cssText = 'position:absolute;inset:0;z-index:0;pointer-events:none;';
+      var card = screen.querySelector('.login-card');
+      if(card) screen.insertBefore(canvas, card);   // detrás de la tarjeta, encima de la grilla
+      else screen.appendChild(canvas);
+      ctx = canvas.getContext('2d');
+      resize();
+      window.addEventListener('resize', resize);
+    }
+    return true;
+  }
+  function resize(){
+    if(!canvas) return;
+    dpr = Math.min(window.devicePixelRatio || 1, 2);
+    // tamaño REAL de la pantalla (garantiza que la línea cruce de borde a borde)
+    W = window.innerWidth;
+    H = window.innerHeight;
+    canvas.style.width = W + 'px'; canvas.style.height = H + 'px';
+    canvas.width = W * dpr; canvas.height = H * dpr;
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  }
+  function makePath(){
+    // Trazo ANGULAR tipo acción del precio: picos y valles marcados (zigzag),
+    // anclado inferior-izquierda -> superior-derecha, con tendencia alcista.
+    var startY = H * 0.86, endY = H * 0.12;
+    var nPiv = 7 + Math.floor(Math.random() * 3);     // 7–9 pivotes (swings)
+    var pivots = [];
+    for(var i=0; i<=nPiv; i++){
+      var t = i / nPiv;
+      var trendY = startY + (endY - startY) * t;       // línea de tendencia ascendente
+      var dir = (i % 2 === 0) ? 1 : -1;                // alterna alto/bajo
+      var env = Math.sin(Math.PI * t);                 // 0 en los extremos -> fija las esquinas
+      var mag = (H * 0.09 + Math.random() * H * 0.13) * env;   // amplitud del swing (variable)
+      pivots.push({ x: t * W, y: trendY + dir * mag });
+    }
+    // Densificar los segmentos rectos para que la cabeza avance suave y los picos queden afilados
+    var pts = [];
+    for(var s=0; s<pivots.length-1; s++){
+      var a = pivots[s], b = pivots[s+1];
+      var steps = Math.max(10, Math.floor((b.x - a.x) / 14));
+      for(var k=0; k<steps; k++){
+        var u = k / steps;
+        pts.push({ x: a.x + (b.x - a.x) * u, y: a.y + (b.y - a.y) * u });
+      }
+    }
+    pts.push(pivots[pivots.length-1]);
+    return pts;
+  }
+  function draw(pts, p, alpha, accent){
+    ctx.clearRect(0, 0, W, H);
+    var last = Math.floor(p * (pts.length - 1));
+    if(last < 1) return;
+    ctx.save();
+    ctx.globalAlpha = alpha;
+    ctx.lineJoin = 'round'; ctx.lineCap = 'round';
+    // halo exterior
+    ctx.shadowColor = accent; ctx.shadowBlur = 26;
+    ctx.strokeStyle = accent; ctx.lineWidth = 2.2;
+    ctx.beginPath(); ctx.moveTo(pts[0].x, pts[0].y);
+    for(var i=1; i<=last; i++) ctx.lineTo(pts[i].x, pts[i].y);
+    ctx.stroke();
+    // núcleo claro
+    ctx.shadowBlur = 6; ctx.lineWidth = 1; ctx.strokeStyle = 'rgba(235,255,245,.9)';
+    ctx.beginPath(); ctx.moveTo(pts[0].x, pts[0].y);
+    for(var j=1; j<=last; j++) ctx.lineTo(pts[j].x, pts[j].y);
+    ctx.stroke();
+    // punto cabeza brillante
+    var head = pts[last];
+    ctx.shadowBlur = 30; ctx.fillStyle = accent;
+    ctx.beginPath(); ctx.arc(head.x, head.y, 4.5, 0, Math.PI*2); ctx.fill();
+    ctx.shadowBlur = 12; ctx.fillStyle = '#eafff5';
+    ctx.beginPath(); ctx.arc(head.x, head.y, 2, 0, Math.PI*2); ctx.fill();
+    ctx.restore();
+  }
+  function gap(){ return 4500 + Math.random() * 2500; }   // reaparece cada ~4.5–7 s
+  function schedule(ms){ clearTimeout(window.__nqWaveT); window.__nqWaveT = setTimeout(runOnce, ms); }
+  function runOnce(){
+    if(!ensureCanvas()){ schedule(3000); return; }
+    var screen = document.getElementById('login-screen');
+    if(!screen || screen.style.display === 'none'){ schedule(2500); return; }  // solo en el login
+    resize();                                  // recalcula el tamaño real antes de dibujar
+    var pts = makePath();
+    var drawMs = 2800, holdMs = 1500, fadeMs = 1000, start = performance.now();
+    var accent = (getComputedStyle(document.documentElement).getPropertyValue('--accent') || '#00e57a').trim();
+    function frame(now){
+      var el = now - start, alpha = 1, prog;
+      if(el < drawMs){ prog = el / drawMs; }
+      else if(el < drawMs + holdMs){ prog = 1; }
+      else if(el < drawMs + holdMs + fadeMs){ prog = 1; alpha = 1 - (el - drawMs - holdMs) / fadeMs; }
+      else { ctx.clearRect(0,0,W,H); schedule(gap()); return; }
+      var p = prog < 1 ? (1 - Math.pow(1 - prog, 3)) : 1;   // ease-out
+      draw(pts, p, alpha, accent);
+      requestAnimationFrame(frame);
+    }
+    requestAnimationFrame(frame);
+  }
+  function boot(){ ensureCanvas(); schedule(1200); }
+  if(document.readyState === 'loading') document.addEventListener('DOMContentLoaded', boot);
+  else boot();
+})();
+</script>
+
 </body>
 </html>
