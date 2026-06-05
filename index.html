@@ -1189,10 +1189,10 @@ body.light .note-card.color-orange:hover{border-color:rgba(210,110,0,.6)!importa
   <!-- Opciones desplegables -->
   <div id="contact-menu" style="display:none;flex-direction:column;gap:8px;align-items:flex-end">
 
-    <!-- Email -->
+    <!-- WhatsApp -->
     <div style="display:flex;align-items:center;gap:10px">
-      <span style="background:var(--s1);border:1px solid var(--border2);color:var(--text);padding:6px 14px;border-radius:8px;font-size:12px;font-family:Inter,sans-serif;font-weight:500;white-space:nowrap;box-shadow:0 4px 16px rgba(0,0,0,.4)">Escríbenos al email</span>
-      <a href="mailto:nqproject.oficial@gmail.com?subject=Contacto%20NQ%20Project" style="width:42px;height:42px;border-radius:50%;background:var(--s2);border:1px solid var(--border2);display:flex;align-items:center;justify-content:center;color:var(--muted2);text-decoration:none;transition:all .2s;box-shadow:0 4px 16px rgba(0,0,0,.3)" onmouseover="this.style.borderColor='#00e5a0';this.style.color='#00e5a0'" onmouseout="this.style.borderColor='var(--border2)';this.style.color='var(--muted2)'"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="16" height="16"><rect x="2" y="4" width="20" height="16" rx="2"/><polyline points="2,4 12,13 22,4"/></svg></a>
+      <span style="background:var(--s1);border:1px solid var(--border2);color:var(--text);padding:6px 14px;border-radius:8px;font-size:12px;font-family:Inter,sans-serif;font-weight:500;white-space:nowrap;box-shadow:0 4px 16px rgba(0,0,0,.4)">Habla con nosotros</span>
+      <div role="button" onclick="window.open('https://wa.link/e476gj','_blank')" style="width:42px;height:42px;border-radius:50%;background:linear-gradient(135deg,#25D366,#128C7E);display:flex;align-items:center;justify-content:center;color:#fff;cursor:pointer;transition:all .2s;box-shadow:0 4px 16px rgba(37,211,102,.35)" onmouseover="this.style.transform='scale(1.08)';this.style.boxShadow='0 6px 20px rgba(37,211,102,.5)'" onmouseout="this.style.transform='scale(1)';this.style.boxShadow='0 4px 16px rgba(37,211,102,.35)'"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="18" height="18"><path d="M.057 24l1.687-6.163a11.867 11.867 0 01-1.587-5.946C.16 5.335 5.495 0 12.05 0a11.817 11.817 0 018.413 3.488 11.824 11.824 0 013.48 8.414c-.003 6.557-5.338 11.892-11.893 11.892a11.9 11.9 0 01-5.688-1.448L.057 24zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884a9.86 9.86 0 001.523 5.26l-.999 3.648 3.965-1.607zm11.387-5.464c-.074-.124-.272-.198-.57-.347-.297-.149-1.758-.868-2.031-.967-.272-.099-.47-.149-.669.149-.198.297-.768.967-.941 1.165-.173.198-.347.223-.644.074-.297-.149-1.255-.462-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.297-.347.446-.521.151-.172.2-.296.3-.495.099-.198.05-.372-.025-.521-.075-.148-.669-1.611-.916-2.206-.242-.579-.487-.501-.669-.51l-.57-.01c-.198 0-.52.074-.792.372s-1.04 1.016-1.04 2.479 1.065 2.876 1.213 3.074c.149.198 2.095 3.2 5.076 4.487.709.306 1.263.489 1.694.626.712.226 1.36.194 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.695.248-1.29.173-1.414z"/></svg></div>
     </div>
 
     <!-- Instagram -->
@@ -2402,15 +2402,10 @@ function renderAll() {
 }
 
 function openWhatsApp() {
-  document.getElementById('promo-name').value = '';
-  openOv('promo');
+  window.open('https://wa.link/e476gj', '_blank');
 }
 function goWhatsApp() {
-  const name = document.getElementById('promo-name').value.trim();
-  if (!name) { document.getElementById('promo-name').focus(); return; }
-  const msg = encodeURIComponent('Hola Homie, mi nombre es: ' + name + ' y quiero ingresar a las operativas en vivo.');
-  window.open('https://wa.me/573207599156?text=' + msg, '_blank');
-  closeOv('promo');
+  window.open('https://wa.link/e476gj', '_blank');
 }
 
 // ANIMACION FONDO LOGIN - NEON GREEN VIVID
@@ -3493,15 +3488,7 @@ window.deleteEvento = async function() {
 };
 </script>
 
-    <div onclick="openWhatsApp()" style="background:linear-gradient(135deg,#0e1f14,#0a1a10);border:1px solid rgba(0,229,160,.3);border-radius:16px 0 0 16px;border-right:none;padding:14px 18px;display:flex;align-items:center;gap:14px;cursor:pointer;max-width:270px;transition:all .2s">
-      <div style="width:44px;height:44px;border-radius:12px;background:linear-gradient(135deg,#25D366,#128C7E);display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0">&#128242;</div>
-      <div>
-        <div style="font-size:9px;font-weight:700;letter-spacing:.15em;text-transform:uppercase;color:#00e5a0;font-family:var(--mono);margin-bottom:3px">&#128308; EN VIVO &middot; NQ PROJECT</div>
-        <div style="font-size:13px;font-weight:700;color:#ffffff;line-height:1.3">Opera en vivo<br>conmigo</div>
-        <div style="font-size:18px;font-weight:800;color:#00e5a0;font-family:var(--mono);margin-top:2px">$33 <span style="font-size:11px;color:#8aaaca;font-weight:400">/ mes</span></div>
-      </div>
-    </div>
-    <div onclick="openWhatsApp()" style="background:#00e5a0;color:#000;border-radius:0 16px 16px 0;padding:0 16px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;letter-spacing:.06em;writing-mode:vertical-rl;cursor:pointer;min-height:82px;border:1px solid #00e5a0;transition:all .2s">UNIRME</div>
+
   </div>
 </div>
 
