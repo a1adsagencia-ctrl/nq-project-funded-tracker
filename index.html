@@ -729,6 +729,7 @@ body.light .note-card.color-orange:hover{border-color:rgba(210,110,0,.6)!importa
   <div class="tab" onclick="goTab('traderpro')" style="color:#ffc840;font-weight:700;">🏆 Trader Pro</div>
   <div class="tab" onclick="goTab('diario')">Diario de Trades</div>
   <div class="tab" onclick="goTab('analisis')">Analisis</div>
+  <div class="tab" onclick="goTab('calculadora')">🧮 Calculadora</div>
   <div class="tab" onclick="goTab('notas')">📝 Notas</div>
   <div class="tab" onclick="goTab('eventos')" id="tab-eventos" style="position:relative;">
     📅 Eventos
@@ -873,6 +874,91 @@ body.light .note-card.color-orange:hover{border-color:rgba(210,110,0,.6)!importa
       <div class="card">
         <div class="ct">⭐ Resultados por nivel de confianza</div>
         <div id="a-stars-stats-wrap" style="height:220px;position:relative;"><canvas id="ch-stars-stats"></canvas></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PANE CALCULADORA -->
+  <div class="pane" id="pane-calculadora">
+    <div class="g2">
+
+      <!-- ENTRADAS -->
+      <div class="card">
+        <div class="ct">🧮 Calculadora de Contratos</div>
+
+        <div class="fg">
+          <label class="fl">Instrumento</label>
+          <select class="fs" id="calc-instr" onchange="onCalcInstrumentChange()">
+            <optgroup label="Índices">
+              <option value="NQ">NQ — E-mini Nasdaq 100</option>
+              <option value="MNQ">MNQ — Micro Nasdaq 100</option>
+              <option value="ES">ES — E-mini S&amp;P 500</option>
+              <option value="MES">MES — Micro S&amp;P 500</option>
+              <option value="YM">YM — E-mini Dow</option>
+              <option value="MYM">MYM — Micro Dow</option>
+              <option value="RTY">RTY — E-mini Russell 2000</option>
+              <option value="M2K">M2K — Micro Russell 2000</option>
+            </optgroup>
+            <optgroup label="Materias primas">
+              <option value="CL">CL — Crudo (WTI)</option>
+              <option value="MCL">MCL — Micro Crudo</option>
+              <option value="GC">GC — Oro</option>
+              <option value="MGC">MGC — Micro Oro</option>
+            </optgroup>
+            <option value="CUSTOM">Personalizado (otro futuro)…</option>
+          </select>
+        </div>
+
+        <!-- Campos personalizados -->
+        <div id="calc-custom-row" style="display:none">
+          <div class="fr">
+            <div class="fg"><label class="fl">Valor por punto ($)</label><input class="fi" id="calc-cust-point" type="number" step="any" inputmode="decimal" placeholder="Ej: 20" oninput="calcContracts()"></div>
+            <div class="fg"><label class="fl">Valor por tick ($)</label><input class="fi" id="calc-cust-tickval" type="number" step="any" inputmode="decimal" placeholder="Ej: 5" oninput="calcContracts()"></div>
+          </div>
+          <div class="fg"><label class="fl">Tamaño de tick</label><input class="fi" id="calc-cust-tick" type="number" step="any" inputmode="decimal" placeholder="Ej: 0.25" oninput="calcContracts()"></div>
+        </div>
+
+        <div class="fg">
+          <label class="fl">Tamaño de cuenta ($) <small style="text-transform:none;letter-spacing:0;color:var(--muted)">(solo para riesgo en %)</small></label>
+          <input class="fi" id="calc-account" type="number" step="any" inputmode="decimal" placeholder="Ej: 50000" oninput="calcContracts()">
+        </div>
+
+        <div class="fr">
+          <div class="fg"><label class="fl">Riesgo por operación</label><input class="fi" id="calc-risk" type="number" step="any" inputmode="decimal" placeholder="Ej: 500" oninput="calcContracts()"></div>
+          <div class="fg"><label class="fl">Unidad</label><select class="fs" id="calc-risk-mode" onchange="calcContracts()"><option value="usd">$ (dólares)</option><option value="pct">% de la cuenta</option></select></div>
+        </div>
+
+        <div class="fr">
+          <div class="fg"><label class="fl">Stop Loss</label><input class="fi" id="calc-stop" type="number" step="any" inputmode="decimal" placeholder="Ej: 20" oninput="calcContracts()"></div>
+          <div class="fg"><label class="fl">Unidad SL</label><select class="fs" id="calc-stop-unit" onchange="calcContracts()"><option value="points">Puntos</option><option value="ticks">Ticks</option></select></div>
+        </div>
+
+        <div class="fr">
+          <div class="fg"><label class="fl">Objetivo (opcional)</label><input class="fi" id="calc-tp" type="number" step="any" inputmode="decimal" placeholder="Ej: 40" oninput="calcContracts()"></div>
+          <div class="fg"><label class="fl">Unidad TP</label><select class="fs" id="calc-tp-unit" onchange="calcContracts()"><option value="points">Puntos</option><option value="ticks">Ticks</option></select></div>
+        </div>
+      </div>
+
+      <!-- RESULTADO -->
+      <div class="card" style="display:flex;flex-direction:column;">
+        <div class="ct">Resultado</div>
+
+        <div style="text-align:center;padding:20px 0;border:1px solid var(--border2);border-radius:14px;margin-bottom:16px;background:rgba(0,229,122,.05)">
+          <div style="font-size:10px;font-family:var(--mono);color:var(--muted);letter-spacing:.12em;text-transform:uppercase">Contratos sugeridos</div>
+          <div id="calc-out-contracts" style="font-size:48px;font-weight:800;color:var(--accent);line-height:1.1;margin-top:6px">0</div>
+          <div id="calc-out-instr" style="font-size:12px;color:var(--muted2);font-family:var(--mono);margin-top:2px"></div>
+        </div>
+
+        <div id="calc-rows" style="display:flex;flex-direction:column;gap:10px;font-family:var(--mono);font-size:13px"></div>
+
+        <div id="calc-warn" style="display:none;margin-top:14px;color:var(--yellow);font-size:12px;font-family:var(--mono);line-height:1.5"></div>
+      </div>
+    </div>
+
+    <div class="card" style="margin-top:16px">
+      <div class="ct">ℹ️ Cómo funciona</div>
+      <div style="font-size:13px;color:var(--muted2);line-height:1.7">
+        La calculadora divide tu <b>riesgo por operación</b> entre el <b>riesgo por contrato</b> (distancia de tu stop &times; valor por punto del instrumento) para indicarte cuántos contratos puedes operar sin pasarte de tu riesgo. Elige un instrumento de la lista o usa <b>Personalizado</b> para cualquier otro futuro ingresando su valor por punto.
       </div>
     </div>
   </div>
@@ -1508,7 +1594,7 @@ window._init = function() {
 // TABS
 function goTab(name) {
   document.querySelectorAll('.tab').forEach((t,i)=>{
-    t.classList.toggle('active',['dashboard','cuentas','traderpro','diario','analisis','notas','eventos'][i]===name);
+    t.classList.toggle('active',['dashboard','cuentas','traderpro','diario','analisis','calculadora','notas','eventos'][i]===name);
   });
   document.querySelectorAll('.pane').forEach(p=>p.classList.remove('active'));
   const activePn = document.getElementById('pane-'+name);
@@ -1518,6 +1604,7 @@ function goTab(name) {
   else if(name==='traderpro') renderTraderPro();
   else if(name==='diario') _cachedRender('diario', renderDiario, 60);
   else if(name==='analisis') _cachedRender('analisis', renderAnalisis, 80);
+  else if(name==='calculadora') renderCalculadora();
   else if(name==='notas') renderFolders();
   else if(name==='eventos') renderEventos();
 }
@@ -4524,6 +4611,138 @@ const _tpInterval = setInterval(()=>{
   if(document.readyState === 'loading') document.addEventListener('DOMContentLoaded', boot);
   else boot();
 })();
+</script>
+
+
+<!-- ===== NQ — Calculadora de contratos de futuros (menú Calculadora) ===== -->
+<script>
+window.CALC_INSTR = {
+  NQ:  { name:'NQ — E-mini Nasdaq 100',     tick:0.25, tickVal:5.00,  pointVal:20   },
+  MNQ: { name:'MNQ — Micro Nasdaq 100',     tick:0.25, tickVal:0.50,  pointVal:2    },
+  ES:  { name:'ES — E-mini S&P 500',        tick:0.25, tickVal:12.50, pointVal:50   },
+  MES: { name:'MES — Micro S&P 500',        tick:0.25, tickVal:1.25,  pointVal:5    },
+  YM:  { name:'YM — E-mini Dow',            tick:1,    tickVal:5.00,  pointVal:5    },
+  MYM: { name:'MYM — Micro Dow',            tick:1,    tickVal:0.50,  pointVal:0.50 },
+  RTY: { name:'RTY — E-mini Russell 2000',  tick:0.10, tickVal:5.00,  pointVal:50   },
+  M2K: { name:'M2K — Micro Russell 2000',   tick:0.10, tickVal:0.50,  pointVal:5    },
+  CL:  { name:'CL — Crudo (WTI)',           tick:0.01, tickVal:10.00, pointVal:1000 },
+  MCL: { name:'MCL — Micro Crudo',          tick:0.01, tickVal:1.00,  pointVal:100  },
+  GC:  { name:'GC — Oro',                   tick:0.10, tickVal:10.00, pointVal:100  },
+  MGC: { name:'MGC — Micro Oro',            tick:0.10, tickVal:1.00,  pointVal:10   }
+};
+
+function _calcNum(id){ var el=document.getElementById(id); if(!el) return NaN; var v=parseFloat(el.value); return isNaN(v)?NaN:v; }
+function _calcFmt(n){ return '$'+Number(n).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2}); }
+function _calcRow(label,val,color){
+  return '<div style="display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid var(--border);padding-bottom:8px">'
+       + '<span style="color:var(--muted)">'+label+'</span>'
+       + '<span style="color:'+(color||'var(--text)')+';font-weight:600">'+val+'</span></div>';
+}
+
+function onCalcInstrumentChange(){
+  var v=document.getElementById('calc-instr').value;
+  var cr=document.getElementById('calc-custom-row');
+  if(cr) cr.style.display = (v==='CUSTOM') ? 'block' : 'none';
+  calcContracts();
+}
+
+function calcContracts(){
+  var iEl=document.getElementById('calc-instr'); if(!iEl) return;
+  var key=iEl.value;
+  var pointVal, tick, tickVal, label;
+  if(key==='CUSTOM'){
+    pointVal=_calcNum('calc-cust-point');
+    tickVal =_calcNum('calc-cust-tickval');
+    tick    =_calcNum('calc-cust-tick');
+    label='Personalizado';
+    if(isNaN(tickVal) && !isNaN(pointVal) && !isNaN(tick) && tick>0) tickVal = pointVal*tick;
+  } else {
+    var ins=window.CALC_INSTR[key]; pointVal=ins.pointVal; tick=ins.tick; tickVal=ins.tickVal; label=ins.name;
+  }
+
+  var outC = document.getElementById('calc-out-contracts');
+  var outI = document.getElementById('calc-out-instr');
+  var rows = document.getElementById('calc-rows');
+  var warn = document.getElementById('calc-warn');
+  if(outI) outI.textContent = label;
+
+  // Valor por punto válido
+  if(isNaN(pointVal)||pointVal<=0){
+    outC.textContent='—'; rows.innerHTML='';
+    warn.style.display='block'; warn.textContent='Ingresa el valor por punto del instrumento.';
+    return;
+  }
+
+  // Riesgo en $
+  var riskMode=document.getElementById('calc-risk-mode').value;
+  var riskInput=_calcNum('calc-risk');
+  var account=_calcNum('calc-account');
+  var riskDollars;
+  if(riskMode==='pct'){
+    riskDollars = (!isNaN(account)&&account>0&&!isNaN(riskInput)) ? account*riskInput/100 : NaN;
+  } else {
+    riskDollars = riskInput;
+  }
+
+  // Stop -> riesgo por contrato
+  var stopUnit=document.getElementById('calc-stop-unit').value;
+  var stopInput=_calcNum('calc-stop');
+  var riskPerContract;
+  if(stopUnit==='ticks'){
+    if(!isNaN(tickVal)) riskPerContract = stopInput*tickVal;
+    else if(!isNaN(tick)&&tick>0) riskPerContract = stopInput*tick*pointVal;
+    else riskPerContract = NaN;
+  } else {
+    riskPerContract = stopInput*pointVal;
+  }
+
+  var html='';
+  html += _calcRow('Valor por punto', _calcFmt(pointVal));
+  if(!isNaN(tickVal)) html += _calcRow('Valor por tick', _calcFmt(tickVal));
+
+  if(isNaN(riskPerContract)||riskPerContract<=0 || isNaN(riskDollars)||riskDollars<=0){
+    outC.textContent='—'; rows.innerHTML=html;
+    warn.style.display='block';
+    warn.textContent = (riskMode==='pct' && (isNaN(account)||account<=0))
+      ? 'Ingresa el tamaño de cuenta para calcular el riesgo en %.'
+      : 'Completa el riesgo y el stop loss para calcular los contratos.';
+    return;
+  }
+
+  var contracts = Math.floor(riskDollars / riskPerContract);
+  var realRisk  = contracts * riskPerContract;
+  outC.textContent = contracts;
+
+  html += _calcRow('Riesgo objetivo', _calcFmt(riskDollars));
+  html += _calcRow('Riesgo por contrato', _calcFmt(riskPerContract));
+  html += _calcRow('Riesgo total ('+contracts+' contratos)', _calcFmt(realRisk), contracts>0?'var(--accent)':'var(--red)');
+
+  // Objetivo / R:R (opcional)
+  var tpUnit=document.getElementById('calc-tp-unit').value;
+  var tpInput=_calcNum('calc-tp');
+  if(!isNaN(tpInput)&&tpInput>0){
+    var rewardPerContract;
+    if(tpUnit==='ticks'){
+      rewardPerContract = (!isNaN(tickVal)) ? tpInput*tickVal : (!isNaN(tick)&&tick>0 ? tpInput*tick*pointVal : NaN);
+    } else {
+      rewardPerContract = tpInput*pointVal;
+    }
+    if(!isNaN(rewardPerContract)&&rewardPerContract>0){
+      html += _calcRow('Ganancia potencial', _calcFmt(contracts*rewardPerContract), 'var(--accent)');
+      html += _calcRow('Relación R:R', '1 : '+(rewardPerContract/riskPerContract).toFixed(2), 'var(--blue)');
+    }
+  }
+
+  rows.innerHTML=html;
+  if(contracts<=0){
+    warn.style.display='block';
+    warn.textContent='Tu riesgo es menor que el de 1 contrato. Reduce el stop o aumenta el riesgo.';
+  } else {
+    warn.style.display='none';
+  }
+}
+
+function renderCalculadora(){ onCalcInstrumentChange(); }
 </script>
 
 </body>
