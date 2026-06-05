@@ -121,9 +121,9 @@ td,th,p,span,div,label,button,input,select,a{font-family:var(--font)}
 #app-screen{display:none;flex-direction:column;height:100%}
 .hdr{display:flex;align-items:center;justify-content:space-between;padding:12px 24px;background:rgba(0,0,0,.95);border-bottom:1px solid rgba(0,255,136,.1);flex-shrink:0;backdrop-filter:blur(20px);}
 .logo{display:flex;align-items:center;gap:8px}
-.logo-sub{font-size:13px;letter-spacing:.45em;text-transform:uppercase;font-family:'Raleway',sans-serif;font-weight:100;cursor:pointer;transition:color .4s,text-shadow .4s;color:rgba(255,255,255,.75);animation:logo-pulse 4s ease-in-out infinite;}
-.logo-sub:hover{color:#fff;text-shadow:0 0 18px rgba(255,255,255,.7),0 0 40px rgba(255,255,255,.3);}
-@keyframes logo-pulse{0%,100%{color:rgba(255,255,255,.75);text-shadow:none;}50%{color:rgba(255,255,255,.95);text-shadow:0 0 10px rgba(255,255,255,.25);}}
+.logo-sub{font-size:13px;letter-spacing:.35em;text-transform:uppercase;font-family:'Raleway',sans-serif;font-weight:100;cursor:pointer;transition:color .4s,text-shadow .4s;color:rgba(255,255,255,.75);animation:logo-pulse 4s ease-in-out infinite;}
+.logo-sub:hover{color:#fff !important;text-shadow:0 0 18px rgba(255,255,255,.8),0 0 40px rgba(255,255,255,.4) !important;}
+@keyframes logo-pulse{0%,100%{color:rgba(255,255,255,.75);text-shadow:none;}50%{color:rgba(255,255,255,.98);text-shadow:0 0 12px rgba(255,255,255,.3);}}
 .hdr-right{display:flex;align-items:center;gap:8px}
 .user-info{display:flex;align-items:center;gap:8px;padding:6px 12px;background:rgba(0,255,136,.05);border:1px solid rgba(0,255,136,.15);border-radius:8px;transition:border-color .2s}
 .user-info:hover{border-color:rgba(0,255,136,.3)}
@@ -361,9 +361,9 @@ body.light .tab { color:#4a6a50 !important; }
 body.light .tab.active { color:#007a45 !important; border-bottom-color:#007a45 !important; text-shadow:none !important; }
 body.light .tab:hover { color:#0f1f12 !important; }
 body.light .cdh { color:#4a6a50 !important; }
-body.light .logo-sub { color:rgba(30,60,35,.8) !important; animation:logo-pulse-light 4s ease-in-out infinite !important; }
-body.light .logo-sub:hover { color:rgba(10,40,15,1) !important; text-shadow:0 0 14px rgba(0,100,40,.35) !important; }
-@keyframes logo-pulse-light{0%,100%{color:rgba(30,60,35,.8);text-shadow:none;}50%{color:rgba(10,40,15,.95);text-shadow:0 0 8px rgba(0,100,40,.2);}}
+body.light .logo-sub { color:rgba(0,0,0,.75) !important; animation:logo-pulse-light 4s ease-in-out infinite !important; }
+body.light .logo-sub:hover { color:rgba(0,0,0,1) !important; text-shadow:0 0 14px rgba(0,0,0,.25) !important; }
+@keyframes logo-pulse-light{0%,100%{color:rgba(0,0,0,.75);text-shadow:none;}50%{color:rgba(0,0,0,1);text-shadow:0 0 8px rgba(0,0,0,.15);}}
 body.light .fi { color:#0f1f12 !important; background:#fff !important; border-color:#c8d8c8 !important; }
 body.light .fi:focus { border-color:#007a45 !important; box-shadow:0 0 0 3px rgba(0,122,69,.08) !important; }
 body.light .fs { color:#0f1f12 !important; background:#fff !important; border-color:#c8d8c8 !important; }
@@ -716,7 +716,7 @@ body.light .note-card.color-orange:hover{border-color:rgba(210,110,0,.6)!importa
 
 <div class="hdr">
   <div class="logo">
-    <div class="logo-sub" onclick="window.open('https://www.instagram.com/nqproject.oficial/','_blank')" title="Instagram NQ Project">NQ &nbsp; PROJECT</div>
+    <div class="logo-sub" onclick="window.open('https://www.instagram.com/nqproject.oficial/','_blank')" title="Instagram NQ Project">NQ PROJECT</div>
   </div>
   <div class="hdr-right">
   <div class="theme-btn" id="theme-btn" onclick="toggleTheme()">&#127769;</div>
