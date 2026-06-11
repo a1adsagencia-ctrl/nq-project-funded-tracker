@@ -711,6 +711,9 @@ body.light .note-card.color-orange:hover{border-color:rgba(210,110,0,.6)!importa
     <div class="logo-sub" onclick="window.open('https://www.instagram.com/nqproject.oficial/','_blank')" title="Instagram NQ Project">NQ PROJECT</div>
   </div>
   <div class="hdr-right">
+  <div id="streak-badge" onclick="toggleStreakInfo(event)" title="Racha — clic para saber más" style="display:none;cursor:pointer;align-items:center;gap:6px;background:linear-gradient(135deg,rgba(255,140,0,.16),rgba(255,90,0,.06));border:1px solid rgba(255,140,0,.4);padding:6px 13px;border-radius:99px;font-weight:800;font-size:14px;color:#ff9b3d;margin-right:2px">🔥 <span id="streak-count">0</span></div>
+  <div id="coin-badge-top" onclick="toggleCoinInfo(event)" title="Monedas — clic para saber más" style="display:none;cursor:pointer;align-items:center;gap:6px;background:linear-gradient(135deg,rgba(245,181,10,.16),rgba(200,137,10,.06));border:1px solid rgba(245,181,10,.45);padding:6px 12px;border-radius:99px;font-weight:800;font-size:14px;color:#f5b50a;margin-right:2px"><svg viewBox="0 0 24 24" width="15" height="15" style="vertical-align:middle"><circle cx="12" cy="12" r="11" fill="#f5b50a" stroke="#c8890a" stroke-width="1.5"/><circle cx="12" cy="12" r="8.2" fill="none" stroke="#e0a800" stroke-width="1"/><text x="12" y="16.3" text-anchor="middle" font-size="12" font-weight="bold" fill="#7a5200" font-family="Arial,sans-serif">$</text></svg> <span id="coin-count-top">0</span></div>
+  <div id="nov-bell" onclick="openNovedades()" title="Novedades" style="position:relative;cursor:pointer;display:flex;align-items:center;justify-content:center;width:38px;height:38px;border-radius:10px;background:var(--s1);border:1px solid var(--border2);margin-right:2px"><svg viewBox="0 0 24 24" width="18" height="18" fill="var(--text)" style="opacity:.85"><path d="M12 2a6 6 0 00-6 6v3.586L4.293 13.293A1 1 0 005 15h14a1 1 0 00.707-1.707L18 11.586V8a6 6 0 00-6-6zm0 20a3 3 0 002.995-2.824L15 19H9a3 3 0 003 3z"/></svg><span id="nov-badge" style="display:none;position:absolute;top:-5px;right:-5px;min-width:17px;height:17px;padding:0 4px;border-radius:99px;background:#ff4060;color:#fff;font-size:10px;font-weight:800;align-items:center;justify-content:center;border:2px solid var(--bg)">0</span></div>
   <div class="theme-btn" id="theme-btn" onclick="toggleTheme()">&#127769;</div>
     <button class="btn btn-g" onclick="openTradeModal()">+ TRADE</button>
     <button class="btn btn-p" onclick="newAccountModal()">+ CUENTA</button>
@@ -731,10 +734,9 @@ body.light .note-card.color-orange:hover{border-color:rgba(210,110,0,.6)!importa
   <div class="tab" onclick="goTab('analisis')">Analisis</div>
   <div class="tab" onclick="goTab('calculadora')">🧮 Calculadora</div>
   <div class="tab" onclick="goTab('notas')">📝 Notas</div>
+  <div class="tab" onclick="goTab('recompensas')"><svg viewBox="0 0 24 24" width="16" height="16" style="vertical-align:middle;margin:0 1px"><circle cx="12" cy="12" r="11" fill="#f5b50a" stroke="#c8890a" stroke-width="1.5"/><circle cx="12" cy="12" r="8.2" fill="none" stroke="#e0a800" stroke-width="1"/><text x="12" y="16.3" text-anchor="middle" font-size="12" font-weight="bold" fill="#7a5200" font-family="Arial,sans-serif">$</text></svg> Recompensas <span id="coin-badge" style="display:inline-block;min-width:18px;padding:1px 6px;margin-left:4px;border-radius:99px;background:var(--accent);color:#04150c;font-size:11px;font-weight:800;text-align:center">0</span></div>
   <div class="tab" onclick="goTab('eventos')" id="tab-eventos" style="position:relative;">
-    📅 Eventos
-    <span id="ev-dot" style="display:none;position:absolute;top:6px;right:2px;width:8px;height:8px;border-radius:50%;background:#ffc840;animation:ev-dot-blink 1.2s ease-in-out infinite;"></span>
-    <span id="ev-dot-live" style="display:none;position:absolute;top:6px;right:2px;width:8px;height:8px;border-radius:50%;background:#ff4060;animation:ev-dot-blink .8s ease-in-out infinite;"></span>
+    📅 Eventos<span id="ev-count" style="display:none;align-items:center;justify-content:center;min-width:16px;height:16px;padding:0 4px;margin-left:5px;border-radius:99px;background:#ffc840;color:#1a1200;font-size:10px;font-weight:800;vertical-align:middle">0</span>
   </div>
 </div>
 
@@ -963,6 +965,9 @@ body.light .note-card.color-orange:hover{border-color:rgba(210,110,0,.6)!importa
     </div>
   </div>
 
+  <!-- PANE RECOMPENSAS -->
+  <div class="pane" id="pane-recompensas"></div>
+
   <!-- PANE NOTAS -->
   <div class="pane" id="pane-notas">
     <div style="display:flex;gap:0;height:calc(100vh - 110px);min-height:400px;position:relative;">
@@ -1014,7 +1019,7 @@ body.light .note-card.color-orange:hover{border-color:rgba(210,110,0,.6)!importa
       </button>
     </div>
     <!-- Lista de eventos -->
-    <div id="ev-list" style="display:flex;flex-direction:column;gap:16px;max-width:780px;width:100%;">
+    <div id="ev-list" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(440px,1fr));gap:18px;width:100%;align-items:start;">
       <div style="text-align:center;padding:60px 20px;color:var(--muted);">
         <div style="font-size:48px;margin-bottom:16px;opacity:.4;">📅</div>
         <div style="font-size:14px;font-weight:600;color:var(--muted2);">Cargando eventos...</div>
@@ -1594,7 +1599,7 @@ window._init = function() {
 // TABS
 function goTab(name) {
   document.querySelectorAll('.tab').forEach((t,i)=>{
-    t.classList.toggle('active',['dashboard','cuentas','traderpro','diario','analisis','calculadora','notas','eventos'][i]===name);
+    t.classList.toggle('active',['dashboard','cuentas','traderpro','diario','analisis','calculadora','notas','recompensas','eventos'][i]===name);
   });
   document.querySelectorAll('.pane').forEach(p=>p.classList.remove('active'));
   const activePn = document.getElementById('pane-'+name);
@@ -1605,6 +1610,7 @@ function goTab(name) {
   else if(name==='diario') _cachedRender('diario', renderDiario, 60);
   else if(name==='analisis') _cachedRender('analisis', renderAnalisis, 80);
   else if(name==='calculadora') renderCalculadora();
+  else if(name==='recompensas') refreshRecompensas();
   else if(name==='notas') renderFolders();
   else if(name==='eventos') renderEventos();
 }
@@ -3171,13 +3177,20 @@ function isAdmin() {
 
 // ── ACTUALIZAR DOT EN TAB ──
 function updateEvDot(eventos) {
-  const dot     = document.getElementById('ev-dot');
-  const dotLive = document.getElementById('ev-dot-live');
-  if (!dot || !dotLive) return;
-  const hasLive    = eventos.some(e => e.estado === 'live');
-  const hasProximo = eventos.some(e => e.estado === 'proximo');
-  dotLive.style.display = hasLive ? 'block' : 'none';
-  dot.style.display     = !hasLive && hasProximo ? 'block' : 'none';
+  const tab=document.getElementById('tab-eventos');
+  const count=document.getElementById('ev-count');
+  if(!tab) return;
+  const live=eventos.filter(e=>e.estado==='live').length;
+  const prox=eventos.filter(e=>e.estado==='proximo').length;
+  const total=live+prox;
+  if(total>0){
+    tab.classList.add('tab-evt-on');
+    tab.style.setProperty('--evt-glow', live>0?'rgba(255,64,96,.55)':'rgba(255,200,64,.5)');
+    if(count){ count.style.display='inline-flex'; count.textContent=String(total); count.style.background= live>0?'#ff4060':'#ffc840'; count.style.color= live>0?'#fff':'#1a1200'; }
+  } else {
+    tab.classList.remove('tab-evt-on');
+    if(count) count.style.display='none';
+  }
 }
 
 async function checkEvDotOnLoad() {
@@ -3232,6 +3245,13 @@ window.renderEventos = async function() {
     const snap = await getDocs(q);
     const eventos = [];
     snap.forEach(d => eventos.push({ id: d.id, ...d.data() }));
+    const _rank = { live:0, proximo:1, finalizado:2 };
+    eventos.sort((a,b) => {
+      const ra = _rank[a.estado] !== undefined ? _rank[a.estado] : 1;
+      const rb = _rank[b.estado] !== undefined ? _rank[b.estado] : 1;
+      if (ra !== rb) return ra - rb;
+      return (a.creadoEn||'') < (b.creadoEn||'') ? 1 : -1;
+    });
     updateEvDot(eventos);
     if (!eventos.length) {
       list.innerHTML = `
@@ -4745,5 +4765,437 @@ function calcContracts(){
 function renderCalculadora(){ onCalcInstrumentChange(); }
 </script>
 
+
+<!-- MODAL CREAR / EDITAR RECOMPENSA -->
+<div class="ov" id="ov-recompensa">
+  <div class="modal" style="max-width:540px">
+    <div class="mhdr" style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
+      <span class="mtitle" id="rew-modal-title">🎁 Nueva recompensa</span>
+      <button class="mx" onclick="closeOv('recompensa')" style="background:none;border:none;color:var(--muted);font-size:22px;cursor:pointer;line-height:1">&#215;</button>
+    </div>
+    <div class="fg"><label class="fl">Título</label><input class="fi" id="rew-f-titulo" placeholder="Ej: Comunidad privada"></div>
+    <div class="fg"><label class="fl">Descripción</label><textarea class="fi" id="rew-f-desc" placeholder="Ej: Acceso de por vida a la comunidad privada de NQ Project" style="min-height:70px;resize:vertical;font-family:var(--font)"></textarea></div>
+    <div class="fr">
+      <div class="fg"><label class="fl">Costo (monedas)</label><input class="fi" id="rew-f-costo" type="number" min="1" placeholder="15"></div>
+      <div class="fg"><label class="fl">Estado</label><label style="display:flex;gap:8px;align-items:center;height:42px;color:var(--text);font-size:14px;cursor:pointer"><input type="checkbox" id="rew-f-activo" checked style="width:18px;height:18px;accent-color:var(--accent)"> Activa</label></div>
+    </div>
+    <div class="fg"><label class="fl">Link de WhatsApp para el canje <small style="text-transform:none;letter-spacing:0;color:var(--muted)">(opcional — si lo dejas vacío se usa tu número con un mensaje automático)</small></label><input class="fi" id="rew-f-link" type="url" placeholder="Ej: https://wa.link/abc123"></div>
+    <div class="fg"><label class="fl">Link de video <small style="text-transform:none;letter-spacing:0;color:var(--muted)">(opcional — ej: YouTube)</small></label><input class="fi" id="rew-f-video" type="url" placeholder="Ej: https://youtu.be/..."></div>
+    <div class="fg"><label class="fl">Imagen (opcional)</label>
+      <div id="rew-f-img-preview-wrap" style="display:none;position:relative;border-radius:8px;overflow:hidden;margin-bottom:8px"><img id="rew-f-img-preview" src="" style="width:100%;height:auto;display:block"><button onclick="clearRewImg()" title="Quitar imagen" style="position:absolute;top:6px;right:6px;background:rgba(0,0,0,.7);border:none;color:#fff;width:24px;height:24px;border-radius:50%;cursor:pointer;font-size:13px;display:flex;align-items:center;justify-content:center">&#215;</button></div>
+      <label style="display:flex;align-items:center;gap:10px;background:rgba(255,255,255,.04);border:1px dashed rgba(0,229,122,.25);border-radius:8px;padding:11px 14px;cursor:pointer;font-size:13px;color:var(--muted)"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg><span id="rew-f-img-label" style="color:var(--muted2)">Subir imagen (opcional)</span><input type="file" id="rew-f-img-file" accept="image/*" style="display:none" onchange="previewRewImg(this)"></label>
+      <input type="hidden" id="rew-f-img">
+    </div>
+    <button onclick="saveReward()" style="width:100%;background:var(--accent);color:#04150c;border:none;padding:13px 20px;border-radius:11px;font-weight:700;cursor:pointer;font-family:var(--font);font-size:15px;margin-top:6px">Guardar recompensa</button>
+  </div>
+</div>
+
+<!-- ===== NQ — Sistema de Recompensas (monedas diarias estilo Duolingo) ===== -->
+<script type="module">
+import { getFirestore, doc, getDoc, setDoc, deleteDoc, collection, addDoc, getDocs, query, orderBy } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+import { getApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+const db5 = getFirestore(getApp());
+
+const REW_ADMIN_UID = 'yeHemG95QUaAr15WAiSYYd5y6Gs1';
+const WHATSAPP_NUMBER = '573207599156';   // <-- tu WhatsApp: respaldo si una recompensa no tiene link propio
+function rewIsAdmin(){ return window._user && window._user.uid === REW_ADMIN_UID; }
+
+function _rwToday(){ const d=new Date(); return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0'); }
+function _rwYmd(s){ const p=String(s).split('-'); return new Date(+p[0], +p[1]-1, +p[2]); }
+function _rwDiff(a,b){ return Math.round((_rwYmd(b)-_rwYmd(a))/86400000); }
+function _rwEsc(s){ return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+function _rwVal(id){ const e=document.getElementById(id); return e?(e.value||'').trim():''; }
+function _rwSet(id,v){ const e=document.getElementById(id); if(e) e.value=(v==null?'':v); }
+function _coin(sz){ return '<svg viewBox="0 0 24 24" width="'+sz+'" height="'+sz+'" style="vertical-align:middle;margin:0 1px"><circle cx="12" cy="12" r="11" fill="#f5b50a" stroke="#c8890a" stroke-width="1.5"/><circle cx="12" cy="12" r="8.2" fill="none" stroke="#e0a800" stroke-width="1"/><text x="12" y="16.3" text-anchor="middle" font-size="12" font-weight="bold" fill="#7a5200" font-family="Arial,sans-serif">$</text></svg>'; }
+
+window._tokens = { streak:0, spent:0, lastClaim:null };
+function _rwAvail(){ return Math.max(0,(window._tokens.streak||0)-(window._tokens.spent||0)); }
+window._rewards = [];
+window._canjes = [];
+
+// ---- sonido de moneda (Web Audio, sin archivos) ----
+let _rwAudio=null;
+function _rwEnsureAudio(){ try{ if(!_rwAudio) _rwAudio=new (window.AudioContext||window.webkitAudioContext)(); if(_rwAudio.state==='suspended') _rwAudio.resume(); }catch(e){} return _rwAudio; }
+window.addEventListener('pointerdown', function _rwU(){ _rwEnsureAudio(); window.removeEventListener('pointerdown',_rwU); }, {once:true});
+function playCoinSound(){
+  const ctx=_rwEnsureAudio(); if(!ctx) return;
+  const t0=ctx.currentTime;
+  function blip(f,s,d){ const o=ctx.createOscillator(), g=ctx.createGain(); o.type='square'; o.frequency.value=f;
+    g.gain.setValueAtTime(0.0001, t0+s); g.gain.exponentialRampToValueAtTime(0.16, t0+s+0.02); g.gain.exponentialRampToValueAtTime(0.0001, t0+s+d);
+    o.connect(g); g.connect(ctx.destination); o.start(t0+s); o.stop(t0+s+d+0.03); }
+  blip(987.77, 0, 0.09); blip(1318.51, 0.09, 0.18);   // tipo "moneda"
+}
+
+// ---- carga / guardado ----
+async function _rwLoadTokens(){ if(!window._user) return; try{ const s=await getDoc(doc(db5,'tokens',window._user.uid)); const d=s.exists()?s.data():{}; window._tokens={ streak:(d.streak!=null?d.streak:(d.coins||0)), spent:(d.spent||0), lastClaim:(d.lastClaim||null) }; }catch(e){ console.warn('tokens load',e); } }
+async function _rwSaveTokens(){ if(!window._user) return; try{ await setDoc(doc(db5,'tokens',window._user.uid),{streak:window._tokens.streak||0,spent:window._tokens.spent||0,lastClaim:window._tokens.lastClaim||null}); }catch(e){ console.warn('tokens save',e); } }
+async function _rwLoadRewards(){ try{ const snap=await getDocs(collection(db5,'recompensas')); window._rewards=snap.docs.map(d=>Object.assign({id:d.id}, d.data())); }catch(e){ window._rewards=[]; } }
+async function _rwLoadCanjes(){ if(!rewIsAdmin()){ window._canjes=[]; return; } try{ const q=query(collection(db5,'canjes'),orderBy('fecha','desc')); const snap=await getDocs(q); window._canjes=snap.docs.map(d=>d.data()); }catch(e){ window._canjes=[]; } }
+
+// ---- moneda diaria (estricto) ----
+window.claimDailyToken = async function(){
+  if(!window._user) return;
+  await _rwLoadTokens();
+  const t=_rwToday();
+  if(window._tokens.lastClaim===t){ updateCoinBadge(); updateStreakBadge(); return; }
+  if(window._tokens.lastClaim && _rwDiff(window._tokens.lastClaim,t)===1){ window._tokens.streak=(window._tokens.streak||0)+1; }
+  else { window._tokens.streak=1; window._tokens.spent=0; }   // racha rota: reinicia racha y monedas
+  window._tokens.lastClaim=t;
+  await _rwSaveTokens();
+  updateCoinBadge();
+  updateStreakBadge();
+  showCoinToast(window._tokens.streak);
+  playCoinSound();
+};
+window.updateCoinBadge=function(){ const c=document.getElementById('coin-count-top'); if(c) c.textContent=_rwAvail(); const w=document.getElementById('coin-badge-top'); if(w) w.style.display=((window._tokens&&window._tokens.streak)>0)?'flex':'none'; };
+window.updateRewardsBadge=function(){ const b=document.getElementById('coin-badge'); if(!b) return; const n=(window._rewards||[]).filter(function(r){return r.activo;}).length; b.textContent=n; b.style.display=n>0?'inline-block':'none'; };
+window.updateStreakBadge=function(){ const e=document.getElementById('streak-count'); if(e) e.textContent=(window._tokens&&window._tokens.streak)||0; const w=document.getElementById('streak-badge'); if(w) w.style.display=((window._tokens&&window._tokens.streak)>0)?'flex':'none'; };
+
+function showCoinToast(n){
+  let el=document.getElementById('coin-toast');
+  if(!el){ el=document.createElement('div'); el.id='coin-toast';
+    el.style.cssText='position:fixed;top:80px;left:50%;transform:translateX(-50%) translateY(-20px);z-index:10000;background:linear-gradient(135deg,#0d1a10,#0a1208);border:1px solid rgba(0,229,122,.4);border-radius:14px;padding:12px 22px;color:#fff;font-family:var(--font,Inter,sans-serif);font-weight:600;box-shadow:0 8px 32px rgba(0,0,0,.6),0 0 24px rgba(0,229,122,.15);opacity:0;transition:opacity .35s, transform .35s;pointer-events:none';
+    document.body.appendChild(el); }
+  el.innerHTML=_coin(20)+' +1 moneda · <span style="color:var(--accent,#00e57a)">¡Día '+n+'!</span> 🔥';
+  requestAnimationFrame(()=>{ el.style.opacity='1'; el.style.transform='translateX(-50%) translateY(0)'; });
+  clearTimeout(window.__coinToastT);
+  window.__coinToastT=setTimeout(()=>{ el.style.opacity='0'; el.style.transform='translateX(-50%) translateY(-20px)'; }, 3200);
+}
+
+// ---- refrescar + render ----
+window.refreshRecompensas=async function(){ await _rwLoadTokens(); await _rwLoadRewards(); await _rwLoadCanjes(); updateCoinBadge(); updateStreakBadge(); updateRewardsBadge(); renderRecompensas(); };
+
+window.renderRecompensas=function(){
+  const pane=document.getElementById('pane-recompensas'); if(!pane) return;
+  const coins=_rwAvail();
+  const streak=(window._tokens&&window._tokens.streak)||0;
+  const all=window._rewards||[];
+  const active=all.filter(r=>r.activo);
+
+  let html='';
+
+  // HERO
+  html += '<div class="card" style="display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;padding:18px 22px">'
+        + '<div style="display:flex;align-items:center;gap:14px">'
+        +   '<div style="line-height:1">'+_coin(42)+'</div>'
+        +   '<div style="line-height:1.15">'
+        +     '<div style="font-size:30px;font-weight:800;color:var(--accent)">'+coins+' <span style="font-size:14px;font-weight:600;color:var(--muted2)">monedas</span></div>'
+        +     '<div style="color:var(--muted);font-family:var(--mono);font-size:10.5px;text-transform:uppercase;letter-spacing:.1em">tu saldo disponible</div>'
+        +   '</div>'
+        + '</div>'
+        + '<div style="display:flex;align-items:center;gap:7px;background:linear-gradient(135deg,rgba(255,140,0,.14),rgba(255,90,0,.05));border:1px solid rgba(255,140,0,.35);padding:8px 14px;border-radius:99px;color:#ff9b3d;font-weight:700;font-size:13.5px">🔥 Racha de '+streak+' días</div>'
+        + '</div>';
+
+  // RECOMPENSAS DISPONIBLES
+  html += '<div style="margin-top:22px;margin-bottom:14px;display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap"><span style="font-size:20px;font-weight:800;color:var(--text)">🎁 Recompensas disponibles</span>'+(rewIsAdmin()?'<button onclick="openNewRewardModal()" style="display:inline-flex;align-items:center;gap:6px;background:var(--accent);color:#04150c;border:none;padding:9px 16px;border-radius:10px;font-weight:700;cursor:pointer;font-family:var(--font);font-size:13px">+ Crear recompensa</button>':'')+'</div>';
+  if(!active.length){
+    html += '<div class="card" style="text-align:center;color:var(--muted2);padding:28px 16px"><div style="font-size:42px">⏳</div><div style="font-weight:700;color:var(--text);margin-top:8px;font-size:16px">Aún no hay recompensas disponibles</div><div style="font-size:13px;margin-top:6px">¡Sigue entrando cada día y acumulando monedas!</div></div>';
+  } else {
+    html += '<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(440px,1fr));gap:18px;align-items:start">';
+    active.forEach(r=>{
+      const cost=r.costo||0, can=coins>=cost, falta=Math.max(0,cost-coins);
+      html += '<div onmouseover="this.style.transform=\'translateY(-4px)\';this.style.boxShadow=\'0 18px 44px rgba(0,229,122,.13)\'" onmouseout="this.style.transform=\'\';this.style.boxShadow=\'0 8px 30px rgba(0,0,0,.35)\'" style="position:relative;border:1px solid var(--border2);border-radius:18px;overflow:hidden;background:linear-gradient(160deg,rgba(0,229,122,.08),rgba(0,0,0,0));box-shadow:0 8px 30px rgba(0,0,0,.35);transition:transform .2s,box-shadow .2s;display:flex;flex-direction:column">'
+            + '<div style="height:5px;background:linear-gradient(90deg,#00b894,#00e57a)"></div>'
+            + '<div style="padding:22px;display:flex;flex-direction:column;flex:1">'
+            + (r.imagen?'<div style="margin-bottom:16px;border-radius:10px;overflow:hidden"><img src="'+r.imagen+'" style="width:100%;height:auto;display:block"></div>':'')
+            + '<div style="display:flex;align-items:center;gap:13px;margin-bottom:12px"><div style="width:50px;height:50px;border-radius:14px;background:rgba(0,229,122,.12);border:1px solid rgba(0,229,122,.25);display:flex;align-items:center;justify-content:center;font-size:24px;flex-shrink:0">🎁</div><div style="font-size:20px;font-weight:800;color:var(--text);line-height:1.2">'+_rwEsc(r.titulo||'')+'</div></div>'
+            + (r.descripcion?'<div style="color:var(--muted2);font-size:14px;line-height:1.6;margin-bottom:18px">'+_rwEsc(r.descripcion)+'</div>':'<div style="margin-bottom:14px"></div>')
+            + '<div style="display:inline-flex;align-items:center;gap:7px;align-self:flex-start;background:var(--s2);border:1px solid var(--border2);padding:7px 14px;border-radius:99px;font-family:var(--mono);font-size:15px;font-weight:700;margin-bottom:18px"><span style="color:var(--muted);font-weight:400;font-size:13px">Cuesta</span> '+cost+' '+_coin(17)+'</div>'
+            + (r.video?'<a href="'+_rwEsc(r.video)+'" target="_blank" rel="noopener" style="display:flex;align-items:center;justify-content:center;gap:7px;margin-bottom:12px;background:#ff0000;color:#fff;text-decoration:none;padding:11px 16px;border-radius:11px;font-weight:700;font-size:14px"><svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor"><path d="M8 5v14l11-7z"/></svg> Ver video</a>':'')
+            + '<button onclick="redeemReward(\''+r.id+'\')" '+(can?'':'disabled')+' style="margin-top:auto;background:'+(can?'#25D366':'var(--s2)')+';color:'+(can?'#fff':'var(--muted)')+';border:none;padding:14px 18px;border-radius:12px;font-weight:700;cursor:'+(can?'pointer':'not-allowed')+';font-family:var(--font);font-size:15px;display:flex;align-items:center;justify-content:center;gap:8px;box-shadow:'+(can?'0 6px 18px rgba(37,211,102,.3)':'none')+'">'
+            + (can?'<svg viewBox="0 0 24 24" fill="currentColor" width="19" height="19"><path d="M.057 24l1.687-6.163a11.867 11.867 0 01-1.587-5.946C.16 5.335 5.495 0 12.05 0a11.817 11.817 0 018.413 3.488 11.824 11.824 0 013.48 8.414c-.003 6.557-5.338 11.892-11.893 11.892a11.9 11.9 0 01-5.688-1.448L.057 24zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884a9.86 9.86 0 001.523 5.26l-.999 3.648 3.965-1.607zm11.387-5.464c-.074-.124-.272-.198-.57-.347-.297-.149-1.758-.868-2.031-.967-.272-.099-.47-.149-.669.149-.198.297-.768.967-.941 1.165-.173.198-.347.223-.644.074-.297-.149-1.255-.462-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.297-.347.446-.521.151-.172.2-.296.3-.495.099-.198.05-.372-.025-.521-.075-.148-.669-1.611-.916-2.206-.242-.579-.487-.501-.669-.51l-.57-.01c-.198 0-.52.074-.792.372s-1.04 1.016-1.04 2.479 1.065 2.876 1.213 3.074c.149.198 2.095 3.2 5.076 4.487.709.306 1.263.489 1.694.626.712.226 1.36.194 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.695.248-1.29.173-1.414z"/></svg> Canjear ahora':'🔒 Te faltan '+falta+' monedas')
+            + '</button>'
+            + (rewIsAdmin()?'<button onclick="openEditRewardModal(\''+r.id+'\')" style="margin-top:10px;background:var(--s2);color:var(--text);border:1px solid var(--border2);padding:10px;border-radius:10px;font-weight:600;cursor:pointer;font-family:var(--font);font-size:13px">✏️ Editar</button>':'')
+            + '</div></div>';
+    });
+    html += '</div>';
+  }
+
+  // ADMIN
+  if(rewIsAdmin()){
+    // lista de recompensas (todas)
+    html += '<div class="card" style="margin-top:16px"><div class="ct">📦 Recompensas creadas ('+all.length+')</div>';
+    if(!all.length){ html += '<div style="color:var(--muted);font-size:13px">Aún no has creado recompensas. Usa el botón “+ Crear recompensa”.</div>'; }
+    else {
+      all.forEach(r=>{
+        html += '<div style="display:flex;justify-content:space-between;align-items:center;gap:10px;border-bottom:1px solid var(--border);padding:10px 0">'
+              + '<div><b style="color:var(--text)">'+_rwEsc(r.titulo||'')+'</b> <span style="color:var(--muted);font-size:12px;font-family:var(--mono)">· '+(r.costo||0)+' monedas · '+(r.activo?'<span style="color:var(--accent)">activa</span>':'<span style="color:var(--muted)">inactiva</span>')+'</span></div>'
+              + '<div style="display:flex;gap:6px;flex-wrap:wrap">'
+              + '<button onclick="openEditRewardModal(\''+r.id+'\')" style="background:var(--s2);color:var(--text);border:1px solid var(--border2);padding:7px 12px;border-radius:9px;cursor:pointer;font-size:12px">✏️ Editar</button>'
+              + '<button onclick="toggleReward(\''+r.id+'\')" style="background:var(--s2);color:var(--text);border:1px solid var(--border2);padding:7px 12px;border-radius:9px;cursor:pointer;font-size:12px">'+(r.activo?'Desactivar':'Activar')+'</button>'
+              + '<button onclick="deleteReward(\''+r.id+'\')" style="background:rgba(255,80,80,.12);color:#ff6b6b;border:1px solid rgba(255,80,80,.3);padding:7px 12px;border-radius:9px;cursor:pointer;font-size:12px">Eliminar</button>'
+              + '</div></div>';
+      });
+    }
+    html += '</div>';
+
+    // canjes
+    html += '<div class="card" style="margin-top:16px"><div class="ct">📋 Canjes realizados ('+window._canjes.length+')</div>';
+    if(!window._canjes.length){ html += '<div style="color:var(--muted);font-size:13px">Aún no hay canjes.</div>'; }
+    else { window._canjes.forEach(c=>{ const f=c.fecha?new Date(c.fecha).toLocaleDateString('es-CO'):'';
+      html += '<div style="display:flex;justify-content:space-between;gap:10px;border-bottom:1px solid var(--border);padding:8px 0;font-size:13px"><div><b style="color:var(--text)">'+_rwEsc(c.nombre||'—')+'</b><div style="color:var(--muted);font-size:12px;font-family:var(--mono)">'+_rwEsc(c.email||'')+'</div></div><div style="text-align:right"><div style="color:var(--accent)">'+_rwEsc(c.recompensa||'')+'</div><div style="color:var(--muted);font-size:12px;font-family:var(--mono)">'+_rwEsc(c.costo||'')+' monedas · '+f+'</div></div></div>'; }); }
+    html += '</div>';
+  }
+
+  // cómo funciona
+  html += '<div class="card" style="margin-top:16px"><div class="ct">ℹ️ Cómo funciona</div>'
+        + '<div style="font-size:13px;color:var(--muted2);line-height:1.7">Cada día que entras ganas <b>1 moneda</b>. Las monedas representan tu <b>racha</b>: si entras días seguidos suben, pero si te saltas un día vuelves a empezar. Cuando tengas monedas suficientes para una recompensa activa, podrás <b>canjearla</b> y te llevará a WhatsApp para coordinar la entrega. Si no hay recompensas activas, sigue sumando para los próximos premios.</div></div>';
+
+  pane.innerHTML=html;
+};
+
+// ---- canjear (descuenta monedas, registra el canje y abre WhatsApp) ----
+window.redeemReward = async function(id){
+  if(!window._user) return;
+  await _rwLoadRewards(); await _rwLoadTokens();
+  const r=(window._rewards||[]).find(x=>x.id===id);
+  if(!r || !r.activo){ alert('Esa recompensa ya no está disponible.'); renderRecompensas(); return; }
+  const avail=_rwAvail();
+  if(avail < (r.costo||0)){ alert('Aún no tienes suficientes monedas para esta recompensa.'); renderRecompensas(); return; }
+  if(!confirm('¿Canjear "'+r.titulo+'" por '+r.costo+' monedas? Te llevaremos a WhatsApp para coordinar la entrega.')) return;
+  window._tokens.spent = (window._tokens.spent||0) + (r.costo||0);   // gasta monedas, la racha NO cambia
+  await _rwSaveTokens();
+  try{ await addDoc(collection(db5,'canjes'), { uid:window._user.uid, nombre:window._user.displayName||'', email:window._user.email||'', recompensa:r.titulo||'', costo:r.costo||0, fecha:new Date().toISOString() }); }catch(e){ console.warn('canje', e); }
+  updateCoinBadge();
+  if(r.link && r.link.trim()){
+    let lnk=r.link.trim(); if(!/^https?:\/\//i.test(lnk)) lnk='https://'+lnk;
+    window.open(lnk, '_blank');
+  } else {
+    const msg = (r.mensaje && r.mensaje.trim()) ? r.mensaje.trim() : ('Hola NQ Project, quiero canjear mis '+r.costo+' monedas por la recompensa: '+r.titulo);
+    window.open('https://wa.me/'+WHATSAPP_NUMBER+'?text='+encodeURIComponent(msg), '_blank');
+  }
+  await refreshRecompensas();
+};
+
+// ---- admin: crear / activar / eliminar ----
+window.openNewRewardModal=function(){
+  if(!rewIsAdmin()) return;
+  window._editingRewardId=null;
+  const t=document.getElementById('rew-modal-title'); if(t) t.textContent='🎁 Nueva recompensa';
+  _rwSet('rew-f-titulo',''); _rwSet('rew-f-desc',''); _rwSet('rew-f-costo',''); _rwSet('rew-f-link',''); _rwSet('rew-f-video','');
+  const a=document.getElementById('rew-f-activo'); if(a) a.checked=true;
+  clearRewImg();
+  openOv('recompensa');
+};
+window.openEditRewardModal=function(id){
+  if(!rewIsAdmin()) return;
+  const r=(window._rewards||[]).find(x=>x.id===id); if(!r) return;
+  window._editingRewardId=id;
+  const t=document.getElementById('rew-modal-title'); if(t) t.textContent='✏️ Editar recompensa';
+  _rwSet('rew-f-titulo',r.titulo||''); _rwSet('rew-f-desc',r.descripcion||''); _rwSet('rew-f-costo',r.costo||''); _rwSet('rew-f-link',r.link||''); _rwSet('rew-f-video',r.video||'');
+  const a=document.getElementById('rew-f-activo'); if(a) a.checked=!!r.activo;
+  if(r.imagen){ setRewImgPreview(r.imagen); } else { clearRewImg(); }
+  openOv('recompensa');
+};
+window.saveReward=async function(){
+  if(!rewIsAdmin()) return;
+  const titulo=_rwVal('rew-f-titulo'), descripcion=_rwVal('rew-f-desc');
+  let link=_rwVal('rew-f-link'); if(link && !/^https?:\/\//i.test(link)) link='https://'+link;
+  let video=_rwVal('rew-f-video'); if(video && !/^https?:\/\//i.test(video)) video='https://'+video;
+  const imgEl=document.getElementById('rew-f-img'); const imagen=(imgEl&&imgEl.value)?imgEl.value:'';
+  const costo=parseInt(_rwVal('rew-f-costo'),10);
+  const activo=document.getElementById('rew-f-activo').checked;
+  if(!titulo){ alert('Ponle un título a la recompensa.'); return; }
+  if(!costo || costo<=0){ alert('Indica un costo válido en monedas.'); return; }
+  const data={ titulo, descripcion, costo, link, video, imagen, activo };
+  try{
+    if(window._editingRewardId){ await setDoc(doc(db5,'recompensas',window._editingRewardId), data, { merge:true }); }
+    else { data.creadoEn=new Date().toISOString(); await addDoc(collection(db5,'recompensas'), data); }
+    window._editingRewardId=null; closeOv('recompensa'); await refreshRecompensas();
+  }catch(e){ alert('Error al guardar: '+e.message); }
+};
+function setRewImgPreview(src){ const hid=document.getElementById('rew-f-img'); if(hid) hid.value=src||''; const prev=document.getElementById('rew-f-img-preview'), wrap=document.getElementById('rew-f-img-preview-wrap'); if(prev) prev.src=src||''; if(wrap) wrap.style.display=src?'block':'none'; }
+window.previewRewImg=function(input){ const file=input.files&&input.files[0]; if(!file) return; const reader=new FileReader(); reader.onload=e=>{ const img=new Image(); img.onload=()=>{ const c=document.createElement('canvas'); const MAX=900; let w=img.width,h=img.height; if(w>MAX){ h=Math.round(h*MAX/w); w=MAX; } c.width=w; c.height=h; c.getContext('2d').drawImage(img,0,0,w,h); setRewImgPreview(c.toDataURL('image/jpeg',0.82)); const lbl=document.getElementById('rew-f-img-label'); if(lbl) lbl.textContent=file.name; }; img.src=e.target.result; }; reader.readAsDataURL(file); };
+window.clearRewImg=function(){ const f=document.getElementById('rew-f-img-file'); if(f) f.value=''; setRewImgPreview(''); const lbl=document.getElementById('rew-f-img-label'); if(lbl) lbl.textContent='Subir imagen (opcional)'; };
+window.toggleReward = async function(id){
+  if(!rewIsAdmin()) return;
+  const r=(window._rewards||[]).find(x=>x.id===id); if(!r) return;
+  try{ await setDoc(doc(db5,'recompensas',id), { activo:!r.activo }, { merge:true }); await refreshRecompensas(); }
+  catch(e){ alert('Error: '+e.message); }
+};
+window.deleteReward = async function(id){
+  if(!rewIsAdmin()) return;
+  if(!confirm('¿Eliminar esta recompensa? No se podrá deshacer.')) return;
+  try{ await deleteDoc(doc(db5,'recompensas',id)); await refreshRecompensas(); }
+  catch(e){ alert('Error: '+e.message); }
+};
+
+// ---- al iniciar sesión: reclamar moneda del día ----
+(function(){ let tries=0; const iv=setInterval(function(){ if(window._user){ clearInterval(iv); if(window.claimDailyToken) window.claimDailyToken(); _rwLoadRewards().then(function(){ if(window.updateRewardsBadge) updateRewardsBadge(); }); } if(++tries>50) clearInterval(iv); },400); })();
+</script>
+
+<style>
+/* Resaltado de la pestaña Eventos cuando hay eventos disponibles */
+.tab-evt-on{ animation:evtGlow 1.7s ease-in-out infinite; border-radius:8px; }
+@keyframes evtGlow{ 0%,100%{ box-shadow:0 0 0 rgba(0,0,0,0);} 50%{ box-shadow:0 0 16px var(--evt-glow,rgba(255,200,64,.5)); } }
+#nov-bell:hover{ filter:brightness(1.18); }
+@keyframes novRing{ 0%,100%{transform:rotate(0)} 8%,24%{transform:rotate(-13deg)} 16%,32%{transform:rotate(13deg)} 40%{transform:rotate(0)} }
+#nov-bell.nov-ring svg{ animation:novRing 1.3s ease-in-out infinite; transform-origin:50% 4px; }
+</style>
+
+<!-- MODAL NOVEDADES -->
+<div class="ov" id="ov-novedades">
+  <div class="modal" style="max-width:540px">
+    <div class="mhdr" style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
+      <span class="mtitle">🔔 Novedades</span>
+      <button class="mx" onclick="closeOv('novedades')" style="background:none;border:none;color:var(--muted);font-size:22px;cursor:pointer;line-height:1">&#215;</button>
+    </div>
+    <div id="nov-admin"></div>
+    <div id="nov-list"></div>
+  </div>
+</div>
+
+<!-- ===== NQ — Novedades (avisos dentro de la plataforma) ===== -->
+<script type="module">
+import { getFirestore, doc, deleteDoc, collection, addDoc, getDocs, query, orderBy } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+import { getApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+const db6 = getFirestore(getApp());
+const NOV_ADMIN_UID = 'yeHemG95QUaAr15WAiSYYd5y6Gs1';
+function novIsAdmin(){ return window._user && window._user.uid === NOV_ADMIN_UID; }
+function _novEsc(s){ return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+
+window._novedades = [];
+function _novSeen(){ try{ return localStorage.getItem('nq_nov_seen')||''; }catch(e){ return ''; } }
+function _novSetSeen(ts){ try{ localStorage.setItem('nq_nov_seen', ts); }catch(e){} }
+
+async function loadNovedades(){ try{ const q=query(collection(db6,'novedades'),orderBy('fecha','desc')); const snap=await getDocs(q); window._novedades=snap.docs.map(d=>Object.assign({id:d.id}, d.data())); }catch(e){ window._novedades=[]; } }
+
+window.updateNovBadge=function(){
+  const badge=document.getElementById('nov-badge');
+  const bell=document.getElementById('nov-bell');
+  if(!badge) return;
+  const seen=_novSeen();
+  const unread=(window._novedades||[]).filter(n=>!seen || (n.fecha||'')>seen).length;
+  if(unread>0){ badge.style.display='flex'; badge.textContent= unread>9?'9+':String(unread); if(bell) bell.classList.add('nov-ring'); }
+  else { badge.style.display='none'; if(bell) bell.classList.remove('nov-ring'); }
+};
+
+window.openNovedades=async function(){
+  openOv('novedades');
+  await loadNovedades();
+  renderNovedades();
+  const latest=(window._novedades||[]).reduce((m,n)=>((n.fecha||'')>m?(n.fecha||''):m),'');
+  if(latest) _novSetSeen(latest);
+  updateNovBadge();
+};
+
+window.renderNovedades=function(){
+  const adminEl=document.getElementById('nov-admin');
+  if(adminEl){
+    if(novIsAdmin()){
+      adminEl.innerHTML='<div style="border:1px solid rgba(0,229,122,.3);border-radius:12px;padding:14px;margin-bottom:18px">'
+        +'<div style="font-size:11px;font-weight:700;color:var(--accent);margin-bottom:10px;font-family:var(--mono);letter-spacing:.06em">⚙️ PUBLICAR NOVEDAD</div>'
+        +'<input class="fi" id="nov-titulo" placeholder="Título (ej: ¡Nueva calculadora de contratos!)" style="margin-bottom:8px">'
+        +'<textarea class="fi" id="nov-desc" placeholder="Cuenta qué agregaron o mejoraron en la plataforma..." style="min-height:72px;resize:vertical;font-family:var(--font);margin-bottom:10px"></textarea>'
+        +'<input class="fi" id="nov-link" type="url" placeholder="Link (opcional) — ej: video de YouTube  https://youtu.be/..." style="margin-bottom:10px">'
+        +'<div id="nov-img-preview-wrap" style="display:none;position:relative;border-radius:8px;overflow:hidden;margin-bottom:10px"><img id="nov-img-preview" src="" style="width:100%;height:auto;display:block"><button onclick="clearNovImg()" title="Quitar imagen" style="position:absolute;top:6px;right:6px;background:rgba(0,0,0,.7);border:none;color:#fff;width:24px;height:24px;border-radius:50%;cursor:pointer;font-size:13px;display:flex;align-items:center;justify-content:center">&#215;</button></div>'
+        +'<label style="display:flex;align-items:center;gap:10px;background:rgba(255,255,255,.04);border:1px dashed rgba(0,229,122,.25);border-radius:8px;padding:11px 14px;cursor:pointer;font-size:13px;color:var(--muted);margin-bottom:12px"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg><span id="nov-img-label" style="color:var(--muted2)">Subir imagen (opcional)</span><input type="file" id="nov-img-file" accept="image/*" style="display:none" onchange="previewNovImg(this)"></label>'
+        +'<input type="hidden" id="nov-img">'
+        +'<button onclick="postNovedad()" style="background:var(--accent);color:#04150c;border:none;padding:10px 18px;border-radius:10px;font-weight:700;cursor:pointer;font-family:var(--font)">Publicar novedad</button>'
+        +'</div>';
+    } else { adminEl.innerHTML=''; }
+  }
+  const listEl=document.getElementById('nov-list'); if(!listEl) return;
+  const list=window._novedades||[];
+  if(!list.length){ listEl.innerHTML='<div style="text-align:center;color:var(--muted);padding:24px 0;font-size:14px">Aún no hay novedades por aquí. 🌱</div>'; return; }
+  let html='';
+  list.forEach(n=>{
+    const f=n.fecha?new Date(n.fecha).toLocaleDateString('es-CO',{day:'numeric',month:'short',year:'numeric'}):'';
+    html+='<div style="border-left:3px solid var(--accent);background:var(--s1);border-radius:10px;padding:14px 16px;margin-bottom:12px">'
+      +(n.imagen?'<img src="'+n.imagen+'" style="width:100%;height:auto;display:block;border-radius:8px;margin-bottom:11px">':'')
+      +'<div style="display:flex;justify-content:space-between;align-items:flex-start;gap:10px">'
+      +'<div style="font-weight:700;color:var(--text);font-size:15px">'+_novEsc(n.titulo||'')+'</div>'
+      +(novIsAdmin()?'<button onclick="deleteNovedad(\''+n.id+'\')" style="background:none;border:none;color:#ff6b6b;cursor:pointer;font-size:12px;flex-shrink:0">Eliminar</button>':'')
+      +'</div>'
+      +(n.descripcion?'<div style="color:var(--muted2);font-size:13.5px;line-height:1.65;margin-top:6px;white-space:pre-wrap">'+_novEsc(n.descripcion)+'</div>':'')
+      +(n.link?'<a href="'+_novEsc(n.link)+'" target="_blank" rel="noopener" style="display:inline-flex;align-items:center;gap:7px;margin-top:11px;background:#ff0000;color:#fff;text-decoration:none;padding:8px 14px;border-radius:9px;font-weight:700;font-size:13px"><svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor"><path d="M8 5v14l11-7z"/></svg> Ver video</a>':'')
+      +'<div style="color:var(--muted);font-size:11px;font-family:var(--mono);margin-top:10px">'+f+'</div>'
+      +'</div>';
+  });
+  listEl.innerHTML=html;
+};
+
+window.previewNovImg=function(input){
+  const file=input.files&&input.files[0]; if(!file) return;
+  const reader=new FileReader();
+  reader.onload=e=>{ const img=new Image(); img.onload=()=>{ const canvas=document.createElement('canvas'); const MAX=900; let w=img.width,h=img.height; if(w>MAX){ h=Math.round(h*MAX/w); w=MAX; } canvas.width=w; canvas.height=h; canvas.getContext('2d').drawImage(img,0,0,w,h); const b64=canvas.toDataURL('image/jpeg',0.82); const hid=document.getElementById('nov-img'); if(hid)hid.value=b64; const prev=document.getElementById('nov-img-preview'); const wrap=document.getElementById('nov-img-preview-wrap'); const lbl=document.getElementById('nov-img-label'); if(prev)prev.src=b64; if(wrap)wrap.style.display='block'; if(lbl)lbl.textContent=file.name; }; img.src=e.target.result; };
+  reader.readAsDataURL(file);
+};
+window.clearNovImg=function(){
+  const hid=document.getElementById('nov-img'); if(hid)hid.value='';
+  const f=document.getElementById('nov-img-file'); if(f)f.value='';
+  const prev=document.getElementById('nov-img-preview'), wrap=document.getElementById('nov-img-preview-wrap'), lbl=document.getElementById('nov-img-label');
+  if(prev)prev.src=''; if(wrap)wrap.style.display='none'; if(lbl)lbl.textContent='Subir imagen (opcional)';
+};
+window.postNovedad=async function(){
+  if(!novIsAdmin()) return;
+  const titulo=(document.getElementById('nov-titulo').value||'').trim();
+  const descripcion=(document.getElementById('nov-desc').value||'').trim();
+  const linkEl=document.getElementById('nov-link');
+  let link=(linkEl&&linkEl.value?linkEl.value:'').trim();
+  if(link && !/^https?:\/\//i.test(link)) link='https://'+link;
+  const imgEl=document.getElementById('nov-img');
+  const imagen=(imgEl&&imgEl.value)?imgEl.value:'';
+  if(!titulo){ alert('Ponle un título a la novedad.'); return; }
+  try{
+    await addDoc(collection(db6,'novedades'), { titulo, descripcion, link, imagen, fecha:new Date().toISOString() });
+    await loadNovedades(); renderNovedades();
+    const latest=(window._novedades||[]).reduce((m,n)=>((n.fecha||'')>m?(n.fecha||''):m),''); if(latest) _novSetSeen(latest);
+    updateNovBadge();
+    const ti=document.getElementById('nov-titulo'), de=document.getElementById('nov-desc'); if(ti)ti.value=''; if(de)de.value='';
+    alert('Novedad publicada ✓ Ya la verán todos los usuarios.');
+  }catch(e){ alert('Error al publicar: '+e.message); }
+};
+window.deleteNovedad=async function(id){
+  if(!novIsAdmin()) return;
+  if(!confirm('¿Eliminar esta novedad?')) return;
+  try{ await deleteDoc(doc(db6,'novedades',id)); await loadNovedades(); renderNovedades(); updateNovBadge(); }
+  catch(e){ alert('Error: '+e.message); }
+};
+
+// al iniciar sesión: cargar novedades y actualizar la campanita
+(function(){ let n=0; const iv=setInterval(function(){ if(window._user){ clearInterval(iv); loadNovedades().then(()=>updateNovBadge()); } if(++n>50) clearInterval(iv); },400); })();
+</script>
+<style>
+/* === Arreglos visuales SOLO para modo día (light) === */
+/* Inputs del registro de evento: fondo claro y texto/placeholder visibles */
+body.light .ev-reg-input{ background:#fff !important; color:#0f1f12 !important; border-color:#c8d8c8 !important; }
+body.light .ev-reg-input:focus{ border-color:#007a45 !important; }
+body.light .ev-reg-input::placeholder{ color:#7a8a7e !important; }
+/* Botones verdes más vivos en modo día (el acento es oscuro en light) */
+body.light .btn-p{ background:#00c46a !important; color:#04150c !important; }
+body.light .btn-p:hover{ background:#00d877 !important; }
+body.light .bf{ background:#00c46a !important; }
+body.light .bf:hover{ background:#00a857 !important; }
+body.light #ev-reg-btn:not(:disabled){ background:#00c46a !important; color:#04150c !important; }
+body.light button[style*="background:var(--accent)"],
+body.light a[style*="background:var(--accent)"],
+body.light button[style*="background: var(--accent)"],
+body.light a[style*="background: var(--accent)"]{ background:#00c46a !important; }
+body.light button[style*="background:var(--accent)"]:hover,
+body.light a[style*="background:var(--accent)"]:hover,
+body.light button[style*="background: var(--accent)"]:hover,
+body.light a[style*="background: var(--accent)"]:hover{ background:#00d877 !important; }
+</style>
+<script>
+(function(){
+  var pop=null, onDoc=null;
+  function close(){ if(pop){ pop.remove(); pop=null; } if(onDoc){ document.removeEventListener('click', onDoc); onDoc=null; } }
+  function show(anchor, html){
+    close();
+    pop=document.createElement('div');
+    pop.style.cssText='position:fixed;z-index:10001;max-width:262px;background:var(--s2);border:1px solid var(--border2);border-radius:12px;padding:12px 14px;font-size:12.5px;line-height:1.55;color:var(--muted2);box-shadow:0 12px 34px rgba(0,0,0,.5)';
+    pop.innerHTML=html;
+    document.body.appendChild(pop);
+    var r=anchor.getBoundingClientRect();
+    var left=r.right-pop.offsetWidth; if(left<10) left=10;
+    pop.style.top=(r.bottom+8)+'px'; pop.style.left=left+'px';
+    onDoc=function(e){ if(pop && !pop.contains(e.target) && !anchor.contains(e.target)){ close(); } };
+    setTimeout(function(){ document.addEventListener('click', onDoc); },0);
+  }
+  window.toggleStreakInfo=function(ev){ ev.stopPropagation(); if(pop){ close(); return; } show(ev.currentTarget, '<b style="color:#ff9b3d">🔥 Tu racha</b><br>Suma <b>1 día</b> cada vez que entras a la plataforma. Si te saltas un día, la racha vuelve a empezar desde 1 y <b>pierdes todas las monedas acumuladas</b>.'); };
+  window.toggleCoinInfo=function(ev){ ev.stopPropagation(); if(pop){ close(); return; } show(ev.currentTarget, '<b style="color:#f5b50a">🪙 Tus monedas</b><br>Ganas <b>1 moneda</b> por cada día de racha. Canjéalas por recompensas; al canjear tu saldo baja, pero la racha no se ve afectada.'); };
+})();
+</script>
 </body>
 </html>
