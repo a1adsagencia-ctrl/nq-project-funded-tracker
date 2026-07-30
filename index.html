@@ -34,7 +34,7 @@
       document.getElementById('news-widget').style.display='flex';
       document.getElementById('u-name').textContent=user.displayName;
       document.getElementById('u-email').textContent=user.email;
-      document.getElementById('u-avatar').src=user.photoURL||'';
+      document.getElementById('u-avatar').src=user.photoURL||window.DEFAULT_AVATAR;
       window._fbLoad(user.uid).then(d=>{ window._accounts=d; window._init(); });
     } else {
       window._user=null;
@@ -148,6 +148,7 @@ td,th,p,span,div,label,button,input,select,a{font-family:var(--font)}
 
 /* CONTENT */
 .content{flex:1;overflow-y:auto;padding:20px 24px;background:var(--bg)}
+.pane{max-width:1400px;margin-left:auto;margin-right:auto}
 .pane{display:none}.pane.active{display:block}
 #pane-eventos.active{display:flex!important;flex-direction:column;gap:20px;}
 
@@ -240,8 +241,8 @@ td{padding:12px 14px;vertical-align:middle;color:var(--text)}
 .ctip{display:none;position:absolute;bottom:110%;left:50%;transform:translateX(-50%);background:#0e1a24;border:1px solid var(--border2);padding:8px 10px;border-radius:8px;font-size:11px;font-family:var(--mono);white-space:nowrap;z-index:100;pointer-events:none;box-shadow:0 4px 16px rgba(0,0,0,.5);color:#fff;text-align:center;line-height:1.6}
 
 
-.cd-num{font-size:9px;color:var(--muted);font-family:var(--mono);line-height:1}
-.cd-pnl{font-size:11px;font-weight:700;font-family:var(--mono);line-height:1.2;margin-top:2px}
+.cd-num{font-size:11px;color:var(--muted);font-family:system-ui,-apple-system,'Segoe UI',Roboto,Arial,sans-serif;font-weight:600;line-height:1}
+.cd-pnl{font-size:13px;font-weight:700;font-family:system-ui,-apple-system,'Segoe UI',Roboto,Arial,sans-serif;line-height:1.2;margin-top:2px}
 .cd-meta{font-size:9px;color:var(--muted2);font-family:var(--mono);line-height:1.2}
 .cd.win .cd-num{color:rgba(0,229,160,.6)}
 .cd.loss .cd-num{color:rgba(255,64,96,.6)}
@@ -273,8 +274,8 @@ body.gray td { color:#f0f0f0; }
 body.gray th { color:rgba(240,240,240,.55); }
 body.gray .fw { color:#f0f0f0; }
 body.gray .sv { color:#f0f0f0; }
-body.gray .sv.green { color:#00e57a; }
-body.gray .sv.red { color:#ff5570; }
+body.gray .sv.green { color:var(--accent); }
+body.gray .sv.red { color:var(--red); }
 body.gray .sv.blue { color:#4da6ff; }
 body.gray .sv.yellow { color:#ffd060; }
 body.gray .mn { color:#f0f0f0; }
@@ -342,8 +343,8 @@ body.light td { color:#0f1f12 !important; }
 body.light th { color:#4a6a50 !important; }
 body.light .fw { color:#0f1f12 !important; }
 body.light .sv { color:#0f1f12; }
-body.light .sv.green { color:#007a45 !important; }
-body.light .sv.red { color:#cc2233 !important; }
+body.light .sv.green { color:var(--accent) !important; }
+body.light .sv.red { color:var(--red) !important; }
 body.light .sv.blue { color:#0066aa !important; }
 body.light .sv.yellow { color:#aa7700 !important; }
 body.light .mn { color:#0f1f12 !important; }
@@ -695,18 +696,95 @@ body.light .note-card.color-orange:hover{border-color:rgba(210,110,0,.6)!importa
     <div style="margin-top:22px;text-align:center">
       <div style="font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:#ffffff;font-family:Inter,sans-serif;font-weight:500;margin-bottom:14px;animation:subtle-blink 3s ease-in-out infinite">Creado por traders, para traders</div>
       <div style="display:flex;align-items:center;justify-content:center;gap:14px">
-        <a href="https://www.instagram.com/soyhomie/" target="_blank" style="display:flex;align-items:center;gap:6px;color:rgba(255,255,255,.4);text-decoration:none;font-size:11px;font-family:Inter,sans-serif;font-weight:500;transition:color .2s" onmouseover="this.style.color='#00e5a0'" onmouseout="this.style.color='rgba(255,255,255,.4)'"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="13" height="13"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none"/></svg> @soyhomie</a>
+        <a href="https://www.instagram.com/soyhomie/" target="_blank" style="display:flex;align-items:center;gap:6px;color:rgba(255,255,255,.4);text-decoration:none;font-size:11px;font-family:Inter,sans-serif;font-weight:500;transition:color .2s" onmouseover="this.style.color=ftxPos()" onmouseout="this.style.color='rgba(255,255,255,.4)'"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="13" height="13"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none"/></svg> @soyhomie</a>
         <div style="width:1px;height:12px;background:rgba(255,255,255,.12)"></div>
-        <a href="https://www.instagram.com/fxjaviargaez/" target="_blank" style="display:flex;align-items:center;gap:6px;color:rgba(255,255,255,.4);text-decoration:none;font-size:11px;font-family:Inter,sans-serif;font-weight:500;transition:color .2s" onmouseover="this.style.color='#00e5a0'" onmouseout="this.style.color='rgba(255,255,255,.4)'"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="13" height="13"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none"/></svg> @fxjaviargaez</a>
+        <a href="https://www.instagram.com/fxjaviargaez/" target="_blank" style="display:flex;align-items:center;gap:6px;color:rgba(255,255,255,.4);text-decoration:none;font-size:11px;font-family:Inter,sans-serif;font-weight:500;transition:color .2s" onmouseover="this.style.color=ftxPos()" onmouseout="this.style.color='rgba(255,255,255,.4)'"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="13" height="13"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none"/></svg> @fxjaviargaez</a>
       </div>
     </div>
   </div>
 </div>
 
 <!-- APP -->
-<div id="app-screen" style="display:none;flex-direction:column;height:100%">
+<style id="ftx-shell">
+#app-screen{flex-direction:row!important}
+.ftx-sidebar{width:238px;flex-shrink:0;background:var(--s1);border-right:1px solid var(--border);display:flex;flex-direction:column;height:100vh;overflow:hidden;transition:width .28s cubic-bezier(.33,1,.68,1);z-index:50}
+#app-screen.ftx-collapsed .ftx-sidebar{width:66px}
+.ftx-main{flex:1;min-width:0;display:flex;flex-direction:column;height:100vh;overflow:hidden}
+.ftx-main .logo{display:none}
+.tabs{display:none!important}
+.ftx-sb-top{display:flex;align-items:center;justify-content:space-between;padding:16px 15px 12px}
+.ftx-brand{display:flex;align-items:center;gap:9px;overflow:hidden;white-space:nowrap}
+.ftx-mark{width:30px;height:30px;border-radius:8px;background:var(--accent);color:#04150c;display:grid;place-items:center;font-weight:800;font-size:13px;flex-shrink:0}
+.ftx-brand-tx{font-size:11px;font-weight:700;letter-spacing:.16em;color:var(--text)}
+.ftx-brand-tx small{display:block;font-size:8px;letter-spacing:.14em;color:var(--muted);font-weight:600;margin-top:2px}
+.ftx-collapse{width:28px;height:28px;border-radius:7px;color:var(--muted);display:grid;place-items:center;cursor:pointer;flex-shrink:0}
+.ftx-collapse:hover{background:var(--s2);color:var(--text)}
+#app-screen.ftx-collapsed .ftx-brand-tx,#app-screen.ftx-collapsed .ftx-fs-name,#app-screen.ftx-collapsed .ftx-fs-meta,#app-screen.ftx-collapsed .ftx-nav-sec,#app-screen.ftx-collapsed .ftx-lbl,#app-screen.ftx-collapsed .ftx-fs-caret,#app-screen.ftx-collapsed .ftx-badge2{display:none}
+#app-screen.ftx-collapsed .ftx-sb-top{justify-content:center;padding:16px 0 12px}
+#app-screen.ftx-collapsed .ftx-collapse{display:none}
+.ftx-firm{margin:2px 12px 10px;border:1px solid var(--border);border-radius:11px;padding:10px 12px;cursor:pointer;background:var(--s2);transition:border-color .15s}
+.ftx-firm:hover{border-color:var(--border2)}
+.ftx-fs-row{display:flex;align-items:center;gap:9px}
+.ftx-fs-logo{width:24px;height:24px;border-radius:6px;background:var(--bg);border:1px solid var(--border);display:grid;place-items:center;font-size:12px;color:var(--muted);flex-shrink:0;overflow:hidden}
+.ftx-fs-name{flex:1;font-size:12.5px;font-weight:600;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ftx-fs-caret{color:var(--muted);flex-shrink:0}
+.ftx-fs-meta{font-size:9px;color:var(--muted);letter-spacing:.1em;text-transform:uppercase;margin-top:8px;font-family:var(--mono)}
+#app-screen.ftx-collapsed .ftx-firm{margin:2px auto 10px;width:44px;height:44px;padding:0;display:grid;place-items:center}
+.ftx-nav{flex:1;overflow-y:auto;padding:4px 12px 12px;scrollbar-width:none}
+.ftx-nav::-webkit-scrollbar{width:0}
+.ftx-nav-sec{font-size:9px;font-weight:700;letter-spacing:.15em;text-transform:uppercase;color:var(--muted);opacity:.55;padding:14px 10px 6px}
+.ftx-nav-item{display:flex;align-items:center;gap:12px;padding:9px 11px;border-radius:9px;color:var(--muted);font-size:12.5px;font-weight:600;letter-spacing:.02em;cursor:pointer;position:relative;transition:color .15s,background .15s;white-space:nowrap}
+.ftx-nav-item:hover{background:var(--s2);color:var(--text)}
+.ftx-nav-item.ftx-active{background:var(--border);color:var(--accent)}
+.ftx-nav-item.ftx-active::before{content:"";position:absolute;left:-12px;top:8px;bottom:8px;width:3px;border-radius:0 3px 3px 0;background:var(--accent)}
+.ftx-ico{width:19px;height:19px;flex-shrink:0;display:grid;place-items:center}
+.ftx-ico svg{width:18px;height:18px}
+.ftx-lbl{flex:1;overflow:hidden}
+.ftx-badge2{font-family:var(--mono);font-size:10px;font-weight:800;min-width:17px;text-align:center;padding:1px 5px;border-radius:20px;display:inline-flex;align-items:center;justify-content:center}
+#app-screen.ftx-collapsed .ftx-nav-item{justify-content:center;padding:10px 0}
+#app-screen.ftx-collapsed .ftx-nav-sec{font-size:0;padding:9px 0 5px}
+#app-screen.ftx-collapsed .ftx-nav-sec::after{content:"";display:block;height:1px;width:18px;margin:0 auto;background:var(--border)}
+.ftx-mobtn{display:none;width:34px;height:34px;border-radius:8px;border:1px solid var(--border2);color:var(--muted);background:none;cursor:pointer;margin-right:6px}
+@media(max-width:860px){
+  #app-screen .ftx-sidebar{position:fixed;left:0;top:0;transform:translateX(-100%);box-shadow:0 0 40px rgba(0,0,0,.6)}
+  #app-screen.ftx-mobile .ftx-sidebar{transform:translateX(0)}
+  .ftx-mobtn{display:inline-grid!important;place-items:center}
+}
+</style>
+<div id="app-screen" style="display:none;flex-direction:row;height:100vh">
+<aside class="ftx-sidebar" id="ftx-sidebar">
+  <div class="ftx-sb-top">
+    <div class="ftx-brand"><div class="ftx-mark">NQ</div><div class="ftx-brand-tx">NQ PROJECT<small>FUNDED TRACKER</small></div></div>
+    
+  </div>
+  <div class="ftx-firm" id="ftx-firm-sel" onclick="ftxToggleFirmMenu(event)">
+    <div class="ftx-fs-row"><div class="ftx-fs-logo" id="ftx-fs-logo">◎</div><div class="ftx-fs-name" id="ftx-fs-name">Todas las empresas</div><span class="ftx-fs-caret"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg></span></div>
+    <div class="ftx-fs-meta" id="ftx-fs-meta">Todas las empresas</div>
+    <div class="ftx-firm-menu" id="ftx-firm-menu"></div>
+  </div>
+  <nav class="ftx-nav">
+    <div class="ftx-nav-sec">Panel</div>
+    <div class="ftx-nav-item ftx-active" data-tab="dashboard" onclick="goTab('dashboard')"><span class="ftx-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg></span><span class="ftx-lbl">Dashboard</span></div>
+    <div class="ftx-nav-item" data-tab="analisis" onclick="goTab('analisis')"><span class="ftx-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></svg></span><span class="ftx-lbl">Análisis</span></div>
+    <div class="ftx-nav-item" data-tab="retiros" onclick="goTab('retiros')"><span class="ftx-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12m0 0l-4-4m4 4l4-4M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2"/></svg></span><span class="ftx-lbl">Retiros</span></div>
+    <div class="ftx-nav-sec">Más</div>
+    <div class="ftx-nav-item" data-tab="recompensas" onclick="goTab('recompensas')"><span class="ftx-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="8" width="18" height="4" rx="1"/><path d="M12 8v13M5 12v9h14v-9M12 8S12 4 9 4a2 2 0 000 4zM12 8s0-4 3-4a2 2 0 010 4z"/></svg></span><span class="ftx-lbl">Recompensas</span><span class="ftx-badge2" id="ftx-rw-badge" style="display:none;background:var(--accent);color:#04150c">0</span></div>
+    <div class="ftx-nav-item" data-tab="eventos" onclick="goTab('eventos')"><span class="ftx-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="17" rx="2"/><path d="M3 9h18M8 2v4M16 2v4"/></svg></span><span class="ftx-lbl">Comunidad</span><span class="ftx-badge2" id="ftx-ev-badge" style="display:none;background:#ffc840;color:#1a1200">0</span></div>
+    <div class="ftx-nav-item" data-tab="notas" onclick="goTab('notas')"><span class="ftx-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h11l5 5v11H4zM15 4v5h5"/></svg></span><span class="ftx-lbl">Notas</span></div>
+  </nav>
+  <div class="ftx-sb-foot">
+    <div class="user-info" onclick="openOv('profile')" style="cursor:pointer" title="Editar perfil">
+      <img class="user-avatar" id="u-avatar" src="" alt="" onerror="this.onerror=null;this.src=window.DEFAULT_AVATAR">
+      <div style="flex:1;min-width:0"><div class="u-name" id="u-name"></div><div class="u-email" id="u-email"></div></div>
+      <span style="font-size:11px;color:var(--muted)">&#9881;</span>
+    </div>
+    <button class="btn-lo" onclick="window._fbSignOut()"><span>Cerrar sesión</span></button>
+  </div>
+</aside>
+<div class="ftx-main">
 
 <div class="hdr">
+  <button class="ftx-mobtn" onclick="ftxToggleMobile()" aria-label="Menú"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M3 12h18M3 18h18"/></svg></button>
   <div class="logo">
     <div class="logo-sub" onclick="window.open('https://www.instagram.com/nqproject.oficial/','_blank')" title="Instagram NQ Project">NQ PROJECT</div>
   </div>
@@ -714,19 +792,15 @@ body.light .note-card.color-orange:hover{border-color:rgba(210,110,0,.6)!importa
   <div id="streak-badge" onclick="toggleStreakInfo(event)" title="Racha — clic para saber más" style="display:none;cursor:pointer;align-items:center;gap:6px;background:linear-gradient(135deg,rgba(255,140,0,.16),rgba(255,90,0,.06));border:1px solid rgba(255,140,0,.4);padding:6px 13px;border-radius:99px;font-weight:800;font-size:14px;color:#ff9b3d;margin-right:2px">🔥 <span id="streak-count">0</span></div>
   <div id="coin-badge-top" onclick="toggleCoinInfo(event)" title="Monedas — clic para saber más" style="display:none;cursor:pointer;align-items:center;gap:6px;background:linear-gradient(135deg,rgba(245,181,10,.16),rgba(200,137,10,.06));border:1px solid rgba(245,181,10,.45);padding:6px 12px;border-radius:99px;font-weight:800;font-size:14px;color:#f5b50a;margin-right:2px"><svg viewBox="0 0 24 24" width="15" height="15" style="vertical-align:middle"><circle cx="12" cy="12" r="11" fill="#f5b50a" stroke="#c8890a" stroke-width="1.5"/><circle cx="12" cy="12" r="8.2" fill="none" stroke="#e0a800" stroke-width="1"/><text x="12" y="16.3" text-anchor="middle" font-size="12" font-weight="bold" fill="#7a5200" font-family="Arial,sans-serif">$</text></svg> <span id="coin-count-top">0</span></div>
   <div id="nov-bell" onclick="openNovedades()" title="Novedades" style="position:relative;cursor:pointer;display:flex;align-items:center;justify-content:center;width:38px;height:38px;border-radius:10px;background:var(--s1);border:1px solid var(--border2);margin-right:2px"><svg viewBox="0 0 24 24" width="18" height="18" fill="var(--text)" style="opacity:.85"><path d="M12 2a6 6 0 00-6 6v3.586L4.293 13.293A1 1 0 005 15h14a1 1 0 00.707-1.707L18 11.586V8a6 6 0 00-6-6zm0 20a3 3 0 002.995-2.824L15 19H9a3 3 0 003 3z"/></svg><span id="nov-badge" style="display:none;position:absolute;top:-5px;right:-5px;min-width:17px;height:17px;padding:0 4px;border-radius:99px;background:#ff4060;color:#fff;font-size:10px;font-weight:800;align-items:center;justify-content:center;border:2px solid var(--bg)">0</span></div>
+  <div style="position:relative">
+    <div class="theme-btn" id="ftx-pal-btn" onclick="ftxTogglePalMenu(event)" title="Paleta de colores"><span id="ftx-pal-dot" style="width:15px;height:15px;border-radius:50%;background:var(--accent)"></span></div>
+    <div id="ftx-pal-menu" class="ftx-pal-menu"></div>
+  </div>
   <div class="theme-btn" id="theme-btn" onclick="toggleTheme()">&#127769;</div>
-    <button class="btn btn-g" onclick="openTradeModal()">+ TRADE</button>
-    <button class="btn btn-p" onclick="newAccountModal()">+ CUENTA</button>
-    <div class="user-info" onclick="openOv('profile')" style="cursor:pointer" title="Editar perfil">
-      <img class="user-avatar" id="u-avatar" src="" alt="">
-      <div><div class="u-name" id="u-name"></div><div class="u-email" id="u-email"></div></div>
-      <span style="font-size:10px;color:var(--muted);margin-left:4px">&#9881;</span>
-    </div>
-    <button class="btn-lo" onclick="window._fbSignOut()">Salir</button>
   </div>
 </div>
 
-<div class="tabs">
+<div class="tabs" style="display:none">
   <div class="tab active" onclick="goTab('dashboard')">Dashboard</div>
   <div class="tab" onclick="goTab('cuentas')">Cuentas</div>
   <div class="tab" onclick="goTab('traderpro')" style="color:#ffc840;font-weight:700;">🏆 Trader Pro</div>
@@ -742,6 +816,11 @@ body.light .note-card.color-orange:hover{border-color:rgba(210,110,0,.6)!importa
 
 <div class="content">
   <div class="pane active" id="pane-dashboard">
+    <div style="margin-bottom:18px">
+      <div style="font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);font-weight:700;margin-bottom:6px">Panel general</div>
+      <h1 style="font-size:clamp(22px,3vw,30px);font-weight:800;letter-spacing:-.02em;line-height:1.1;margin:0">Resumen de tu trading</h1>
+      <div style="font-size:13px;color:var(--muted);margin-top:5px">Vista general de todo tu rendimiento y capital.</div>
+    </div>
     <!-- FILTRO DROPDOWN -->
     <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px;flex-wrap:wrap;">
       <div style="position:relative;">
@@ -784,19 +863,19 @@ body.light .note-card.color-orange:hover{border-color:rgba(210,110,0,.6)!importa
     </div>
 
     <div class="sg" id="d-stats"></div>
+    <!-- Curva de capital como principal (ancho completo) -->
+    <div class="card" style="margin-top:16px"><div style="margin-bottom:10px"><div style="font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);font-weight:700">Curva de capital · capital actual</div><div id="ch-capital-total" class="mn" style="font-size:24px;font-weight:800;color:var(--text);line-height:1.1;margin-top:3px"></div></div><div class="ch" style="height:280px"><canvas id="ch-capital"></canvas></div></div>
     <div class="g2">
-      <div class="card"><div class="ct">Curva de Capital</div><div class="ch"><canvas id="ch-capital"></canvas></div></div>
-      <div class="card"><div class="ct">Distribucion W/L/BE</div><div class="ch"><canvas id="ch-dist"></canvas></div></div>
+      <div class="card"><div class="ct">Racha Actual</div><div id="a-racha"></div></div>
+      <div class="card"><div class="ct">Mes Mas Rentable</div><div id="a-meses"></div></div>
     </div>
     <div class="g2">
-      <div class="card"><div class="ct">Mejor Día de la Semana</div><div class="ch" style="height:200px"><canvas id="ch-weekday"></canvas></div></div>
-      <div class="card"><div class="ct">Mejor Horario</div><div class="ch" style="height:200px"><canvas id="ch-hour"></canvas></div></div>
+      <div class="card"><div class="ct">Mejor Día de la Semana</div><div class="ch" style="height:215px"><canvas id="ch-weekday"></canvas></div></div>
+      <div class="card"><div class="ct">Mejor Horario</div><div class="ch" style="height:215px"><canvas id="ch-hour"></canvas></div></div>
     </div>
-    <div class="g3">
-      <div class="card"><div class="ct">Cuentas para Recuperar Inversion</div><div id="d-recovery"></div></div>
-      <div class="card"><div class="ct">Promedio Dias para Pasar</div><div id="d-avgdays"></div></div>
-      <div class="card"><div class="ct">Proyeccion de Retiros</div><div id="d-projection"></div></div>
-    </div>
+    <div class="card"><div class="ct">Promedio Dias para Pasar</div><div id="d-avgdays"></div></div>
+    <div style="display:none"><canvas id="ch-dist"></canvas></div>
+    <div style="display:none"><div class="ses-grid" id="a-sesiones"></div><div id="a-firmas"></div><div id="a-dias"></div><div id="d-recovery"></div></div>
   </div>
 
   <div class="pane" id="pane-cuentas">
@@ -841,17 +920,22 @@ body.light .note-card.color-orange:hover{border-color:rgba(210,110,0,.6)!importa
   </div>
 
   <div class="pane" id="pane-analisis">
-    <div class="g2">
-      <div class="card"><div class="ct">Comparativa por Firma (ROI)</div><div id="a-firmas"></div></div>
-      <div class="card"><div class="ct">Racha Actual</div><div id="a-racha"></div></div>
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:16px;flex-wrap:wrap">
+      <span style="font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;font-weight:700">Cuenta</span>
+      <select id="a-acct-filter" onchange="ftxSelectAccount(this.value)" class="fs" style="max-width:260px"><option value="">Todas las cuentas</option></select>
+      <span style="font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;font-weight:700;margin-left:6px">Fechas</span>
+      <input type="date" id="a-date-from" onchange="ftxSetDate()" class="fs" style="max-width:150px" title="Desde">
+      <input type="date" id="a-date-to" onchange="ftxSetDate()" class="fs" style="max-width:150px" title="Hasta">
+      <button onclick="ftxClearDate()" style="background:var(--s2);border:1px solid var(--border);color:var(--muted);border-radius:8px;padding:8px 12px;font-size:11px;cursor:pointer" title="Quitar filtro de fechas">Limpiar</button>
     </div>
-    <div class="g3">
-      <div class="card"><div class="ct">Win Rate por Sesion</div><div class="ses-grid" id="a-sesiones"></div></div>
-      <div class="card"><div class="ct">Mejor Dia de la Semana</div><div id="a-dias"></div></div>
-      <div class="card"><div class="ct">Mes Mas Rentable</div><div id="a-meses"></div></div>
-    </div>
+    <div class="sg" id="a-statstrip" style="margin-bottom:16px"></div>
     <div class="card" style="margin-bottom:16px">
-      <div class="ct">Calendario de Rentabilidad</div>
+      <div style="margin-bottom:10px"><div style="font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);font-weight:700">Curva de capital · capital actual</div><div id="ch-capital-a-total" class="mn" style="font-size:24px;font-weight:800;color:var(--text);line-height:1.1;margin-top:3px"></div></div>
+      <div class="ch"><canvas id="ch-capital-a"></canvas></div>
+    </div>
+    <div id="a-metaprogress"></div>
+    <div class="card" style="margin-bottom:16px">
+      <div style="display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-bottom:10px"><div class="ct" style="margin-bottom:0">Calendario de Rentabilidad</div><button class="btn btn-p" onclick="openTradeModal()" style="font-size:12px;padding:8px 14px">+ Agregar trade</button></div>
       <div style="margin-bottom:10px;display:flex;gap:8px;align-items:center">
         <button class="ab" onclick="calPrev()">&#8592;</button>
         <span id="cal-title" style="font-family:var(--mono);font-size:13px;min-width:130px;text-align:center"></span>
@@ -861,22 +945,40 @@ body.light .note-card.color-orange:hover{border-color:rgba(210,110,0,.6)!importa
       <div class="cg" id="cal-grid"></div>
     </div>
 
+    <!-- ULTIMOS TRADES (movido desde Diario) -->
+    <div class="card" style="margin-bottom:16px">
+      <div style="display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:10px">
+        <div class="ct" style="margin-bottom:0">🕒 Últimos trades</div>
+        <div style="display:flex;align-items:center;gap:8px">
+          <button class="ab" onclick="ftxUltPage(-1)" title="Más recientes">&#8592;</button>
+          <span id="a-ult-page" style="font-family:var(--mono);font-size:11px;color:var(--muted);min-width:72px;text-align:center"></span>
+          <button class="ab" onclick="ftxUltPage(1)" title="Más antiguos">&#8594;</button>
+        </div>
+      </div>
+      <div style="overflow-x:auto"><table id="a-ultimos" style="width:100%"><thead><tr><th>Fecha</th><th>Empresa</th><th>Hora</th><th>Tipo</th><th>P&L</th><th>Resultado</th><th>Foto</th></tr></thead><tbody></tbody></table></div>
+    </div>
+
     <!-- STATS EMOCIONALES -->
-    <div style="margin-top:16px">
-      <div class="card">
+    <div class="g2" style="margin-top:16px">
+      <div class="card" style="border-color:color-mix(in srgb,var(--accent) 22%,var(--border))">
         <div class="ct">⚡ Emociones más frecuentes</div>
-        <div style="height:260px;position:relative;"><canvas id="ch-emo-freq"></canvas></div>
+        <div id="a-emo-bars" style="display:flex;align-items:flex-end;gap:10px;height:210px;padding-top:20px"></div>
+      </div>
+      <div class="card">
+        <div class="ct" id="a-rules-title">✅ Cumplimiento de reglas</div>
+        <div id="a-rules-list" style="margin-top:4px"></div>
       </div>
     </div>
-    <div class="g2" style="margin-top:0">
-      <div class="card">
-        <div class="ct">✅ Cumplimiento de reglas</div>
-        <div id="a-rules-stats-wrap" style="height:220px;position:relative;"><canvas id="ch-rules-stats"></canvas></div>
-      </div>
-      <div class="card">
-        <div class="ct">⭐ Resultados por nivel de confianza</div>
-        <div id="a-stars-stats-wrap" style="height:220px;position:relative;"><canvas id="ch-stars-stats"></canvas></div>
-      </div>
+    <div style="display:none"><canvas id="ch-emo-freq"></canvas><div id="a-rules-stats-wrap"><canvas id="ch-rules-stats"></canvas></div><canvas id="ch-stars-stats"></canvas></div>
+  </div>
+
+  <!-- PANE RETIROS (métricas reales en fase 2D) -->
+  <div class="pane" id="pane-retiros">
+    <div class="card" style="text-align:center;padding:42px 20px;color:var(--muted)">
+      <div style="font-size:40px;margin-bottom:12px">💸</div>
+      <div style="font-weight:700;color:var(--text);font-size:16px;margin-bottom:6px">Retiros</div>
+      <div style="font-size:13px;max-width:460px;margin:0 auto;line-height:1.6">Aquí verás los retiros y las métricas de inversión de la empresa seleccionada: total invertido, total retirado, ganancia neta, ROI, % de aprobación, cuentas para recuperar inversión y más.</div>
+      <div style="font-size:11px;margin-top:12px;font-family:var(--mono);color:var(--muted)">Se completa en la fase 2D</div>
     </div>
   </div>
 
@@ -1028,6 +1130,7 @@ body.light .note-card.color-orange:hover{border-color:rgba(210,110,0,.6)!importa
   </div>
 
 </div>
+</div><!-- /ftx-main -->
 
 <!-- MODAL GRUPO -->
 <div class="ov" id="ov-grupo">
@@ -1291,8 +1394,8 @@ body.light .note-card.color-orange:hover{border-color:rgba(210,110,0,.6)!importa
       <div style="background:var(--s1);border:1px solid var(--border2);padding:8px 12px;border-radius:8px;font-size:12px;font-family:Inter,sans-serif;box-shadow:0 4px 16px rgba(0,0,0,.4);display:flex;flex-direction:column;gap:6px;align-items:flex-start">
         <span style="font-size:10px;color:var(--muted);letter-spacing:.08em;text-transform:uppercase">Seguir en Instagram</span>
         <div style="display:flex;gap:8px">
-          <a href="https://www.instagram.com/soyhomie/" target="_blank" style="display:flex;align-items:center;gap:5px;color:var(--text);text-decoration:none;font-size:12px;font-family:Inter,sans-serif;font-weight:600;padding:4px 10px;border:1px solid var(--border);border-radius:6px;background:var(--s2);transition:all .2s" onmouseover="this.style.borderColor='#00e5a0';this.style.color='#00e5a0'" onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--text)'"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="16" height="16"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none"/></svg> @soyhomie</a>
-          <a href="https://www.instagram.com/fxjaviargaez/" target="_blank" style="display:flex;align-items:center;gap:5px;color:var(--text);text-decoration:none;font-size:12px;font-family:Inter,sans-serif;font-weight:600;padding:4px 10px;border:1px solid var(--border);border-radius:6px;background:var(--s2);transition:all .2s" onmouseover="this.style.borderColor='#00e5a0';this.style.color='#00e5a0'" onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--text)'"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="16" height="16"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none"/></svg> @fxjaviargaez</a>
+          <a href="https://www.instagram.com/soyhomie/" target="_blank" style="display:flex;align-items:center;gap:5px;color:var(--text);text-decoration:none;font-size:12px;font-family:Inter,sans-serif;font-weight:600;padding:4px 10px;border:1px solid var(--border);border-radius:6px;background:var(--s2);transition:all .2s" onmouseover="this.style.borderColor=ftxPos();this.style.color=ftxPos()" onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--text)'"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="16" height="16"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none"/></svg> @soyhomie</a>
+          <a href="https://www.instagram.com/fxjaviargaez/" target="_blank" style="display:flex;align-items:center;gap:5px;color:var(--text);text-decoration:none;font-size:12px;font-family:Inter,sans-serif;font-weight:600;padding:4px 10px;border:1px solid var(--border);border-radius:6px;background:var(--s2);transition:all .2s" onmouseover="this.style.borderColor=ftxPos();this.style.color=ftxPos()" onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--text)'"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="16" height="16"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none"/></svg> @fxjaviargaez</a>
         </div>
       </div>
       <div style="width:42px;height:42px;border-radius:50%;background:linear-gradient(135deg,#f09433,#e6683c,#dc2743,#cc2366,#bc1888);display:flex;align-items:center;justify-content:center;color:#fff;box-shadow:0 4px 16px rgba(220,39,67,.3)"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="16" height="16"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none"/></svg></div>
@@ -1338,16 +1441,28 @@ body.light .note-card.color-orange:hover{border-color:rgba(210,110,0,.6)!importa
   <div class="modal">
     <div class="mhdr"><div class="mtitle" id="acct-title">Nueva Cuenta</div><button class="mx" onclick="closeOv('account')">&#215;</button></div>
     <div class="fr">
-      <div class="fg"><label class="fl">Firma</label><input class="fi" id="a-firma" placeholder="FTMO, Topstep..."></div>
-      <div class="fg"><label class="fl">Tamano</label><select class="fs" id="a-size"><option>$5,000</option><option>$10,000</option><option>$25,000</option><option>$50,000</option><option>$100,000</option><option>$150,000</option><option>$200,000</option></select></div>
+      <div class="fg"><label class="fl">Nombre de la cuenta <small>(opcional)</small></label><input class="fi" id="a-nombre" placeholder="Ej: APEX 50K #1"></div>
+      <div class="fg"><label class="fl">Empresa</label><input class="fi" id="a-firma" placeholder="Apex, Topstep..."></div>
     </div>
     <div class="fr">
-      <div class="fg"><label class="fl">Inversion <small>(lo que pagaste por la cuenta)</small></label><input class="fi" id="a-inv" type="number" placeholder="Ej: 150"></div>
-      <div class="fg"><label class="fl">Objetivo Profit <small>(% del tamano de la cuenta)</small></label><input class="fi" id="a-obj" type="number" placeholder="10" value="10"><span class="hint">Ej: 10% de $50,000 = meta de $5,000</span></div>
+      <div class="fg"><label class="fl">Tamaño</label><select class="fs" id="a-size"><option>$5,000</option><option>$10,000</option><option>$25,000</option><option>$50,000</option><option>$100,000</option><option>$150,000</option><option>$200,000</option></select></div>
+      <div class="fg"><label class="fl">Inversión <small>(lo que pagaste)</small></label><input class="fi" id="a-inv" type="number" placeholder="Ej: 150"></div>
     </div>
     <div class="fr">
-      <div class="fg"><label class="fl">Estado</label><select class="fs" id="a-estado"><option value="active">Activa</option><option value="funded">Fondeada</option><option value="passed">Pasada</option><option value="failed">Fallida</option></select></div>
-      <div class="fg"><label class="fl">Fecha de Compra</label><input class="fi" id="a-fecha" type="date"></div>
+      <div class="fg"><label class="fl">Tipo de cuenta</label><select class="fs" id="a-tipo" onchange="ftxToggleAcctType()"><option value="challenge">Challenge</option><option value="fondeada">Fondeada</option></select></div>
+      <div class="fg"><label class="fl">Estado</label><select class="fs" id="a-estado"><option value="active">Activa / En challenge</option><option value="funded">Fondeada</option><option value="failed">Quemada</option></select></div>
+    </div>
+    <div id="ftx-challenge-fields" class="fr">
+      <div class="fg"><label class="fl">Drawdown máx <small>($ de pérdida = quemada)</small></label><input class="fi" id="a-dd" type="number" placeholder="Ej: 2000"><span class="hint">Al tocar esta pérdida se marca quemada</span></div>
+      <div class="fg"><label class="fl">Profit objetivo <small>($ para fondearse)</small></label><input class="fi" id="a-pt" type="number" placeholder="Ej: 3000"><span class="hint">Al alcanzarlo se marca fondeada</span></div>
+    </div>
+    <div id="ftx-fondeada-fields" class="fr" style="display:none">
+      <div class="fg"><label class="fl">Meta de retiro <small>($ opcional)</small></label><input class="fi" id="a-meta" type="number" placeholder="Ej: 5000"><span class="hint">Verás el avance en Análisis</span></div>
+      <div class="fg"></div>
+    </div>
+    <div class="fr">
+      <div class="fg"><label class="fl">Fecha de compra</label><input class="fi" id="a-fecha" type="date"></div>
+      <div class="fg"></div>
     </div>
     <div class="fg"><label class="fl">Notas</label><input class="fi" id="a-notas" placeholder="Opcional..."></div>
     <div style="margin-top:8px;padding-top:14px;border-top:1px solid var(--border)">
@@ -1358,6 +1473,10 @@ body.light .note-card.color-orange:hover{border-color:rgba(210,110,0,.6)!importa
       </div>
       <button class="btn btn-g" style="width:100%;margin-bottom:10px" onclick="addRetiro()">+ AGREGAR RETIRO</button>
       <div id="ret-list"></div>
+    </div>
+    <div id="ftx-acct-actions" style="display:none;gap:8px;margin-top:8px">
+      <button class="bf2" style="flex:1;color:#ffc840;border-color:rgba(255,200,64,.4)" onclick="quemarCuenta(editAcctId)">🔥 Marcar quemada</button>
+      <button class="bf2" style="flex:1;color:#ff5b6a;border-color:rgba(255,91,106,.4)" onclick="deleteAccount(editAcctId)">🗑 Eliminar</button>
     </div>
     <button class="bf" id="acct-btn" onclick="saveAccount()">GUARDAR CUENTA</button>
     <button class="bf2" onclick="closeOv('account')">Cancelar</button>
@@ -1372,14 +1491,17 @@ body.light .note-card.color-orange:hover{border-color:rgba(210,110,0,.6)!importa
       <div class="fg"><label class="fl">Cuenta</label><select class="fs" id="t-cuenta"></select></div>
       <div class="fg"><label class="fl">Fecha</label><input class="fi" id="t-fecha" type="date"></div>
     </div>
-    <div class="fr3">
-      <div class="fg"><label class="fl">Sesion</label><select class="fs" id="t-ses"><option>NY</option><option>Londres</option><option>Tokyo</option><option>Pre-market</option></select></div>
-      <div class="fg"><label class="fl">Instrumento</label><input class="fi" id="t-inst" placeholder="NQ, ES..."></div>
+    <div class="fr">
+      <div class="fg"><label class="fl">Instrumento</label><select class="fs" id="t-inst"><optgroup label="Futuros"><option>NQ</option><option>MNQ</option><option>ES</option><option>MES</option><option>YM</option><option>MYM</option><option>RTY</option><option>M2K</option><option>GC</option><option>MGC</option><option>CL</option><option>MCL</option><option>SI</option><option>NG</option><option>ZB</option><option>ZN</option><option>6E</option><option>6J</option><option>6B</option></optgroup><optgroup label="CFDs / Índices"><option>US30</option><option>NAS100</option><option>SPX500</option><option>US500</option><option>GER40</option><option>UK100</option><option>US OIL</option><option>XAUUSD (Oro)</option><option>XAGUSD (Plata)</option><option>BTCUSD</option><option>ETHUSD</option></optgroup><optgroup label="Forex"><option>EURUSD</option><option>GBPUSD</option><option>USDJPY</option><option>AUDUSD</option><option>USDCAD</option><option>USDCHF</option><option>NZDUSD</option><option>EURJPY</option><option>GBPJPY</option><option>EURGBP</option></optgroup></select></div>
       <div class="fg"><label class="fl">Tipo</label><select class="fs" id="t-tipo"><option>Long</option><option>Short</option></select></div>
     </div>
     <div class="fr">
+      <div class="fg"><label class="fl">Hora de entrada</label><input class="fi" id="t-hin" type="time"></div>
+      <div class="fg"><label class="fl">Hora de salida</label><input class="fi" id="t-hout" type="time"></div>
+    </div>
+    <div class="fr">
       <div class="fg"><label class="fl">P&amp;L ($)</label><input class="fi" id="t-pnl" type="number" placeholder="0" step="0.01"></div>
-      <div class="fg"><label class="fl">Resultado</label><select class="fs" id="t-res"><option value="win">Win</option><option value="loss">Loss</option><option value="be">Break Even</option></select></div>
+      <div class="fg"><label class="fl">Resultado</label><select class="fs" id="t-res"><option value="win">Win</option><option value="loss">Loss</option><option value="be">Break Even</option><option value="notrade">No trade</option></select></div>
     </div>
     <div class="fg"><label class="fl">Notas</label><textarea class="fi" id="t-notas" placeholder="Escribe aquí tus observaciones del trade... estrategia, errores, aprendizajes..." style="min-height:110px;resize:vertical;line-height:1.6;font-family:var(--font);font-size:13px;"></textarea></div>
     <div class="fg"><label class="fl">Foto del trade <small>(URL de la imagen)</small></label><input class="fi" id="t-foto" placeholder="https://..."></div>
@@ -1406,7 +1528,7 @@ body.light .note-card.color-orange:hover{border-color:rgba(210,110,0,.6)!importa
         <div class="emo-rule" onclick="toggleRule(this)"><div class="emo-rule-box">✓</div><div class="emo-rule-text">Cumplí con mis hábitos antes de operar</div></div>
       </div>
 
-      <div style="margin-top:13px">
+      <div style="margin-top:13px;display:none">
         <div class="emo-label">Confianza en el trade</div>
         <div class="emo-stars" id="emo-stars">
           <span class="emo-star" data-val="1" onclick="setStars(1)">⭐</span>
@@ -1544,12 +1666,13 @@ const today = () => new Date().toISOString().slice(0,10);
 const fmt = n => '$'+Number(n).toLocaleString('en-US',{minimumFractionDigits:0,maximumFractionDigits:0});
 const fmtD = n => (n>=0?'+':'')+fmt(Math.abs(n));
 const fmtP = n => (n>=0?'+':'')+n.toFixed(1)+'%';
-const allTrades = () => accounts.flatMap(a=>(a.trades||[]).map(t=>Object.assign({},t,{_firma:a.firma,_aid:a.id})));
+const allTrades = () => { var _accs=accounts; if(window._ftxFirm) _accs=_accs.filter(a=>a.firma===window._ftxFirm); if(window._ftxAccount) _accs=_accs.filter(a=>a.id===window._ftxAccount); var _tr=_accs.flatMap(a=>(a.trades||[]).map(t=>Object.assign({},t,{_firma:a.firma,_aid:a.id}))); if(window._ftxDateFrom) _tr=_tr.filter(t=>t.fecha&&t.fecha>=window._ftxDateFrom); if(window._ftxDateTo) _tr=_tr.filter(t=>t.fecha&&t.fecha<=window._ftxDateTo); return _tr; };
 const acctTrades = id => (accounts.find(x=>x.id===id)||{}).trades||[];
-const winRate = trades => { const d=trades.filter(t=>t.resultado!=='be'); return d.length?d.filter(t=>t.resultado==='win').length/d.length*100:0; };
+const winRate = trades => { const d=trades.filter(t=>t.resultado!=='be'&&t.resultado!=='notrade'); return d.length?d.filter(t=>t.resultado==='win').length/d.length*100:0; };
 const acctSize = a => parseInt((a.size||'').replace(/[$,]/g,''))||0;
 
 async function save() {
+  if(window.ftxAutoStatus) ftxAutoStatus();
   if (window._user && window._fbSave) {
     window._accounts = accounts;
     // Recalcular firmCounters desde cuentas actuales para persistirlos
@@ -1604,15 +1727,19 @@ function goTab(name) {
   document.querySelectorAll('.pane').forEach(p=>p.classList.remove('active'));
   const activePn = document.getElementById('pane-'+name);
   if(activePn) activePn.classList.add('active');
-  if(name==='dashboard') _cachedRender('dashboard', renderDashboard, 80);
+  if(name!=='analisis'){ window._ftxDateFrom=''; window._ftxDateTo=''; var _df=document.getElementById('a-date-from'),_dt=document.getElementById('a-date-to'); if(_df)_df.value=''; if(_dt)_dt.value=''; }
+  if(name==='dashboard'){ _cachedRender('dashboard', renderDashboard, 80); if(window.renderAnalyticsCards) renderAnalyticsCards(); }
   else if(name==='cuentas') _cachedRender('cuentas', renderCuentas, 60);
   else if(name==='traderpro') renderTraderPro();
   else if(name==='diario') _cachedRender('diario', renderDiario, 60);
-  else if(name==='analisis') _cachedRender('analisis', renderAnalisis, 80);
+  else if(name==='analisis'){ _cachedRender('analisis', renderAnalisis, 80); if(window.renderUltimosTrades) renderUltimosTrades(); }
   else if(name==='calculadora') renderCalculadora();
   else if(name==='recompensas') refreshRecompensas();
   else if(name==='notas') renderFolders();
   else if(name==='eventos') renderEventos();
+  else if(name==='retiros'){ if(window.renderRetiros) renderRetiros(); }
+  if(window.ftxSyncNav) ftxSyncNav(name);
+  if(window.ftxBuildFirms) ftxBuildFirms();
 }
 
 // THEME - 3 modos: dark / gray / light
@@ -1625,11 +1752,13 @@ function applyTheme(t) {
   document.body.className = t === 'dark' ? '' : t === 'gray' ? 'gray' : 'light';
   document.getElementById('theme-btn').innerHTML = THEME_ICONS[t];
   localStorage.setItem('nqft_theme', t);
+  if(window.ftxApplyPalette && window._ftxPalette) ftxApplyPalette(window._ftxPalette);
 }
 
 function toggleTheme() {
   const idx = THEMES.indexOf(currentTheme);
   applyTheme(THEMES[(idx + 1) % THEMES.length]);
+  if(window.ftxRerenderActive) setTimeout(ftxRerenderActive,30);
 }
 
 // Restaurar tema guardado (dark por defecto)
@@ -1694,12 +1823,13 @@ window._invalidateCache = function() {
 
 function renderDashboard() {
   const tr = getFilteredTrades();
-  const inv=accounts.reduce((s,a)=>s+(a.inversion||0),0);
-  const ret=accounts.reduce((s,a)=>s+(a.retiros||[]).reduce((x,r)=>x+r.monto,0),0);
+  const _ftxAcc=window.ftxAccounts?window.ftxAccounts():accounts;
+  const inv=_ftxAcc.reduce((s,a)=>s+(a.inversion||0),0);
+  const ret=_ftxAcc.reduce((s,a)=>s+(a.retiros||[]).reduce((x,r)=>x+r.monto,0),0);
   const neta=ret-inv;
-  const enEvaluacion=accounts.filter(a=>a.estado==='active').length;
-  const pasadas=accounts.filter(a=>['passed','funded'].includes(a.estado)).length;
-  const fallidas=accounts.filter(a=>a.estado==='failed').length;
+  const enEvaluacion=_ftxAcc.filter(a=>a.estado==='active').length;
+  const pasadas=_ftxAcc.filter(a=>['passed','funded'].includes(a.estado)).length;
+  const fallidas=_ftxAcc.filter(a=>a.estado==='failed').length;
   const term=pasadas+fallidas;
   const apr=term?pasadas/term*100:0;
   const roi=inv?neta/inv*100:0;
@@ -1740,10 +1870,11 @@ function renderDashboard() {
   });
 
   // Curva de Capital
-  const sorted=[...tr].sort((a,b)=>a.fecha<b.fecha?-1:1);
-  let cum=0; const pts=sorted.map(t=>{cum+=(t.pnl||0);return {x:t.fecha,y:cum};});
+  const _bd={}; tr.forEach(t=>{ if(t.fecha) _bd[t.fecha]=(_bd[t.fecha]||0)+(t.pnl||0); });
+  const _dk=Object.keys(_bd).sort();
+  let cum=0; const pts=_dk.map(function(dd){cum+=_bd[dd];return {x:dd,y:cum,delta:_bd[dd]};}); window._eqPtsDash=pts; (function(){var _t=pts.length?pts[pts.length-1].y:0;var _e=document.getElementById('ch-capital-total');if(_e){_e.textContent=(_t>=0?'+':'\u2212')+'$'+Math.abs(_t).toLocaleString('en-US',{maximumFractionDigits:0});_e.style.color='var(--text)';}})();
   if(chCap) chCap.destroy();
-  chCap=new Chart(document.getElementById('ch-capital').getContext('2d'),{type:'line',data:{labels:pts.map(p=>p.x),datasets:[{data:pts.map(p=>p.y),borderColor:'#00e5a0',backgroundColor:'rgba(0,229,160,.08)',borderWidth:2,pointRadius:0,fill:true,tension:.3}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{display:false},y:{ticks:{color:'#8aaaca',font:{family:'Roboto Mono',size:10}},grid:{color:'#1a2535'}}}}});
+  chCap=new Chart(document.getElementById('ch-capital').getContext('2d'),{type:'line',plugins:[window.ftxLastPoint],data:{labels:pts.map(p=>p.x),datasets:[{data:pts.map(p=>p.y),borderColor:ftxPos(),backgroundColor:window.ftxEqFill,borderWidth:2,pointRadius:0,pointHoverRadius:5,pointHoverBackgroundColor:ftxPos(),pointHoverBorderColor:'#fff',pointHoverBorderWidth:2,fill:true,tension:.4,cubicInterpolationMode:'monotone'}]},options:{responsive:true,maintainAspectRatio:false,animation:{duration:1000,easing:'easeOutQuart'},interaction:{intersect:false,mode:'index'},plugins:{legend:{display:false},tooltip:{backgroundColor:'#0c0c0c',borderColor:'rgba(0,229,160,.35)',borderWidth:1,titleColor:'#e9efe9',bodyColor:'#8aaaca',padding:10,displayColors:false,callbacks:{title:function(it){return it[0].label;},label:function(ctx){return 'Capital: '+(ctx.parsed.y>=0?'+':'')+'$'+Math.round(ctx.parsed.y).toLocaleString();},afterLabel:function(ctx){var p=window._eqPtsDash&&window._eqPtsDash[ctx.dataIndex];var dl=p?p.delta:0;return 'Ese dia: '+(dl>=0?'+':'')+'$'+Math.round(dl).toLocaleString();}}}},scales:{x:{display:false},y:{display:false}}}});
 
   // Distribución W/L/BE
   const wins=tr.filter(t=>t.resultado==='win').length, losses=tr.filter(t=>t.resultado==='loss').length, bes=tr.filter(t=>t.resultado==='be').length;
@@ -1761,10 +1892,11 @@ function renderDashboard() {
     else dayData[d].bes++;
     dayData[d].pnl += (t.pnl||0);
   });
-  const dayColors = dayData.map(d => d.pnl > 0 ? '#00e5a0' : d.pnl < 0 ? '#ff4060' : '#4a6a8a');
+  const dayColors = dayData.map(d => d.pnl > 0 ? ftxPos() : d.pnl < 0 ? ftxNeg() : '#4a6a8a');
   if(chWeekday) chWeekday.destroy();
   chWeekday = new Chart(document.getElementById('ch-weekday').getContext('2d'), {
     type:'bar',
+    plugins:[window.ftxBarLabel],
     data:{
       labels: dias,
       datasets:[{
@@ -1782,8 +1914,8 @@ function renderDashboard() {
         tooltip:{callbacks:{label:ctx=>' PnL: $'+ctx.parsed.y.toFixed(2)+' | W:'+dayData[ctx.dataIndex].wins+' L:'+dayData[ctx.dataIndex].losses}}
       },
       scales:{
-        x:{ticks:{color:'#8aaaca',font:{family:'Roboto Mono',size:10}},grid:{display:false},border:{display:false}},
-        y:{ticks:{color:'#8aaaca',font:{family:'Roboto Mono',size:10}},grid:{display:false},border:{display:false}}
+        x:{ticks:{color:(window.ftxTickColor?ftxTickColor():'#8aaaca'),font:{family:'Roboto Mono',size:10}},grid:{display:false},border:{display:false}},
+        y:{display:false,grace:'30%'}
       }
     }
   });
@@ -1801,10 +1933,11 @@ function renderDashboard() {
   });
   const activeHours = hourData.map((d,i)=>({...d,h:i})).filter(d=>d.wins+d.losses+d.bes>0);
   const hourLabels = activeHours.map(d=>d.h.toString().padStart(2,'0')+':00');
-  const hourColors = activeHours.map(d => d.pnl > 0 ? '#00e5a0' : d.pnl < 0 ? '#ff4060' : '#4a6a8a');
+  const hourColors = activeHours.map(d => d.pnl > 0 ? ftxPos() : d.pnl < 0 ? ftxNeg() : '#4a6a8a');
   if(chHour) chHour.destroy();
   chHour = new Chart(document.getElementById('ch-hour').getContext('2d'), {
     type:'bar',
+    plugins:[window.ftxBarLabel],
     data:{
       labels: hourLabels.length ? hourLabels : ['Sin datos'],
       datasets:[{
@@ -1822,8 +1955,8 @@ function renderDashboard() {
         tooltip:{callbacks:{label:ctx=>' PnL: $'+ctx.parsed.y.toFixed(2)+' | W:'+activeHours[ctx.dataIndex]?.wins+' L:'+activeHours[ctx.dataIndex]?.losses}}
       },
       scales:{
-        x:{ticks:{color:'#8aaaca',font:{family:'Roboto Mono',size:9},maxRotation:45},grid:{display:false},border:{display:false}},
-        y:{ticks:{color:'#8aaaca',font:{family:'Roboto Mono',size:10}},grid:{display:false},border:{display:false}}
+        x:{ticks:{color:(window.ftxTickColor?ftxTickColor():'#8aaaca'),font:{family:'Roboto Mono',size:9},maxRotation:45},grid:{display:false},border:{display:false}},
+        y:{display:false,grace:'30%'}
       }
     }
   });
@@ -1836,9 +1969,7 @@ function renderDashboard() {
   const avgD=dArr.length?Math.round(dArr.reduce((s,x)=>s+x,0)/dArr.length):0;
   document.getElementById('d-avgdays').innerHTML='<div style="text-align:center;padding:16px 0"><div style="font-size:40px;font-weight:800;color:var(--blue);font-family:var(--mono)">'+(avgD||'&mdash;')+'</div><div style="font-size:11px;color:var(--muted);font-family:var(--mono);margin-top:6px">dias en promedio</div></div>';
 
-  const mons=[...new Set(tr.map(t=>t.fecha?t.fecha.slice(0,7):null).filter(Boolean))].sort().slice(-3);
-  const avgM=mons.length?mons.map(mo=>accounts.reduce((s,a)=>(a.retiros||[]).filter(r=>r.fecha&&r.fecha.startsWith(mo)).reduce((x,r)=>x+r.monto,0)+s,0)).reduce((s,x,_,arr)=>s+x/arr.length,0):0;
-  document.getElementById('d-projection').innerHTML='<div style="padding:8px 0">'+[1,3,6,12].map(m=>'<div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--border);font-family:var(--mono);font-size:12px"><span style="color:var(--muted)">'+m+' mes'+(m>1?'es':'')+'</span><span style="color:var(--accent)">'+(avgM?fmt(avgM*m):'&mdash;')+'</span></div>').join('')+'</div>';
+
 }
 
 // CUENTAS
@@ -1908,7 +2039,7 @@ function renderCuentas() {
 function renderDiario() {
   const sel=document.getElementById('f-cuenta');
   const cur=sel.value;
-  sel.innerHTML='<option value="">Todas las cuentas</option>'+accounts.map(a=>'<option value="'+a.id+'">'+a.firma+'</option>').join('');
+  sel.innerHTML='<option value="">Todas las cuentas</option>'+ftxTradeAcctOptions();
   sel.value=cur;
   let tr=allTrades();
   const fa=document.getElementById('f-cuenta').value;
@@ -1954,6 +2085,10 @@ function renderDiario() {
 
 // ANALISIS
 function renderAnalisis() {
+  if(window.ftxBuildAcctFilter) ftxBuildAcctFilter();
+  if(window.renderStatStrip) renderStatStrip();
+  if(window.renderEquityAnalisis) renderEquityAnalisis();
+  if(window.renderMetaProgress) renderMetaProgress();
   const tr=allTrades();
   const firms=[...new Set(accounts.map(a=>a.firma))];
   const fd=firms.map(f=>{
@@ -2009,8 +2144,54 @@ function renderAnalisis() {
   }).join('')||'<div style="text-align:center;padding:20px;color:var(--muted);font-family:var(--mono)">Sin datos</div>';
 
   renderCalendar();
-  renderEmocionalStats();
+  if(window.ftxRenderEmoRules) ftxRenderEmoRules();
 }
+
+window.renderStatStrip=function(){
+  var el=document.getElementById('a-statstrip'); if(!el) return;
+  var tr=(typeof allTrades==='function'?allTrades():[]);
+  var wins=tr.filter(function(t){return t.resultado==='win';}).length;
+  var losses=tr.filter(function(t){return t.resultado==='loss';}).length;
+  var wr=(wins+losses)?(wins/(wins+losses)*100):0;
+  var gp=tr.filter(function(t){return (t.pnl||0)>0;}).reduce(function(s,t){return s+t.pnl;},0);
+  var gl=Math.abs(tr.filter(function(t){return (t.pnl||0)<0;}).reduce(function(s,t){return s+t.pnl;},0));
+  var pf=gl?gp/gl:(gp>0?gp:0);
+  var pnl=tr.reduce(function(s,t){return s+(t.pnl||0);},0);
+  var dias={}; tr.forEach(function(t){if(t.fecha)dias[t.fecha]=(dias[t.fecha]||0)+(t.pnl||0);});
+  var vals=Object.keys(dias).map(function(k){return dias[k];});
+  var mejor=vals.length?Math.max.apply(null,vals):0;
+  var cards=[
+    ['Winrate',wr.toFixed(0)+'%',wr>=60?'green':wr>=50?'yellow':'red',wins+'G \u00b7 '+losses+'P'],
+    ['Profit Factor',pf.toFixed(2),pf>=1?'green':'red',pf>=1?'rentable':'en p\u00e9rdida'],
+    ['Operaciones',String(tr.length),'',vals.length+' d\u00edas'],
+    ['P&L Total',(pnl>=0?'+':'\u2212')+fmt(Math.abs(pnl)),pnl>=0?'green':'red',''],
+    ['Mejor D\u00eda',(mejor>=0?'+':'\u2212')+fmt(Math.abs(mejor)),mejor>=0?'green':'red','este periodo']
+  ];
+  el.innerHTML=cards.map(function(c){return '<div class="sc"><div class="sl">'+c[0]+'</div><div class="sv '+c[2]+'">'+c[1]+'</div>'+(c[3]?'<div style="font-size:10px;color:var(--muted);font-family:var(--mono);margin-top:4px">'+c[3]+'</div>':'')+'</div>';}).join('');
+};
+
+window.renderAnalyticsCards=function(){
+  const tr=allTrades();
+  const firms=[...new Set(accounts.map(a=>a.firma))];
+  const fd=firms.map(f=>{
+    const ac=accounts.filter(a=>a.firma===f);
+    const inv=ac.reduce((s,a)=>s+(a.inversion||0),0);
+    const ret=ac.reduce((s,a)=>s+(a.retiros||[]).reduce((x,r)=>x+r.monto,0),0);
+    return {f,roi:inv?(ret-inv)/inv*100:0};
+  }).sort((a,b)=>b.roi-a.roi);
+  const maxR=Math.max(...fd.map(f=>Math.abs(f.roi)),1);
+  var e;
+  if(e=document.getElementById('a-firmas')) e.innerHTML=fd.length
+    ?fd.map(d=>'<div style="display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--border)"><div style="font-size:13px;font-weight:700;min-width:100px;color:var(--text)">'+d.f+'</div><div style="flex:1;background:var(--s3);border-radius:3px;height:6px;overflow:hidden"><div style="width:'+Math.abs(d.roi)/maxR*100+'%;height:100%;border-radius:3px;background:'+(d.roi>=0?'var(--accent)':'var(--red)')+'"></div></div><span style="font-family:var(--mono);font-size:12px;color:'+(d.roi>=0?'var(--accent)':'var(--red)')+';min-width:55px;text-align:right">'+fmtP(d.roi)+'</span></div>').join('')
+    :'<div style="text-align:center;padding:20px;color:var(--muted);font-family:var(--mono)">Sin datos</div>';
+  const stk=streak(tr);
+  if(e=document.getElementById('a-racha')) e.innerHTML='<div class="sk"><div class="sn" style="color:'+(stk.type==='win'?'var(--accent)':stk.type==='loss'?'var(--red)':'var(--muted)')+'">'+stk.cur+'</div><div><div style="font-size:14px;font-weight:700;color:var(--text)">'+(stk.cur?(stk.type==='win'?'Racha Ganadora':'Racha Perdedora'):'Sin racha')+'</div><div style="font-size:11px;color:var(--muted);font-family:var(--mono)">trades consecutivos</div></div></div><div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px"><div class="sk"><div class="sn green">'+stk.best+'</div><div><div style="font-size:13px;font-weight:700;color:var(--text)">Mejor</div><div style="font-size:11px;color:var(--muted);font-family:var(--mono)">victorias</div></div></div><div class="sk"><div class="sn red">'+stk.worst+'</div><div><div style="font-size:13px;font-weight:700;color:var(--text)">Peor</div><div style="font-size:11px;color:var(--muted);font-family:var(--mono)">perdidas</div></div></div></div>';
+  if(e=document.getElementById('a-sesiones')) e.innerHTML=['NY','Londres','Tokyo','Pre-market'].map(sn=>{const st=tr.filter(t=>t.sesion===sn);const wr=winRate(st);return '<div class="ses-card"><div class="ses-name">'+sn+'</div><div class="ses-wr" style="color:'+(wr>=60?'var(--accent)':wr>=50?'var(--yellow)':'var(--red)')+'">'+(st.length?wr.toFixed(0)+'%':'&mdash;')+'</div><div class="ses-tr">'+st.length+' trades</div></div>';}).join('');
+  if(e=document.getElementById('a-dias')) e.innerHTML=DAYS.map((d,i)=>{const dt=tr.filter(t=>new Date(t.fecha+'T12:00:00').getDay()===i);const wr=winRate(dt);return '<div style="display:flex;align-items:center;gap:8px;padding:6px 0;border-bottom:1px solid var(--border)"><span style="font-family:var(--mono);font-size:11px;color:var(--muted);min-width:28px">'+d+'</span><div style="flex:1;background:var(--s3);border-radius:3px;height:5px;overflow:hidden"><div style="width:'+wr+'%;height:100%;background:'+(wr>=60?'var(--accent)':wr>=50?'var(--yellow)':'var(--red)')+';border-radius:3px"></div></div><span style="font-family:var(--mono);font-size:11px;color:'+(wr>=60?'var(--accent)':'var(--muted2)')+';min-width:40px;text-align:right">'+(dt.length?wr.toFixed(0)+'%':'&mdash;')+'</span><span style="font-size:10px;color:var(--muted);font-family:var(--mono)">'+dt.length+'</span></div>';}).join('');
+  const mm={};
+  tr.forEach(t=>{ const m=t.fecha?t.fecha.slice(0,7):null; if(!m)return; if(!mm[m])mm[m]={pnl:0,count:0}; mm[m].pnl+=(t.pnl||0); mm[m].count++; });
+  if(e=document.getElementById('a-meses')) e.innerHTML=Object.entries(mm).sort((a,b)=>b[1].pnl-a[1].pnl).slice(0,5).map(function(ee){const m=ee[0],d=ee[1],parts=m.split('-');return '<div style="display:flex;justify-content:space-between;align-items:center;padding:7px 0;border-bottom:1px solid var(--border);font-family:var(--mono);font-size:11px"><span style="color:var(--muted2)">'+MONTHS[parseInt(parts[1])-1]+' '+parts[0]+'</span><span style="color:'+(d.pnl>=0?'var(--accent)':'var(--red)')+'">'+fmtD(d.pnl)+'</span><span style="color:var(--muted)">'+d.count+'t</span></div>';}).join('')||'<div style="text-align:center;padding:20px;color:var(--muted);font-family:var(--mono)">Sin datos</div>';
+};
 
 // CALENDAR
 function calPrev(){calDate=new Date(calDate.getFullYear(),calDate.getMonth()-1,1);renderCalendar();}
@@ -2040,23 +2221,20 @@ function renderCalendar() {
     const data=dm[key];
     const cls=data?(data.pnl>0?'win':data.pnl<0?'loss':'be'):'';
     const onclick=data?'onclick="openCalDay(&quot;'+key+'&quot;)"':'';
-    const pcolor=data&&data.pnl>=0?'#00e5a0':'#ff4060';
+    const pcolor=data&&data.pnl>=0?ftxPos():'#ff4060';
     if(data){
       const pclr=data.pnl>=0?'var(--accent)':'var(--red)';
-      html+='<div class="cd '+cls+'" '+onclick+'>'
-        +'<div style="display:flex;align-items:flex-start;justify-content:space-between;">'
+      const dayWr=(data.wins+data.losses)>0?Math.round(data.wins/(data.wins+data.losses)*100):0;
+      html+='<div class="cd '+cls+'" '+onclick+' style="position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center">'
+        +'<button onclick="event.stopPropagation();openTradeModalWithDate(&quot;'+key+'&quot;)" style="position:absolute;top:5px;right:6px;background:none;border:none;color:var(--muted);cursor:pointer;font-size:16px;line-height:1;padding:0 2px;opacity:0;transition:opacity .15s;" class="cd-add-btn" title="Agregar trade">+</button>'
         +'<div class="cd-num">'+d+'</div>'
-        +'<button onclick="event.stopPropagation();openTradeModalWithDate(&quot;'+key+'&quot;)" style="background:none;border:none;color:var(--muted);cursor:pointer;font-size:16px;line-height:1;padding:0 2px;opacity:0;transition:opacity .15s;" class="cd-add-btn" title="Agregar trade">+</button>'
-        +'</div>'
-        +'<div class="cd-pnl" style="color:'+pclr+'">'+(data.pnl>=0?'+':'')+data.pnl.toFixed(0)+'</div>'
-        +'<div class="cd-meta">'+data.count+'t &middot; '+data.wins+'W '+data.losses+'L</div>'
+        +'<div class="cd-pnl" style="color:var(--text);font-size:clamp(11px,1.35vw,14px);line-height:1.2;margin-top:3px">'+(data.pnl>=0?'+':'\u2212')+'$'+Math.abs(data.pnl).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2})+'</div>'
+        +'<div style="font-size:10px;color:var(--muted);margin-top:3px">'+data.count+' '+(data.count===1?'trade':'trades')+'</div>'
         +'</div>';
     } else {
-      html+='<div class="cd '+cls+'">'
-        +'<div style="display:flex;align-items:flex-start;justify-content:space-between;">'
-        +'<div class="cd-num">'+d+'</div>'
-        +'<button onclick="openTradeModalWithDate(&quot;'+key+'&quot;)" style="background:none;border:none;color:var(--muted);cursor:pointer;font-size:16px;line-height:1;padding:0 2px;opacity:0;transition:opacity .15s;" class="cd-add-btn" title="Agregar trade">+</button>'
-        +'</div>'
+      html+='<div class="cd '+cls+'" style="position:relative;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;text-align:center">'
+        +'<button onclick="openTradeModalWithDate(&quot;'+key+'&quot;)" style="position:absolute;top:5px;right:6px;background:none;border:none;color:var(--muted);cursor:pointer;font-size:16px;line-height:1;padding:0 2px;opacity:0;transition:opacity .15s;" class="cd-add-btn" title="Agregar trade">+</button>'
+        +'<div class="cd-num" style="font-weight:700">'+d+'</div>'
         +'</div>';
     }
   }
@@ -2118,13 +2296,19 @@ function newAccountModal() {
   editAcctId=null; editRetiros=[];
   document.getElementById('acct-title').textContent='Nueva Cuenta';
   document.getElementById('acct-btn').textContent='GUARDAR CUENTA';
-  document.getElementById('a-firma').value='';
+  document.getElementById('a-nombre').value='';
+  document.getElementById('a-firma').value=(window._ftxFirm||'');
   document.getElementById('a-inv').value='';
-  document.getElementById('a-obj').value=10;
+  document.getElementById('a-tipo').value='challenge';
+  document.getElementById('a-dd').value='';
+  document.getElementById('a-pt').value='';
+  if(document.getElementById('a-meta'))document.getElementById('a-meta').value='';
   document.getElementById('a-notas').value='';
   document.getElementById('a-estado').value='active';
   document.getElementById('a-fecha').value=today();
   document.getElementById('a-ret-f').value=today();
+  var ac=document.getElementById('ftx-acct-actions'); if(ac) ac.style.display='none';
+  ftxToggleAcctType();
   renderRetList();
   openOv('account');
 }
@@ -2134,14 +2318,20 @@ function editAccount(id) {
   editRetiros=[...(a.retiros||[])];
   document.getElementById('acct-title').textContent='Editar Cuenta';
   document.getElementById('acct-btn').textContent='GUARDAR CAMBIOS';
+  document.getElementById('a-nombre').value=a.nombre||'';
   document.getElementById('a-firma').value=a.firma||'';
   document.getElementById('a-size').value=a.size||'$50,000';
   document.getElementById('a-inv').value=a.inversion||'';
-  document.getElementById('a-obj').value=a.objetivo||10;
-  document.getElementById('a-estado').value=a.estado||'active';
+  document.getElementById('a-tipo').value=a.tipo||(a.estado==='funded'?'fondeada':'challenge');
+  document.getElementById('a-dd').value=a.drawdown||'';
+  document.getElementById('a-pt').value=a.profitTarget||'';
+  if(document.getElementById('a-meta'))document.getElementById('a-meta').value=a.meta||'';
+  document.getElementById('a-estado').value=(a.estado==='passed'?'funded':(a.estado||'active'));
   document.getElementById('a-fecha').value=a.fecha||'';
   document.getElementById('a-notas').value=a.notas||'';
   document.getElementById('a-ret-f').value=today();
+  var ac=document.getElementById('ftx-acct-actions'); if(ac) ac.style.display='flex';
+  ftxToggleAcctType();
   renderRetList();
   openOv('account');
 }
@@ -2167,7 +2357,7 @@ function renderRetList(){
 async function saveAccount() {
   const firma=document.getElementById('a-firma').value.trim();
   if(!firma){alert('Ingresa el nombre de la firma');return;}
-  const data={firma,size:document.getElementById('a-size').value,inversion:parseFloat(document.getElementById('a-inv').value)||0,objetivo:parseFloat(document.getElementById('a-obj').value)||10,estado:document.getElementById('a-estado').value,fecha:document.getElementById('a-fecha').value||today(),notas:document.getElementById('a-notas').value.trim(),retiros:[...editRetiros]};
+  const data={nombre:document.getElementById('a-nombre').value.trim(),firma,size:document.getElementById('a-size').value,inversion:parseFloat(document.getElementById('a-inv').value)||0,tipo:document.getElementById('a-tipo').value,drawdown:parseFloat(document.getElementById('a-dd').value)||0,profitTarget:parseFloat(document.getElementById('a-pt').value)||0,meta:parseFloat((document.getElementById('a-meta')||{}).value)||0,estado:document.getElementById('a-estado').value,fecha:document.getElementById('a-fecha').value||today(),notas:document.getElementById('a-notas').value.trim(),retiros:[...editRetiros]};
   if(editAcctId){
     const idx=accounts.findIndex(a=>a.id===editAcctId);
     accounts[idx]=Object.assign({},accounts[idx],data);
@@ -2190,14 +2380,14 @@ async function saveAccount() {
 async function deleteAccount(id) {
   if(!confirm('Eliminar esta cuenta y todos sus trades?')) return;
   accounts=accounts.filter(a=>a.id!==id);
-  await save(); renderAll();
+  await save(); closeOv('account'); renderAll();
 }
 
 async function quemarCuenta(id) {
   if(!confirm('Marcar esta cuenta como FALLIDA (quemada)?')) return;
   const a=accounts.find(x=>x.id===id);
   if(a) a.estado='failed';
-  await save(); renderAll();
+  await save(); closeOv('account'); renderAll();
 }
 
 async function aprobarCuenta(id) {
@@ -2213,12 +2403,14 @@ function openTradeModal() {
   resetEmoForm();
   document.getElementById('trade-title').textContent='Registrar Trade';
   document.getElementById('trade-btn').textContent='GUARDAR TRADE';
-  document.getElementById('t-cuenta').innerHTML=accounts.map(a=>'<option value="'+a.id+'">'+a.firma+'</option>').join('');
+  document.getElementById('t-cuenta').innerHTML=ftxTradeAcctOptions();
   document.getElementById('t-fecha').value=today();
   document.getElementById('t-inst').value='';
   document.getElementById('t-pnl').value='';
   document.getElementById('t-notas').value='';
   document.getElementById('t-foto').value='';
+  if(document.getElementById('t-hin'))document.getElementById('t-hin').value='';
+  if(document.getElementById('t-hout'))document.getElementById('t-hout').value='';
   openOv('trade');
 }
 
@@ -2227,12 +2419,14 @@ function openTradeModalWithDate(fecha) {
   resetEmoForm();
   document.getElementById('trade-title').textContent='Registrar Trade';
   document.getElementById('trade-btn').textContent='GUARDAR TRADE';
-  document.getElementById('t-cuenta').innerHTML=accounts.map(a=>'<option value="'+a.id+'">'+a.firma+'</option>').join('');
+  document.getElementById('t-cuenta').innerHTML=ftxTradeAcctOptions();
   document.getElementById('t-fecha').value=fecha;
   document.getElementById('t-inst').value='';
   document.getElementById('t-pnl').value='';
   document.getElementById('t-notas').value='';
   document.getElementById('t-foto').value='';
+  if(document.getElementById('t-hin'))document.getElementById('t-hin').value='';
+  if(document.getElementById('t-hout'))document.getElementById('t-hout').value='';
   openOv('trade');
 }
 
@@ -2243,10 +2437,11 @@ function editTrade(acctId, tradeId) {
   if(!t) return;
   document.getElementById('trade-title').textContent='Editar Trade';
   document.getElementById('trade-btn').textContent='GUARDAR CAMBIOS';
-  document.getElementById('t-cuenta').innerHTML=accounts.map(a=>'<option value="'+a.id+'">'+a.firma+'</option>').join('');
+  document.getElementById('t-cuenta').innerHTML=ftxTradeAcctOptions();
   document.getElementById('t-cuenta').value=acctId;
   document.getElementById('t-fecha').value=t.fecha||today();
-  document.getElementById('t-ses').value=t.sesion||'NY';
+  if(document.getElementById('t-hin'))document.getElementById('t-hin').value=t.horaEntrada||'';
+  if(document.getElementById('t-hout'))document.getElementById('t-hout').value=t.horaSalida||'';
   document.getElementById('t-inst').value=t.instrumento||'';
   document.getElementById('t-tipo').value=t.tipo||'Long';
   document.getElementById('t-pnl').value=t.pnl||'';
@@ -2358,7 +2553,7 @@ function renderEmocionalStats() {
   }));
   const ruleKeys = Object.keys(tot);
   const rulePcts = ruleKeys.map(r => Math.round((pass[r]||0) / tot[r] * 100));
-  const ruleColors = rulePcts.map(p => p >= 80 ? '#00e5a0' : p >= 50 ? '#ffc840' : '#ff4060');
+  const ruleColors = rulePcts.map(p => p >= 80 ? ftxPos() : p >= 50 ? '#ffc840' : '#ff4060');
   // Abreviar etiquetas largas
   const ruleLabels = ruleKeys.map(r => r.length > 22 ? r.slice(0,22)+'…' : r);
 
@@ -2421,7 +2616,7 @@ function renderEmocionalStats() {
         data: {
           labels: starLabels,
           datasets: [
-            { label: 'Win %',  data: starWin,  backgroundColor: '#00e5a0', borderRadius: 4, borderColor: 'transparent', barThickness: 14 },
+            { label: 'Win %',  data: starWin,  backgroundColor: ftxPos(), borderRadius: 4, borderColor: 'transparent', barThickness: 14 },
             { label: 'Loss %', data: starLoss, backgroundColor: '#ff4060', borderRadius: 4, borderColor: 'transparent', barThickness: 14 },
             { label: 'BE %',   data: starBE,   backgroundColor: '#4a6a8a', borderRadius: 4, borderColor: 'transparent', barThickness: 14 },
           ]
@@ -2461,7 +2656,8 @@ async function saveTrade() {
   if(!a.trades) a.trades=[];
   const td={
     fecha:       document.getElementById('t-fecha').value||today(),
-    sesion:      document.getElementById('t-ses').value,
+    horaEntrada: (document.getElementById('t-hin')||{}).value||'',
+    horaSalida:  (document.getElementById('t-hout')||{}).value||'',
     instrumento: document.getElementById('t-inst').value||'',
     tipo:        document.getElementById('t-tipo').value,
     pnl:         parseFloat(document.getElementById('t-pnl').value)||0,
@@ -2487,11 +2683,9 @@ async function deleteTrade(acctId,tradeId) {
 
 // RENDER ALL
 function renderAll() {
+  if(window.ftxBuildFirms) ftxBuildFirms();
   window._invalidateCache && window._invalidateCache();
-  const names=['dashboard','cuentas','diario','analisis'];
-  const active=document.querySelector('.tab.active');
-  const idx=[...document.querySelectorAll('.tab')].indexOf(active);
-  if(idx>=0) goTab(names[idx]);
+  if(window.ftxRerenderActive) ftxRerenderActive();
 }
 
 function openWhatsApp() {
@@ -3182,7 +3376,7 @@ function updateEvDot(eventos) {
   if(!tab) return;
   const live=eventos.filter(e=>e.estado==='live').length;
   const prox=eventos.filter(e=>e.estado==='proximo').length;
-  const total=live+prox;
+  const total=live+prox; var feb=document.getElementById('ftx-ev-badge'); if(feb){ if(total>0){feb.textContent=total;feb.style.display='inline-flex';feb.style.background=live>0?'#ff4060':'#ffc840';feb.style.color=live>0?'#fff':'#1a1200';}else{feb.style.display='none';} }
   if(total>0){
     tab.classList.add('tab-evt-on');
     tab.style.setProperty('--evt-glow', live>0?'rgba(255,64,96,.55)':'rgba(255,200,64,.5)');
@@ -4848,7 +5042,7 @@ window.claimDailyToken = async function(){
   playCoinSound();
 };
 window.updateCoinBadge=function(){ const c=document.getElementById('coin-count-top'); if(c) c.textContent=_rwAvail(); const w=document.getElementById('coin-badge-top'); if(w) w.style.display=((window._tokens&&window._tokens.streak)>0)?'flex':'none'; };
-window.updateRewardsBadge=function(){ const b=document.getElementById('coin-badge'); if(!b) return; const n=(window._rewards||[]).filter(function(r){return r.activo;}).length; b.textContent=n; b.style.display=n>0?'inline-block':'none'; };
+window.updateRewardsBadge=function(){ const b=document.getElementById('coin-badge'); if(!b) return; const n=(window._rewards||[]).filter(function(r){return r.activo;}).length; b.textContent=n; b.style.display=n>0?'inline-block':'none'; var fb=document.getElementById('ftx-rw-badge'); if(fb){ fb.textContent=n; fb.style.display=n>0?'inline-flex':'none'; } };
 window.updateStreakBadge=function(){ const e=document.getElementById('streak-count'); if(e) e.textContent=(window._tokens&&window._tokens.streak)||0; const w=document.getElementById('streak-badge'); if(w) w.style.display=((window._tokens&&window._tokens.streak)>0)?'flex':'none'; };
 
 function showCoinToast(n){
@@ -5196,6 +5390,414 @@ body.light a[style*="background: var(--accent)"]:hover{ background:#00d877 !impo
   window.toggleStreakInfo=function(ev){ ev.stopPropagation(); if(pop){ close(); return; } show(ev.currentTarget, '<b style="color:#ff9b3d">🔥 Tu racha</b><br>Suma <b>1 día</b> cada vez que entras a la plataforma. Si te saltas un día, la racha vuelve a empezar desde 1 y <b>pierdes todas las monedas acumuladas</b>.'); };
   window.toggleCoinInfo=function(ev){ ev.stopPropagation(); if(pop){ close(); return; } show(ev.currentTarget, '<b style="color:#f5b50a">🪙 Tus monedas</b><br>Ganas <b>1 moneda</b> por cada día de racha. Canjéalas por recompensas; al canjear tu saldo baja, pero la racha no se ve afectada.'); };
 })();
+</script>
+<script>
+window.ftxSyncNav=function(name){var items=document.querySelectorAll('.ftx-nav-item');for(var i=0;i<items.length;i++){items[i].classList.toggle('ftx-active',items[i].getAttribute('data-tab')===name);}};
+window.ftxToggleCollapse=function(){document.getElementById('app-screen').classList.toggle('ftx-collapsed');};
+window.ftxToggleMobile=function(){document.getElementById('app-screen').classList.toggle('ftx-mobile');};
+</script>
+<style id="ftx-firm-css">
+.ftx-firm{position:relative}
+.ftx-firm-menu{position:absolute;top:calc(100% + 6px);left:0;right:0;background:var(--s2);border:1px solid var(--border2);border-radius:11px;padding:5px;z-index:90;box-shadow:0 24px 60px rgba(0,0,0,.6);display:none;max-height:340px;overflow-y:auto}
+.ftx-firm-menu.open{display:block}
+.ftx-fm-item{display:flex;align-items:center;gap:9px;padding:8px 9px;border-radius:8px;font-size:12.5px;color:var(--text);cursor:pointer;white-space:nowrap}
+.ftx-fm-item:hover{background:var(--s1)}
+.ftx-fm-count{font-family:var(--mono);font-size:10px;color:var(--muted);background:var(--bg);border:1px solid var(--border);padding:1px 7px;border-radius:20px}
+#app-screen.ftx-collapsed .ftx-firm-menu{left:12px;width:210px;right:auto}
+</style>
+<script>
+window._ftxFirm='';window._ftxAccount='';
+function ftxAllAccounts(){ return (typeof accounts!=='undefined')?accounts:(window.accounts||[]); }
+window.ftxAccounts=function(){ var a=ftxAllAccounts(); return window._ftxFirm?a.filter(function(x){return x.firma===window._ftxFirm;}):a; };
+function ftxEsc(s){ return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+function ftxInitials(s){ s=String(s||'').trim(); if(!s)return '\u25CE'; var p=s.split(/\s+/); return (p.length>1?(p[0][0]+p[1][0]):s.slice(0,2)).toUpperCase(); }
+function ftxUpdateFirmLabel(){
+  var ne=document.getElementById('ftx-fs-name'),le=document.getElementById('ftx-fs-logo'),me=document.getElementById('ftx-fs-meta');
+  if(ne)ne.textContent=window._ftxFirm||'Todas las empresas';
+  if(le)le.textContent=window._ftxFirm?ftxInitials(window._ftxFirm):'\u25CE';
+  if(me)me.textContent=window._ftxFirm?'Empresa seleccionada':'Todas las empresas';
+}
+window.ftxBuildFirms=function(){
+  var menu=document.getElementById('ftx-firm-menu'); if(!menu) return;
+  var accs=(typeof ftxAllAccounts==='function')?ftxAllAccounts():((typeof accounts!=='undefined')?accounts:[]);
+  var firms={}; accs.forEach(function(a){ var f=(a.firma||'').trim(); if(f){ if(!firms[f])firms[f]=[]; firms[f].push(a); } });
+  var names=Object.keys(firms).sort(function(a,b){return a.localeCompare(b);});
+  var html='<div class="ftx-fm-item" data-firm="" onclick="ftxSelectFirm(this.getAttribute(\'data-firm\'),event)"><div class="ftx-fs-logo" style="font-size:12px">\u25CE</div><span style="flex:1">Todas las empresas</span></div>';
+  names.forEach(function(n){
+    html+='<div style="border-top:1px solid var(--border);margin-top:5px;padding-top:5px">';
+    html+='<div class="ftx-fm-item" data-firm="'+ftxEsc(n)+'" onclick="ftxSelectFirm(this.getAttribute(\'data-firm\'),event)" style="font-weight:700"><div class="ftx-fs-logo" style="font-size:10px;color:var(--text)">'+ftxEsc(ftxInitials(n))+'</div><span style="flex:1">'+ftxEsc(n)+'</span><span class="ftx-fm-count">'+firms[n].length+'</span></div>';
+    firms[n].forEach(function(a){
+      var col=a.estado==='funded'?'var(--accent)':(a.estado==='failed'?'var(--red)':'#e5b23c');
+      var lbl=a.nombre||((a.size||'Cuenta'));
+      html+='<div class="ftx-fm-acct"><span onclick="ftxSelectAccountFromMenu(\''+a.id+'\',event)" style="flex:1;cursor:pointer;display:flex;align-items:center;gap:7px;overflow:hidden;white-space:nowrap"><span style="color:'+col+';font-size:9px">\u25CF</span>'+ftxEsc(lbl)+'</span><button onclick="event.stopPropagation();editAccount(\''+a.id+'\');document.getElementById(\'ftx-firm-menu\').classList.remove(\'open\')" title="Editar cuenta" style="background:none;border:none;color:var(--muted);cursor:pointer;font-size:13px;padding:0 4px">\u270e</button></div>';
+    });
+    html+='<div class="ftx-fm-add-acct" data-firm="'+ftxEsc(n)+'" onclick="event.stopPropagation();ftxAddAccountTo(this.getAttribute(\'data-firm\'))"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M12 5v14M5 12h14"/></svg> Agregar cuenta</div>';
+    html+='</div>';
+  });
+  html+='<div class="ftx-fm-add" onclick="event.stopPropagation();ftxAddAccountTo(\'\')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M12 5v14M5 12h14"/></svg> Agregar empresa</div>';
+  menu.innerHTML=html; ftxUpdateFirmLabel();
+};
+window.ftxAddAccountTo=function(firm){ if(typeof newAccountModal==='function'){ newAccountModal(); var fe=document.getElementById('a-firma'); if(fe)fe.value=firm||''; } var m=document.getElementById('ftx-firm-menu'); if(m)m.classList.remove('open'); };
+window.ftxSelectAccountFromMenu=function(id,ev){ if(ev)ev.stopPropagation(); var all=(typeof accounts!=='undefined')?accounts:(window.accounts||[]); var a=all.find(function(x){return x.id===id;}); if(a){ window._ftxFirm=a.firma||''; window._ftxAccount=id; } var m=document.getElementById('ftx-firm-menu'); if(m)m.classList.remove('open'); if(window.ftxUpdateFirmLabel)ftxUpdateFirmLabel(); if(window.ftxBuildAcctFilter)ftxBuildAcctFilter(); if(window.ftxRerenderActive)ftxRerenderActive(); };
+window.ftxToggleFirmMenu=function(ev){ ev.stopPropagation(); ftxBuildFirms(); var m=document.getElementById('ftx-firm-menu'); if(m)m.classList.toggle('open'); };
+window.ftxSelectFirm=function(firm,ev){ if(ev)ev.stopPropagation(); window._ftxFirm=firm||''; window._ftxAccount=''; var m=document.getElementById('ftx-firm-menu'); if(m)m.classList.remove('open'); ftxUpdateFirmLabel(); if(window.ftxBuildAcctFilter)ftxBuildAcctFilter(); ftxRerenderActive(); };
+function ftxRerenderActive(){
+  var a=document.querySelector('.ftx-nav-item.ftx-active'); var tab=a?a.getAttribute('data-tab'):'dashboard';
+  try{
+    if(tab==='dashboard'&&window.renderDashboard){renderDashboard(); if(window.renderAnalyticsCards)renderAnalyticsCards();}
+    else if(tab==='diario'&&window.renderDiario)renderDiario();
+    else if(tab==='analisis'&&window.renderAnalisis){renderAnalisis(); if(window.renderUltimosTrades)renderUltimosTrades();}
+    else if(tab==='cuentas'&&window.renderCuentas)renderCuentas();
+    else if(tab==='traderpro'&&window.renderTraderPro)renderTraderPro();
+    else if(tab==='retiros'&&window.renderRetiros)renderRetiros();
+  }catch(e){}
+}
+document.addEventListener('click',function(){ var m=document.getElementById('ftx-firm-menu'); if(m)m.classList.remove('open'); });
+</script>
+<style id="ftx-ult">
+#a-ultimos{border-collapse:collapse}
+#a-ultimos th{text-align:left;font-size:10px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);padding:8px 10px;border-bottom:1px solid var(--border);font-weight:700}
+#a-ultimos td{padding:9px 10px;border-bottom:1px solid var(--border);font-size:12.5px;white-space:nowrap}
+#a-ultimos tr:last-child td{border-bottom:none}
+</style>
+<script>
+window._ultPage=window._ultPage||0;
+window.renderUltimosTrades=function(){
+  var el=document.getElementById('a-ultimos'); if(!el) return;
+  var body=el.querySelector('tbody'); if(!body) return;
+  var all=(typeof allTrades==='function'?allTrades():[]).filter(function(t){return t.fecha;}).sort(function(a,b){return a.fecha<b.fecha?1:(a.fecha>b.fecha?-1:0);});
+  var per=7; var pages=Math.max(1,Math.ceil(all.length/per));
+  if(window._ultPage>=pages) window._ultPage=pages-1; if(window._ultPage<0) window._ultPage=0;
+  var start=window._ultPage*per; var trs=all.slice(start,start+per);
+  var rmap={win:'green',loss:'red',be:'',notrade:''}, rlbl={win:'Ganador',loss:'Perdedor',be:'BE',notrade:'No trade'};
+  var pg=document.getElementById('a-ult-page'); if(pg) pg.textContent=all.length?((start+1)+'-'+Math.min(start+per,all.length)+' de '+all.length):'0';
+  if(!trs.length){ body.innerHTML='<tr><td colspan="7" style="text-align:center;color:var(--muted);padding:16px">Sin trades aún.</td></tr>'; return; }
+  body.innerHTML=trs.map(function(t){
+    var pnl=t.pnl||0;
+    var foto=t.foto?('<button onclick="ftxShowPhoto(this.getAttribute(\'data-u\'))" data-u="'+ftxEsc(t.foto)+'" style="background:none;border:none;cursor:pointer;color:var(--accent);font-size:15px" title="Ver foto">\ud83d\udcf7</button>'):'<span style="color:var(--muted)">\u2014</span>';
+    return '<tr>'
+      +'<td class="mn" style="color:var(--muted2);font-size:11px">'+(t.fecha||'')+'</td>'
+      +'<td class="fw" style="font-size:11.5px">'+(t._firma||'')+'</td>'
+      +'<td class="mn" style="font-size:11px;color:var(--muted2)">'+(t.horaEntrada||t.sesion||'\u2014')+'</td>'
+      +'<td style="font-size:11px;color:'+(t.tipo==='Long'?'var(--accent)':'var(--red)')+';font-family:var(--mono)">'+(t.tipo||'\u2014')+'</td>'
+      +'<td class="mn '+(pnl>=0?'green':'red')+'">'+(typeof fmtD==='function'?fmtD(pnl):pnl)+'</td>'
+      +'<td><span class="badge '+(rmap[t.resultado]||'')+'">'+(rlbl[t.resultado]||t.resultado||'')+'</span></td>'
+      +'<td style="text-align:center">'+foto+'</td>'
+      +'</tr>';
+  }).join('');
+};
+window.ftxUltPage=function(d){ window._ultPage=(window._ultPage||0)+d; if(window._ultPage<0)window._ultPage=0; if(window.renderUltimosTrades) renderUltimosTrades(); };
+window.ftxShowPhoto=function(url){ if(!url)return; var ov=document.createElement('div'); ov.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,.88);z-index:99999;display:flex;align-items:center;justify-content:center;padding:24px;cursor:zoom-out'; ov.onclick=function(){ov.remove();}; var img=document.createElement('img'); img.src=url; img.alt='foto'; img.style.cssText='max-width:94%;max-height:94%;border-radius:12px;box-shadow:0 20px 60px rgba(0,0,0,.7)'; img.onclick=function(e){e.stopPropagation();}; ov.appendChild(img); document.body.appendChild(ov); };
+</script>
+<script>
+window._ftxAccount=window._ftxAccount||'';
+window.ftxBuildAcctFilter=function(){
+  var sel=document.getElementById('a-acct-filter'); if(!sel||typeof ftxAllAccounts!=='function') return;
+  var accs=ftxAllAccounts(); if(window._ftxFirm) accs=accs.filter(function(a){return a.firma===window._ftxFirm;});
+  var cur=window._ftxAccount||'';
+  var html='<option value="">Todas las cuentas'+(window._ftxFirm?' \u00b7 '+ftxEsc(window._ftxFirm):'')+'</option>';
+  accs.forEach(function(a){ var lbl=((a.size||'Cuenta')); html+='<option value="'+ftxEsc(a.id)+'"'+(a.id===cur?' selected':'')+'>'+ftxEsc(lbl)+'</option>'; });
+  sel.innerHTML=html;
+};
+window.ftxSelectAccount=function(id){ window._ftxAccount=id||''; if(typeof ftxRerenderActive==='function')ftxRerenderActive(); else{ try{renderAnalisis();}catch(e){} } };
+window.renderEquityAnalisis=function(){
+  var cv=document.getElementById('ch-capital-a'); if(!cv||typeof Chart==='undefined'||typeof allTrades!=='function') return;
+  var bd={}; allTrades().forEach(function(t){ if(t.fecha) bd[t.fecha]=(bd[t.fecha]||0)+(t.pnl||0); });
+  var dk=Object.keys(bd).sort(); var cum=0; var pts=dk.map(function(d){cum+=bd[d];return {x:d,y:cum,delta:bd[d]};}); window._eqPtsAna=pts; (function(){var _t=pts.length?pts[pts.length-1].y:0;var _e=document.getElementById('ch-capital-a-total');if(_e){_e.textContent=(_t>=0?'+':'\u2212')+'$'+Math.abs(_t).toLocaleString('en-US',{maximumFractionDigits:0});_e.style.color='var(--text)';}})();
+  if(window.chCapA){ try{window.chCapA.destroy();}catch(e){} }
+  window.chCapA=new Chart(cv.getContext('2d'),{type:'line',data:{labels:pts.map(function(p){return p.x;}),datasets:[{data:pts.map(function(p){return p.y;}),borderColor:ftxPos(),backgroundColor:window.ftxEqFill,borderWidth:2,pointRadius:0,pointHoverRadius:5,pointHoverBackgroundColor:ftxPos(),pointHoverBorderColor:'#fff',pointHoverBorderWidth:2,fill:true,tension:.4,cubicInterpolationMode:'monotone'}]},options:{responsive:true,maintainAspectRatio:false,animation:{duration:1000,easing:'easeOutQuart'},interaction:{intersect:false,mode:'index'},plugins:{legend:{display:false},tooltip:{backgroundColor:'#0c0c0c',borderColor:'rgba(0,229,160,.35)',borderWidth:1,titleColor:'#e9efe9',bodyColor:'#8aaaca',padding:10,displayColors:false,callbacks:{title:function(it){return it[0].label;},label:function(ctx){return 'Capital: '+(ctx.parsed.y>=0?'+':'')+'$'+Math.round(ctx.parsed.y).toLocaleString();},afterLabel:function(ctx){var p=window._eqPtsAna&&window._eqPtsAna[ctx.dataIndex];var dl=p?p.delta:0;return 'Ese dia: '+(dl>=0?'+':'')+'$'+Math.round(dl).toLocaleString();}}}},scales:{x:{display:false},y:{display:false}}}});
+};
+</script>
+<style id="ftx-ret">
+.ret-tbl{border-collapse:collapse}
+.ret-tbl th{text-align:left;font-size:10px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);padding:8px 10px;border-bottom:1px solid var(--border);font-weight:700}
+.ret-tbl td{padding:9px 10px;border-bottom:1px solid var(--border);font-size:12.5px}
+.ret-tbl tr:last-child td{border-bottom:none}
+</style>
+<script>
+function _rfMoney(n){ return '$'+Number(n||0).toLocaleString('en-US',{maximumFractionDigits:0}); }
+window._retScope=window._retScope||'';
+window.ftxSetRetScope=function(v){ window._retScope=v||''; if(window.renderRetiros) renderRetiros(); };
+window.renderRetiros=function(){
+  var pane=document.getElementById('pane-retiros'); if(!pane) return;
+  if(window.ftxAutoStatus)ftxAutoStatus();
+  var all=(typeof accounts!=='undefined')?accounts:(window.accounts||[]);
+  var scope=window._retScope||'';
+  var accs;
+  if(scope.indexOf('acct:')===0){ var aid=scope.slice(5); accs=all.filter(function(a){return a.id===aid;}); }
+  else if(scope.indexOf('firm:')===0){ var fn=scope.slice(5); accs=all.filter(function(a){return a.firma===fn;}); }
+  else { accs=all; }
+  var inv=accs.reduce(function(s,a){return s+(a.inversion||0);},0);
+  var ret=accs.reduce(function(s,a){return s+((a.retiros||[]).reduce(function(x,r){return x+(r.monto||0);},0));},0);
+  var neta=ret-inv, roi=inv?neta/inv*100:0;
+  var fond=accs.filter(function(a){return a.estado==='funded'||a.estado==='passed';}).length;
+  var quem=accs.filter(function(a){return a.estado==='failed';}).length;
+  var term=fond+quem, apr=term?fond/term*100:0;
+  function card(l,v,c,sub){ return '<div class="sc"><div class="sl">'+l+'</div><div class="sv '+c+'">'+v+'</div>'+(sub?'<div style="font-size:10px;color:var(--muted);font-family:var(--mono);margin-top:3px">'+sub+'</div>':'')+'</div>'; }
+  var metrics='<div class="sg">'
+    +card('Total Invertido','\u2212'+_rfMoney(inv),'red','facturación en cuentas')
+    +card('Total Retirado','+'+_rfMoney(ret),'green','')
+    +card('Ganancia Neta',(neta>=0?'+':'\u2212')+_rfMoney(Math.abs(neta)),neta>=0?'green':'red','')
+    +card('ROI',(roi>=0?'+':'')+roi.toFixed(1)+'%',roi>=0?'green':'red','retorno de inversión')
+    +card('% Aprobación',apr.toFixed(0)+'%','yellow',fond+' de '+term+' cuentas')
+    +'</div>';
+  var firms={}; all.forEach(function(a){ if(a.firma) firms[a.firma]=1; });
+  var firmOpts=Object.keys(firms).sort().map(function(fn){ return '<option value="firm:'+ftxEsc(fn)+'"'+(scope==='firm:'+fn?' selected':'')+'>'+ftxEsc(fn)+'</option>'; }).join('');
+  var acctOpts=all.map(function(a){ return '<option value="acct:'+ftxEsc(a.id)+'"'+(scope==='acct:'+a.id?' selected':'')+'>'+ftxEsc((a.firma||'')+' \u00b7 '+(a.size||''))+'</option>'; }).join('');
+  var selector='<div style="display:flex;align-items:center;gap:10px;margin-bottom:16px;flex-wrap:wrap"><span style="font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;font-weight:700">Ver</span><select class="fs" style="max-width:340px" onchange="ftxSetRetScope(this.value)"><option value=""'+(scope===''?' selected':'')+'>Todos los retiros</option><optgroup label="Por empresa">'+firmOpts+'</optgroup><optgroup label="Por cuenta">'+acctOpts+'</optgroup></select></div>';
+  var opts=accs.map(function(a){ return '<option value="'+ftxEsc(a.id)+'">'+ftxEsc((a.size||'Cuenta')+' \u00b7 '+(a.firma||''))+'</option>'; }).join('');
+  var addForm='<div class="card" style="margin-top:16px"><div class="ct">Agregar retiro</div><div style="display:flex;gap:10px;flex-wrap:wrap;align-items:flex-end">'
+    +'<div style="flex:2;min-width:180px"><label class="fl">Cuenta</label><select id="ret-acct" class="fi">'+(opts||'<option value="">Sin cuentas</option>')+'</select></div>'
+    +'<div style="flex:1;min-width:120px"><label class="fl">Monto ($)</label><input id="ret-monto" class="fi" type="number" min="1" placeholder="500"></div>'
+    +'<div style="flex:1;min-width:140px"><label class="fl">Fecha</label><input id="ret-fecha" class="fi" type="date"></div>'
+    +'<button class="btn btn-p" onclick="addRetiroFromRetiros()" style="padding:11px 18px">Agregar</button></div></div>';
+  var rows=[];
+  accs.forEach(function(a){ (a.retiros||[]).forEach(function(r,idx){ rows.push({fecha:r.fecha||'',monto:r.monto||0,acct:(a.size||'Cuenta')+' \u00b7 '+(a.firma||''),aid:a.id,idx:idx}); }); });
+  rows.sort(function(x,y){return x.fecha<y.fecha?1:(x.fecha>y.fecha?-1:0);});
+  var list='<div class="card" style="margin-top:16px"><div class="ct">Historial de retiros ('+rows.length+')</div>';
+  if(!rows.length){ list+='<div style="text-align:center;color:var(--muted);padding:22px;font-size:13px">Aún no hay retiros con este filtro. Agrega el primero arriba.</div>'; }
+  else { list+='<div style="overflow-x:auto"><table class="ret-tbl" style="width:100%"><thead><tr><th>Fecha</th><th>Cuenta</th><th>Monto</th><th></th></tr></thead><tbody>'
+    +rows.map(function(r){ return '<tr><td class="mn" style="color:var(--muted2);font-size:12px">'+r.fecha+'</td><td style="font-size:12px">'+ftxEsc(r.acct)+'</td><td class="mn green">+'+_rfMoney(r.monto)+'</td><td style="text-align:right"><button onclick="delRetiro(\''+r.aid+'\','+r.idx+')" style="background:none;border:none;color:#ff6b6b;cursor:pointer;font-size:11px">Eliminar</button></td></tr>'; }).join('')
+    +'</tbody></table></div>'; }
+  list+='</div>';
+  var perRows=accs.filter(function(a){return (a.retiros||[]).length;}).map(function(a){ var c=(a.retiros||[]).length; var tt=(a.retiros||[]).reduce(function(s,r){return s+(r.monto||0);},0); return '<tr><td style="font-size:12px">'+ftxEsc(a.nombre||((a.firma||'')+' · '+(a.size||'')))+'</td><td class="mn" style="text-align:center">'+c+'</td><td class="mn green" style="text-align:right">+'+_rfMoney(tt)+'</td></tr>'; }).join('');
+  var perAcct=perRows?'<div class="card" style="margin-top:16px"><div class="ct">Retiros por cuenta</div><div style="overflow-x:auto"><table class="ret-tbl" style="width:100%"><thead><tr><th>Cuenta</th><th style="text-align:center"># Retiros</th><th style="text-align:right">Total</th></tr></thead><tbody>'+perRows+'</tbody></table></div></div>':'';
+  var scopeLabel = scope.indexOf('firm:')===0?scope.slice(5):(scope.indexOf('acct:')===0?'Una cuenta':'Todas las empresas');
+  pane.innerHTML='<div style="margin-bottom:16px"><div style="font-size:20px;font-weight:800;color:var(--text)">Retiros</div><div style="font-size:12px;color:var(--muted)">'+ftxEsc(scopeLabel)+' \u00b7 inversión y retornos</div></div>'+selector+metrics+perAcct+addForm+list;
+};
+window.addRetiroFromRetiros=function(){
+  var ae=document.getElementById('ret-acct'), me=document.getElementById('ret-monto'), fe=document.getElementById('ret-fecha');
+  var aid=ae?ae.value:'', monto=parseFloat(me?me.value:''), fecha=fe?fe.value:'';
+  if(!aid){ alert('Selecciona una cuenta.'); return; }
+  if(!monto||monto<=0){ alert('Ingresa un monto válido.'); return; }
+  var all=(typeof accounts!=='undefined')?accounts:(window.accounts||[]);
+  var a=all.find(function(x){return x.id===aid;}); if(!a) return;
+  if(!a.retiros) a.retiros=[];
+  a.retiros.push({monto:monto,fecha:fecha||new Date().toISOString().slice(0,10)});
+  if(typeof save==='function'){ try{save();}catch(e){} }
+  renderRetiros();
+};
+window.delRetiro=function(aid,idx){
+  if(!confirm('¿Eliminar este retiro?')) return;
+  var all=(typeof accounts!=='undefined')?accounts:(window.accounts||[]);
+  var a=all.find(function(x){return x.id===aid;}); if(!a||!a.retiros) return;
+  a.retiros.splice(idx,1);
+  if(typeof save==='function'){ try{save();}catch(e){} }
+  renderRetiros();
+};
+</script>
+<script>
+window.ftxTradeAcctOptions=function(sel){
+  var all=(typeof accounts!=='undefined')?accounts:(window.accounts||[]);
+  var accs=window._ftxFirm?all.filter(function(a){return a.firma===window._ftxFirm;}):all;
+  if(!accs.length) return '<option value="">Sin cuentas en esta empresa</option>';
+  return accs.map(function(a){ var lbl=(a.firma||'')+(a.size?' \u00b7 '+a.size:''); return '<option value="'+a.id+'"'+(sel&&a.id===sel?' selected':'')+'>'+lbl+'</option>'; }).join('');
+};
+</script>
+<style id="ftx-foot">
+.ftx-sb-foot{border-top:1px solid var(--border);padding:11px;display:flex;flex-direction:column;gap:8px}
+.ftx-sb-foot .user-info{display:flex;align-items:center;gap:9px;padding:6px;border-radius:9px}
+.ftx-sb-foot .user-info:hover{background:var(--s2)}
+.ftx-sb-foot .user-avatar{width:32px;height:32px;border-radius:8px;object-fit:cover;background:var(--s2);flex-shrink:0}
+.ftx-sb-foot .u-name{font-size:12.5px;font-weight:700;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ftx-sb-foot .u-email{font-size:10px;color:var(--muted);font-family:var(--mono);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ftx-sb-foot .btn-lo{width:100%;padding:8px;border-radius:8px;background:var(--s2);border:1px solid var(--border);color:var(--muted);font-size:12px;font-weight:600;cursor:pointer;transition:.15s}
+.ftx-sb-foot .btn-lo:hover{color:var(--red);border-color:var(--red)}
+#app-screen.ftx-collapsed .ftx-sb-foot{padding:10px 0;align-items:center}
+#app-screen.ftx-collapsed .ftx-sb-foot .user-info>div,#app-screen.ftx-collapsed .ftx-sb-foot .user-info>span{display:none}
+#app-screen.ftx-collapsed .ftx-sb-foot .user-info{justify-content:center;padding:6px 0}
+#app-screen.ftx-collapsed .ftx-sb-foot .btn-lo{display:none}
+</style>
+<script>
+window.renderMetaProgress=function(){
+  var el=document.getElementById('a-metaprogress'); if(!el) return;
+  var all=(typeof accounts!=='undefined')?accounts:(window.accounts||[]);
+  var accs=window._ftxFirm?all.filter(function(a){return a.firma===window._ftxFirm;}):all;
+  if(window._ftxAccount) accs=accs.filter(function(a){return a.id===window._ftxAccount;});
+  var meta=accs.reduce(function(s,a){return s+(a.tipo==='challenge'?(a.profitTarget||0):(a.meta||0));},0);
+  var pnl=accs.reduce(function(s,a){return s+((a.trades||[]).reduce(function(x,t){return x+(t.pnl||0);},0));},0);
+  if(meta<=0){ el.style.display='none'; el.innerHTML=''; return; }
+  el.style.display='block';
+  var pct=Math.max(0,Math.min(100,pnl/meta*100));
+  el.innerHTML='<div class="card" style="margin-bottom:16px"><div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:9px;gap:8px;flex-wrap:wrap"><div class="ct" style="margin-bottom:0">\ud83c\udfaf Meta de profit</div><div style="font-family:var(--mono);font-size:13px"><span style="color:var(--text)">'+(pnl>=0?'+':'')+'$'+Math.round(pnl).toLocaleString()+'</span> <span style="color:var(--muted)">/ $'+Math.round(meta).toLocaleString()+'</span></div></div><div style="height:10px;border-radius:6px;background:var(--s3);overflow:hidden"><div class="ftx-meta-fill" style="height:100%;width:0%;border-radius:6px;background:linear-gradient(90deg,#00c47a,var(--accent));transition:width .9s cubic-bezier(.33,1,.68,1)"></div></div><div style="font-size:11px;color:var(--muted);font-family:var(--mono);margin-top:7px">'+pct.toFixed(0)+'% de la meta'+(pct>=100?' \u2014 \u00a1Meta alcanzada! \ud83c\udf89':'')+'</div></div>';
+  var _b=el.querySelector('.ftx-meta-fill'); if(_b){ requestAnimationFrame(function(){ requestAnimationFrame(function(){ _b.style.width=pct+'%'; }); }); }
+};
+</script>
+<style id="ftx-anim">
+@keyframes ftxCardIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+.sg .sc{animation:ftxCardIn .5s cubic-bezier(.33,1,.68,1) both}
+.sg .sc:nth-child(2){animation-delay:.06s}
+.sg .sc:nth-child(3){animation-delay:.12s}
+.sg .sc:nth-child(4){animation-delay:.18s}
+.sg .sc:nth-child(5){animation-delay:.24s}
+.sg .sc:nth-child(6){animation-delay:.3s}
+@media(prefers-reduced-motion:reduce){.sg .sc{animation:none}}
+</style>
+<script>
+window.DEFAULT_AVATAR="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' fill='%23161c18'/%3E%3Ccircle cx='50' cy='37' r='17' fill='%237d8b82'/%3E%3Cpath d='M50 58c-17 0-29 12-29 27v13h58V85c0-15-12-27-29-27z' fill='%237d8b82'/%3E%3C/svg%3E";
+window.ftxMenuToggle=function(){ if(window.innerWidth<=820){ if(window.ftxToggleMobile)ftxToggleMobile(); } else { if(window.ftxToggleCollapse)ftxToggleCollapse(); } };
+(function(){ function setAv(){ var a=document.getElementById('u-avatar'); if(a && !a.getAttribute('src')) a.src=window.DEFAULT_AVATAR; } if(document.readyState!=='loading') setAv(); else document.addEventListener('DOMContentLoaded',setAv); })();
+</script>
+<script>
+window._ftxDateFrom=window._ftxDateFrom||''; window._ftxDateTo=window._ftxDateTo||'';
+window.ftxSetDate=function(){ var f=document.getElementById('a-date-from'),t=document.getElementById('a-date-to'); window._ftxDateFrom=f?f.value:''; window._ftxDateTo=t?t.value:''; if(window.ftxRerenderActive)ftxRerenderActive(); };
+window.ftxClearDate=function(){ window._ftxDateFrom=''; window._ftxDateTo=''; var f=document.getElementById('a-date-from'),t=document.getElementById('a-date-to'); if(f)f.value=''; if(t)t.value=''; if(window.ftxRerenderActive)ftxRerenderActive(); };
+</script>
+<script>
+window.ftxTickColor=function(){ return document.body.classList.contains('light')?'#1a1a1a':'#e9efe9'; };
+</script>
+<script>
+window.ftxToggleAcctType=function(){
+  var el=document.getElementById('a-tipo'); if(!el) return;
+  var t=el.value;
+  var ch=document.getElementById('ftx-challenge-fields'), fo=document.getElementById('ftx-fondeada-fields');
+  if(ch) ch.style.display = (t==='challenge')?'':'none';
+  if(fo) fo.style.display = (t==='fondeada')?'':'none';
+};
+window.ftxAutoStatus=function(){
+  var all=(typeof accounts!=='undefined')?accounts:(window.accounts||[]);
+  var changed=false;
+  all.forEach(function(a){
+    if(a.tipo==='challenge' && a.estado==='active'){
+      var pnl=(a.trades||[]).reduce(function(s,t){return s+(t.pnl||0);},0);
+      if(a.drawdown>0 && pnl<=-Math.abs(a.drawdown)){ a.estado='failed'; changed=true; }
+      else if(a.profitTarget>0 && pnl>=a.profitTarget){ a.estado='funded'; changed=true; }
+    }
+  });
+  return changed;
+};
+</script>
+<style id="ftx-fm-css">
+.ftx-fm-acct{display:flex;align-items:center;gap:6px;padding:6px 10px 6px 18px;font-size:12px;color:var(--muted);border-radius:7px}
+.ftx-fm-acct:hover{background:var(--s1);color:var(--text)}
+.ftx-fm-add{color:var(--accent);font-weight:700;border-top:1px solid var(--border);margin-top:5px;padding:11px 10px 6px;display:flex;align-items:center;gap:7px;cursor:pointer;font-size:12.5px;border-radius:7px}
+.ftx-fm-add:hover{background:var(--s1)}
+</style>
+<style id="ftx-pal-css">
+body.pal-verde{--accent:#84cc16!important;--red:#828b9c!important;--border:rgba(132,204,22,.14)!important;--border2:rgba(132,204,22,.30)!important;}
+.ftx-pal-menu{position:absolute;top:calc(100% + 8px);right:0;background:var(--s2);border:1px solid var(--border2);border-radius:11px;padding:6px;z-index:9999;box-shadow:0 24px 60px rgba(0,0,0,.6);display:none;min-width:200px}
+.ftx-pal-menu.open{display:block}
+.ftx-pal-opt{display:flex;align-items:center;gap:10px;padding:9px 10px;border-radius:8px;font-size:12.5px;color:var(--text);cursor:pointer}
+.ftx-pal-opt:hover{background:var(--s1)}
+.ftx-pal-sw{display:flex;gap:3px}
+.ftx-pal-sw i{width:13px;height:13px;border-radius:4px;display:block}
+.ftx-pal-check{margin-left:auto;color:var(--accent);font-weight:700}
+</style>
+<script>
+window.FTX_PALETTES={
+  default:{name:'Predeterminado',pos:'#00e57a',neg:'#ff4060'},
+  verde:{name:'Verde',pos:'#84cc16',neg:'#828b9c'}
+};
+window.ftxPos=function(){var c=getComputedStyle(document.body).getPropertyValue('--accent').trim();return c||'#00e5a0';};
+window.ftxNeg=function(){var c=getComputedStyle(document.body).getPropertyValue('--red').trim();return c||'#ff4060';};
+window.ftxSoft=function(hex,a){hex=(hex||'').trim();var h=hex.replace('#','');if(h.length===3)h=h.split('').map(function(x){return x+x;}).join('');var r=parseInt(h.slice(0,2),16),g=parseInt(h.slice(2,4),16),b=parseInt(h.slice(4,6),16);if(isNaN(r))return 'rgba(0,229,160,'+(a||.1)+')';return 'rgba('+r+','+g+','+b+','+(a||.1)+')';};
+window.ftxApplyPalette=function(p){ p=p||'default'; if(p!=='default'&&p!=='verde')p='default'; document.body.classList.remove('pal-morado','pal-azul','pal-verde'); if(p!=='default') document.body.classList.add('pal-'+p); try{localStorage.setItem('nqft_palette',p);}catch(e){} window._ftxPalette=p; var dot=document.getElementById('ftx-pal-dot'); if(dot) dot.style.background=(window.FTX_PALETTES[p]||FTX_PALETTES.default).pos; };
+window.ftxBuildPalMenu=function(){ var m=document.getElementById('ftx-pal-menu'); if(!m)return; var cur=window._ftxPalette||'default'; m.innerHTML=Object.keys(FTX_PALETTES).map(function(k){var p=FTX_PALETTES[k];return '<div class="ftx-pal-opt'+(k===cur?' sel':'')+'" onclick="ftxSetPalette(\''+k+'\')"><span class="ftx-pal-sw"><i style="background:'+p.pos+'"></i><i style="background:'+p.neg+'"></i></span><span style="flex:1">'+p.name+'</span>'+(k===cur?'<span class="ftx-pal-check">\u2713</span>':'')+'</div>';}).join(''); };
+window.ftxSetPalette=function(p){ ftxApplyPalette(p); var m=document.getElementById('ftx-pal-menu'); if(m)m.classList.remove('open'); ftxBuildPalMenu(); if(window.renderAll){try{renderAll();}catch(e){}} };
+window.ftxTogglePalMenu=function(ev){ if(ev)ev.stopPropagation(); ftxBuildPalMenu(); var m=document.getElementById('ftx-pal-menu'); if(m)m.classList.toggle('open'); };
+document.addEventListener('click',function(){ var m=document.getElementById('ftx-pal-menu'); if(m)m.classList.remove('open'); });
+(function(){ var p='default'; try{p=localStorage.getItem('nqft_palette')||'default';}catch(e){} function ap(){ ftxApplyPalette(p); ftxBuildPalMenu(); } if(document.readyState!=='loading')ap(); else document.addEventListener('DOMContentLoaded',ap); })();
+</script>
+<script>
+window.ftxEqFill=function(context){ var ch=context.chart; var area=ch.chartArea; var c=ch.ctx; var col=(window.ftxPos?ftxPos():'#00e5a0'); if(!area) return (window.ftxSoft?ftxSoft(col,.14):'rgba(0,229,160,.14)'); var g=c.createLinearGradient(0,area.top,0,area.bottom); g.addColorStop(0,(window.ftxSoft?ftxSoft(col,.38):'rgba(0,229,160,.38)')); g.addColorStop(1,(window.ftxSoft?ftxSoft(col,0):'rgba(0,229,160,0)')); return g; };
+</script>
+<script>
+window.ftxBarLabel={
+  afterDatasetsDraw:function(chart){
+    var ctx=chart.ctx; var area=chart.chartArea;
+    var txtColor=(getComputedStyle(document.body).getPropertyValue('--text').trim())||'#e9efe9';
+    chart.data.datasets.forEach(function(ds,di){
+      var meta=chart.getDatasetMeta(di);
+      meta.data.forEach(function(bar,i){
+        var v=ds.data[i]; if(v==null||isNaN(v))return;
+        ctx.save();
+        ctx.fillStyle=txtColor; ctx.font='700 11px Roboto Mono, monospace'; ctx.textAlign='center';
+        var txt=(v>=0?'+':'\u2212')+'$'+Math.abs(Math.round(v));
+        var y=bar.y-8;
+        ctx.fillText(txt,bar.x,y);
+        ctx.restore();
+      });
+    });
+  }
+};
+</script>
+<style id="ftx-white-nums">
+.green,.red{color:var(--text)!important}
+.cd.win{background:color-mix(in srgb,var(--accent) 16%,transparent)!important;border-color:color-mix(in srgb,var(--accent) 42%,transparent)!important}
+.cd.loss{background:color-mix(in srgb,var(--red) 16%,transparent)!important;border-color:color-mix(in srgb,var(--red) 42%,transparent)!important}
+.cd.win:hover{background:color-mix(in srgb,var(--accent) 24%,transparent)!important}
+.cd.loss:hover{background:color-mix(in srgb,var(--red) 24%,transparent)!important}
+.cd.win .cd-pnl,.cd.loss .cd-pnl,.cd.win .cd-num,.cd.loss .cd-num{color:var(--text)!important}
+</style>
+<script>
+window.ftxLastPoint={
+  afterDatasetsDraw:function(chart){
+    var ds=chart.data.datasets[0]; if(!ds||!ds.data.length)return;
+    var meta=chart.getDatasetMeta(0); var pt=meta.data[meta.data.length-1]; if(!pt)return;
+    var ctx=chart.ctx; var col=(window.ftxPos?ftxPos():'#00e5a0');
+    var pts=(chart.canvas&&chart.canvas.id==='ch-capital')?window._eqPtsDash:window._eqPtsAna;
+    var delta=(pts&&pts.length)?pts[pts.length-1].delta:0;
+    ctx.save();
+    ctx.beginPath(); ctx.arc(pt.x,pt.y,5.5,0,Math.PI*2); ctx.fillStyle=col; ctx.shadowColor=col; ctx.shadowBlur=14; ctx.fill();
+    ctx.beginPath(); ctx.arc(pt.x,pt.y,2.5,0,Math.PI*2); ctx.fillStyle='#fff'; ctx.shadowBlur=0; ctx.fill();
+    var txt=(delta>=0?'+':'\u2212')+'$'+Math.abs(Math.round(delta));
+    ctx.font='700 12px Roboto Mono, monospace'; var w=ctx.measureText(txt).width+18; var bh=24;
+    var bx=pt.x-w/2, by=pt.y-40;
+    if(bx<2)bx=2; if(bx+w>chart.width-2)bx=chart.width-w-2; if(by<2)by=pt.y+16;
+    ctx.fillStyle='rgba(18,18,18,.94)'; ctx.strokeStyle=col; ctx.lineWidth=1;
+    var r=8; ctx.beginPath(); ctx.moveTo(bx+r,by); ctx.arcTo(bx+w,by,bx+w,by+bh,r); ctx.arcTo(bx+w,by+bh,bx,by+bh,r); ctx.arcTo(bx,by+bh,bx,by,r); ctx.arcTo(bx,by,bx+w,by,r); ctx.closePath(); ctx.fill(); ctx.stroke();
+    ctx.fillStyle='#fff'; ctx.textAlign='center'; ctx.textBaseline='middle'; ctx.fillText(txt,bx+w/2,by+bh/2+1);
+    ctx.restore();
+  }
+};
+</script>
+<style id="ftx-add-acct-css">
+.ftx-fm-add-acct{color:var(--accent);font-size:11px;font-weight:600;padding:6px 10px 8px 18px;display:flex;align-items:center;gap:6px;cursor:pointer;border-radius:7px}
+.ftx-fm-add-acct:hover{background:var(--s1)}
+</style>
+<script>
+window.ftxRenderEmoRules=function(){
+  var tr=(typeof allTrades==='function')?allTrades():[];
+  var emoTr=tr.filter(function(t){return t.emo&&t.emo.emociones&&t.emo.emociones.length;});
+  var freq={}; emoTr.forEach(function(t){(t.emo.emociones||[]).forEach(function(e){freq[e]=(freq[e]||0)+1;});});
+  var sorted=Object.keys(freq).map(function(k){return [k,freq[k]];}).sort(function(a,b){return b[1]-a[1];});
+  var box=document.getElementById('a-emo-bars');
+  if(box){
+    if(!sorted.length){ box.innerHTML='<div style="width:100%;text-align:center;color:var(--muted);font-family:var(--mono);font-size:12px;align-self:center">Sin datos de emociones aún</div>'; }
+    else{
+      var max=sorted[0][1];
+      box.innerHTML=sorted.map(function(e,i){
+        var h=Math.max(10, Math.round(e[1]/max*100));
+        var op=i===0?1:(0.6-i*0.07); if(op<0.3)op=0.3;
+        return '<div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;height:100%;min-width:0">'
+          +'<div style="font-family:var(--mono);font-size:11px;color:var(--text);font-weight:700;margin-bottom:4px">'+e[1]+'</div>'
+          +'<div style="width:100%;max-width:46px;height:'+h+'%;background:var(--accent);opacity:'+op+';border-radius:8px 8px 4px 4px"></div>'
+          +'<div style="font-size:10px;color:var(--muted);margin-top:7px;text-align:center;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%">'+ftxEsc(e[0])+'</div>'
+          +'</div>';
+      }).join('');
+    }
+  }
+  var rl=document.getElementById('a-rules-list'); var rt=document.getElementById('a-rules-title');
+  if(rl){
+    var ruleTr=tr.filter(function(t){return t.emo&&t.emo.reglas&&t.fecha;}).sort(function(a,b){return a.fecha<b.fecha?1:-1;});
+    if(!ruleTr.length){ rl.innerHTML='<div style="color:var(--muted);font-family:var(--mono);font-size:12px;padding:14px 0">Sin datos de reglas aún</div>'; if(rt)rt.textContent='\u2705 Cumplimiento de reglas'; }
+    else{
+      var lastDate=ruleTr[0].fecha;
+      var dayTr=ruleTr.filter(function(t){return t.fecha===lastDate;});
+      var agg={}; dayTr.forEach(function(t){ Object.keys(t.emo.reglas).forEach(function(r){ if(!(r in agg))agg[r]=true; if(!t.emo.reglas[r])agg[r]=false; }); });
+      if(rt)rt.textContent='\u2705 Reglas del día \u00b7 '+lastDate;
+      var keys=Object.keys(agg);
+      rl.innerHTML=keys.map(function(r){ var ok=agg[r];
+        return '<div style="display:flex;align-items:center;gap:10px;padding:9px 0;border-bottom:1px solid var(--border)">'
+          +'<span style="width:20px;height:20px;border-radius:6px;display:grid;place-items:center;flex-shrink:0;background:'+(ok?'var(--accent)':'transparent')+';border:1px solid '+(ok?'var(--accent)':'var(--border2)')+';color:'+(ok?'#04150c':'var(--muted)')+';font-size:12px;font-weight:800">'+(ok?'\u2713':'')+'</span>'
+          +'<span style="font-size:12.5px;color:'+(ok?'var(--text)':'var(--muted)')+'">'+ftxEsc(r)+'</span>'
+          +'</div>';
+      }).join('');
+      var cumplidas=keys.filter(function(r){return agg[r];}).length;
+      rl.innerHTML+='<div style="margin-top:12px;font-family:var(--mono);font-size:12px;color:var(--muted)">'+cumplidas+' de '+keys.length+' reglas cumplidas</div>';
+    }
+  }
+};
 </script>
 </body>
 </html>
